@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="Added Command interface and initial models">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Subject.java" afterDir="false" />
-    </list>
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="Implemented the educator class" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -86,7 +82,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706435032462</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Implemented the educator class">
+      <created>1706435921601</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1706435921601</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -103,6 +106,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initials project with initial classes" />
     <MESSAGE value="Added Command interface and initial models" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Command interface and initial models" />
+    <MESSAGE value="Implemented the educator class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented the educator class" />
   </component>
 </project>
