@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class State {
-    private final ArrayList<Day> days;
-    private final ArrayList<Subject> subjects;
-    private final ArrayList<Grade> grades;
-    private final Map<Integer, Educator> educators;
-    private final Map<Integer, Session> sessions;
+    public final ArrayList<Day> days;
+    public final ArrayList<Subject> subjects;
+    public final ArrayList<Grade> grades;
+    public final Map<Integer, Educator> educators;
+    public final Map<Integer, Session> sessions;
     private static State instance = null;
     private State(){
         days = new ArrayList<>();
