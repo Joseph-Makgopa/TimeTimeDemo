@@ -33,7 +33,7 @@
                 <MenuItem mnemonicParsing="false" onAction="#showSubjectDialog" text="Subjects" />
                   <MenuItem mnemonicParsing="false" onAction="#showGradeDialog" text="Grades" />
                   <MenuItem mnemonicParsing="false" onAction="#showEducatorDialog" text="Educators" />
-                  <MenuItem mnemonicParsing="false" text="Sessions" />
+                  <MenuItem mnemonicParsing="false" onAction="#showSessionDialog" text="Sessions" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Table">
