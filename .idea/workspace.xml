@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="created subject dialog box and implemented showSubjectDialog method in DemoController">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the design of the subject-dialog">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/GradeDialogController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/grade-dialog-view.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/subject-dialog-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/subject-dialog-view.fxml" afterDir="false" />
@@ -129,7 +131,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706445417483</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="implemented the design of the subject-dialog">
+      <created>1706448270303</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1706448270303</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,6 +161,7 @@
     <MESSAGE value="added the containers for subjects, grades, educators and sessions in state class" />
     <MESSAGE value="added menu items to the tool bar menus" />
     <MESSAGE value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
-    <option name="LAST_COMMIT_MESSAGE" value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
+    <MESSAGE value="implemented the design of the subject-dialog" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented the design of the subject-dialog" />
   </component>
 </project>
