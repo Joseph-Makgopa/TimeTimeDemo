@@ -1,4 +1,6 @@
 package com.example.demo.models.commands;
 
-public class Command {
+public interface Command {
+    void execute();
+    void reverse();
 }
