@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="Implemented the educator class" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented grade class">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Session.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Grade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Grade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Subject.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -89,7 +95,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706435921601</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="implemented grade class">
+      <created>1706436717463</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1706436717463</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -107,6 +120,7 @@
     <MESSAGE value="initials project with initial classes" />
     <MESSAGE value="Added Command interface and initial models" />
     <MESSAGE value="Implemented the educator class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented the educator class" />
+    <MESSAGE value="implemented grade class" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented grade class" />
   </component>
 </project>

@@ -9,9 +9,9 @@ public class Educator implements Serializable {
     private Integer post;
     private String initials;
     private String surname;
-    private transient SimpleIntegerProperty postView;
-    private transient SimpleStringProperty initialsView;
-    private transient SimpleStringProperty surnameView;
+    private transient final SimpleIntegerProperty postView;
+    private transient final SimpleStringProperty initialsView;
+    private transient final SimpleStringProperty surnameView;
     public Educator(Integer post, String initials, String surname){
         this.post = post;
         this.initials = initials;

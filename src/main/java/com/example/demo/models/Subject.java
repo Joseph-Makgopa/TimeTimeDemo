@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class Subject implements Serializable {
     private String name;
-    private transient SimpleStringProperty nameView;
+    private transient final SimpleStringProperty nameView;
     public Subject(String name){
         this.name = name;
         this.nameView = new SimpleStringProperty(name);

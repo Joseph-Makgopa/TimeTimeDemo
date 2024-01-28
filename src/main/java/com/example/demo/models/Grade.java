@@ -8,8 +8,8 @@ import java.io.Serializable;
 public class Grade implements Serializable {
     private Integer number;
     private Character division;
-    private transient SimpleIntegerProperty numberView;
-    private transient SimpleStringProperty divisionView;
+    private transient final SimpleIntegerProperty numberView;
+    private transient final SimpleStringProperty divisionView;
     public Grade(Integer number, Character division){
         this.number = number;
         this.division = division;
