@@ -22,8 +22,9 @@ public class DemoController {
             Parent parent = fxmlLoader.load();
             SubjectDialogController dialogController = fxmlLoader.getController();
 
-            Scene scene = new Scene(parent, 300, 200);
+            Scene scene = new Scene(parent);
             Stage stage = new Stage();
+            stage.setTitle("Subjects");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();

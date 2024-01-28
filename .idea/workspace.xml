@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added menu items to the tool bar menus">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SubjectDialogController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/subject-dialog-view.fxml" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="created subject dialog box and implemented showSubjectDialog method in DemoController">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/subject-dialog-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/subject-dialog-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +122,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706440996447</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="created subject dialog box and implemented showSubjectDialog method in DemoController">
+      <created>1706445417483</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1706445417483</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,6 +151,7 @@
     <MESSAGE value="implemented session class" />
     <MESSAGE value="added the containers for subjects, grades, educators and sessions in state class" />
     <MESSAGE value="added menu items to the tool bar menus" />
-    <option name="LAST_COMMIT_MESSAGE" value="added menu items to the tool bar menus" />
+    <MESSAGE value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
+    <option name="LAST_COMMIT_MESSAGE" value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
   </component>
 </project>
