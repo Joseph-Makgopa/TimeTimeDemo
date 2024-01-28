@@ -54,7 +54,7 @@
             <AnchorPane prefHeight="45.0" prefWidth="500.0">
                <children>
                   <Button layoutX="400.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
-                  <Button layoutX="275.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Apply" />
+                  <Button layoutX="275.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Ok" />
                </children>
             </AnchorPane>
          </children>
