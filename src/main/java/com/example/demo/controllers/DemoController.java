@@ -51,4 +51,22 @@ public class DemoController {
             error.printStackTrace();
         }
     }
+    @FXML
+    public void showEducatorDialog(ActionEvent event){
+        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("educator-dialog-view.fxml"));
+
+        try {
+            Parent parent = fxmlLoader.load();
+            EducatorDialogController dialogController = fxmlLoader.getController();
+
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.setTitle("Educators");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+        }catch(IOException error){
+            error.printStackTrace();
+        }
+    }
 }

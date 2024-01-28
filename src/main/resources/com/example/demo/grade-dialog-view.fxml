@@ -15,8 +15,8 @@
             <AnchorPane prefHeight="71.0" prefWidth="380.0">
                <children>
                   <Label layoutX="20.0" layoutY="30.0" text="Grade" />
-                  <Spinner layoutX="72.0" layoutY="25.0" prefHeight="30.0" prefWidth="80.0" />
-                  <ComboBox layoutX="275.0" layoutY="25.0" prefHeight="30.0" prefWidth="80.0" />
+                  <Spinner layoutX="72.0" layoutY="25.0" prefWidth="80.0" />
+                  <ComboBox layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
                   <Label layoutX="190.0" layoutY="30.0" text="Sub grade" />
                </children>
             </AnchorPane>
