@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Educator implements Serializable {
     private Integer post;
@@ -55,5 +56,18 @@ public class Educator implements Serializable {
                 ", initials='" + initials + '\'' +
                 ", surname='" + surname + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Educator educator = (Educator) o;
+        return Objects.equals(post, educator.post) && Objects.equals(initials, educator.initials) && Objects.equals(surname, educator.surname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(post, initials, surname);
     }
 }

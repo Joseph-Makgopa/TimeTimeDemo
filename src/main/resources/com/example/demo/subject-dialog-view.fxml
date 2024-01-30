@@ -7,31 +7,31 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="370.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="370.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.SubjectDialogController">
    <children>
       <VBox layoutX="155.0" layoutY="14.0" prefHeight="383.0" prefWidth="485.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane prefHeight="58.0" prefWidth="400.0">
                <children>
                   <Label layoutX="20.0" layoutY="25.0" text="Name" />
-                  <TextField layoutX="75.0" layoutY="20.0" prefHeight="25.0" prefWidth="280.0" />
+                  <TextField fx:id="txtName" layoutX="75.0" layoutY="20.0" onKeyPressed="#textFieldKeyPress" prefHeight="25.0" prefWidth="280.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="22.0" prefWidth="400.0">
                <children>
-                  <Button layoutX="175.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Add" />
-                  <Button layoutX="275.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Remove" />
+                  <Button layoutX="175.0" mnemonicParsing="false" onAction="#add" prefHeight="30.0" prefWidth="80.0" text="Add" />
+                  <Button layoutX="275.0" mnemonicParsing="false" onAction="#remove" prefHeight="30.0" prefWidth="80.0" text="Remove" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="233.0" prefWidth="400.0">
                <children>
-                  <ListView layoutX="20.0" layoutY="18.0" prefHeight="187.0" prefWidth="335.0" />
+                  <ListView fx:id="listSubject" layoutX="20.0" layoutY="18.0" prefHeight="187.0" prefWidth="335.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="30.0" prefWidth="400.0">
                <children>
-                  <Button layoutX="175.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Ok" />
-                  <Button layoutX="275.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
+                  <Button layoutX="175.0" layoutY="-1.0" mnemonicParsing="false" onAction="#ok" prefHeight="30.0" prefWidth="80.0" text="Ok" />
+                  <Button layoutX="275.0" layoutY="-1.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
                </children>
             </AnchorPane>
          </children>

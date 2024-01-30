@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Session implements Serializable {
     private Integer id;
@@ -122,5 +123,18 @@ public class Session implements Serializable {
                 ", split=" + split +
                 ", pair=" + pair +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(id, session.id) && Objects.equals(grade, session.grade) && Objects.equals(educator, session.educator) && Objects.equals(subject, session.subject) && Objects.equals(amount, session.amount) && Objects.equals(split, session.split) && Objects.equals(pair, session.pair);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, grade, educator, subject, amount, split, pair);
     }
 }

@@ -16,7 +16,7 @@
                <children>
                   <Label layoutX="20.0" layoutY="30.0" text="Grade" />
                   <Spinner layoutX="72.0" layoutY="25.0" prefWidth="80.0" />
-                  <ComboBox layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
+                  <ComboBox fx:id="comboSubGrade" layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
                   <Label layoutX="190.0" layoutY="30.0" text="Sub grade" />
                </children>
             </AnchorPane>

@@ -17,6 +17,9 @@ public class CommandManager {
 
         return instance;
     }
+    public void addCommand(Command command){
+        undoStack.push(command);
+    }
     public void undo(){
 
     }

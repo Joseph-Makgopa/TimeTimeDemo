@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Grade implements Serializable {
     private Integer number;
@@ -41,5 +42,18 @@ public class Grade implements Serializable {
                 "number=" + number +
                 ", division=" + division +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Grade grade = (Grade) o;
+        return Objects.equals(number, grade.number) && Objects.equals(division, grade.division);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, division);
     }
 }
