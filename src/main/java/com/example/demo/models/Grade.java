@@ -40,10 +40,7 @@ public class Grade implements Serializable {
 
     @Override
     public String toString() {
-        return "Grade{" +
-                "number=" + number +
-                ", division=" + division +
-                '}';
+        return number + " " + division;
     }
 
     @Override

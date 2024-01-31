@@ -15,6 +15,6 @@ public class AddEducatorCommand implements Command{
     }
     @Override
     public void reverse(){
-        State.getInstance().grades.remove(educator);
+        State.getInstance().educators.remove(educator);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.models.commands.CommandManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,78 +14,47 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class DemoController {
-
-    @FXML
-    public void showSubjectDialog(ActionEvent event){
-        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("subject-dialog-view.fxml"));
+    private void showDataDialog(String title, String resource){
+        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource(resource));
 
         try {
             Parent parent = fxmlLoader.load();
-            SubjectDialogController dialogController = fxmlLoader.getController();
 
             Scene scene = new Scene(parent);
             Stage stage = new Stage();
-            stage.setTitle("Subjects");
+            stage.setTitle(title);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();
         }catch(IOException error){
             error.printStackTrace();
         }
+    }
+
+    @FXML
+    public void showSubjectDialog(ActionEvent event){
+        showDataDialog("Subjects", "subject-dialog-view.fxml");
     }
 
     @FXML
     public void showGradeDialog(ActionEvent event){
-        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("grade-dialog-view.fxml"));
-
-        try {
-            Parent parent = fxmlLoader.load();
-            GradeDialogController dialogController = fxmlLoader.getController();
-
-            Scene scene = new Scene(parent);
-            Stage stage = new Stage();
-            stage.setTitle("Grades");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-        }catch(IOException error){
-            error.printStackTrace();
-        }
+        showDataDialog("Grades", "grade-dialog-view.fxml");
     }
     @FXML
     public void showEducatorDialog(ActionEvent event){
-        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("educator-dialog-view.fxml"));
-
-        try {
-            Parent parent = fxmlLoader.load();
-            EducatorDialogController dialogController = fxmlLoader.getController();
-
-            Scene scene = new Scene(parent);
-            Stage stage = new Stage();
-            stage.setTitle("Educators");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-        }catch(IOException error){
-            error.printStackTrace();
-        }
+        showDataDialog("Educators", "educator-dialog-view.fxml");
     }
     @FXML
     public void showSessionDialog(ActionEvent event){
-        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("session-dialog-view.fxml"));
-
-        try {
-            Parent parent = fxmlLoader.load();
-            SessionDialogController dialogController = fxmlLoader.getController();
-
-            Scene scene = new Scene(parent);
-            Stage stage = new Stage();
-            stage.setTitle("Sessions");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-        }catch(IOException error){
-            error.printStackTrace();
-        }
+        showDataDialog("Sessions", "session-dialog-view.fxml");
     }
+    @FXML
+    public void undo(ActionEvent event){
+        CommandManager.getInstance().undo();
+    }
+
+    @FXML void redo(ActionEvent event){
+        CommandManager.getInstance().redo();
+    }
+
 }

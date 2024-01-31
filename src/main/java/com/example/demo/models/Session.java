@@ -34,12 +34,27 @@ public class Session implements Serializable {
         this.educatorView = new SimpleStringProperty(educator.getInitials() + " " + educator.getSurname() + ", " + educator.getPost());
         this.subjectView = new SimpleStringProperty(subject.getName());
         this.amountView = new SimpleIntegerProperty(amount);
-        this.splitView = new SimpleIntegerProperty(split);
-        this.pairView = new SimpleIntegerProperty(pair);
+
+        if(split == null) {
+            this.splitView = new SimpleIntegerProperty(0);
+            this.split = null;
+        }else {
+            this.splitView = new SimpleIntegerProperty(split);
+            this.split = split;
+        }
+
+        if(pair == null) {
+            this.pairView = new SimpleIntegerProperty(0);
+            this.pair = null;
+        }else {
+            this.pairView = new SimpleIntegerProperty(pair);
+            this.pair = pair;
+        }
+
         counter++;
     }
     public Session(Grade grade, Educator educator, Subject subject, Integer amount, Integer split, Integer pair){
-        this.id = counter++;
+        this.id = ++counter;
         this.grade = grade;
         this.educator = educator;
         this.subject = subject;
@@ -50,11 +65,29 @@ public class Session implements Serializable {
         this.educatorView = new SimpleStringProperty(educator.getInitials() + " " + educator.getSurname() + ", " + educator.getPost());
         this.subjectView = new SimpleStringProperty(subject.getName());
         this.amountView = new SimpleIntegerProperty(amount);
-        this.splitView = new SimpleIntegerProperty(split);
-        this.pairView = new SimpleIntegerProperty(pair);
+
+        if(split == null) {
+            this.splitView = new SimpleIntegerProperty(0);
+            this.split = null;
+        }else {
+            this.splitView = new SimpleIntegerProperty(split);
+            this.split = split;
+        }
+
+        if(pair == null) {
+            this.pairView = new SimpleIntegerProperty(0);
+            this.pair = null;
+        }else {
+            this.pairView = new SimpleIntegerProperty(pair);
+            this.pair = pair;
+        }
     }
     public Session clone(){
         return new Session(grade, educator, subject, amount, split, pair);
+    }
+    public void setId(Integer id){
+        this.id = id;
+        idView.set(id);
     }
     public Integer getId() {
         return id;
@@ -113,6 +146,33 @@ public class Session implements Serializable {
         this.split = split;
         this.splitView.set(split);
     }
+    public Integer getIdView(){
+        return idView.get();
+    }
+
+    public String getGradeView() {
+        return gradeView.get();
+    }
+
+    public String getEducatorView() {
+        return educatorView.get();
+    }
+
+    public String getSubjectView() {
+        return subjectView.get();
+    }
+
+    public int getAmountView() {
+        return amountView.get();
+    }
+
+    public int getSplitView() {
+        return splitView.get();
+    }
+
+    public int getPairView() {
+        return pairView.get();
+    }
 
     @Override
     public String toString() {
@@ -132,7 +192,7 @@ public class Session implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Session session = (Session) o;
-        return Objects.equals(id, session.id) && Objects.equals(grade, session.grade) && Objects.equals(educator, session.educator) && Objects.equals(subject, session.subject) && Objects.equals(amount, session.amount) && Objects.equals(split, session.split) && Objects.equals(pair, session.pair);
+        return Objects.equals(grade, session.grade) && Objects.equals(educator, session.educator) && Objects.equals(subject, session.subject) && Objects.equals(amount, session.amount) && Objects.equals(split, session.split) && Objects.equals(pair, session.pair);
     }
 
     @Override

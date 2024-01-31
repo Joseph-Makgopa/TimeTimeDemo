@@ -23,7 +23,7 @@ public class GradeDialogController extends BaseDataDialogController implements I
     @FXML
     private Spinner<Integer> spinnerNumber;
     @FXML
-    private ListView<String> listGrades;
+    private ListView<Grade> listGrades;
     @FXML
     private Button btnOk;
     private ObservableList<String> subGrades = FXCollections.observableArrayList("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" "));
@@ -35,7 +35,7 @@ public class GradeDialogController extends BaseDataDialogController implements I
         numberValueFactory.setValue(8);
         spinnerNumber.setValueFactory(numberValueFactory);
 
-        listGrades.getItems().addAll(State.getInstance().grades.stream().map(grade -> grade.getNumber().toString() + grade.getDivision()).toList());
+        listGrades.getItems().addAll(State.getInstance().grades);
         btnOk.setDisable(true);
     }
     @FXML
@@ -50,13 +50,13 @@ public class GradeDialogController extends BaseDataDialogController implements I
 
         Grade grade = new Grade(spinnerNumber.getValue(), division.charAt(0));
 
-        if(listGrades.getItems().contains(grade.getNumber().toString() + division)){
+        if(listGrades.getItems().contains(grade)){
             Notification.show("Grade error", "Duplicate grade is detected.", Alert.AlertType.ERROR);
 
             return;
         }
 
-        listGrades.getItems().add(grade.getNumber().toString() + division);
+        listGrades.getItems().add(grade);
         commandList.add(new AddGradeCommand(grade));
         btnOk.setDisable(false);
     }
@@ -64,8 +64,8 @@ public class GradeDialogController extends BaseDataDialogController implements I
     public void remove(ActionEvent event){
 
         try {
-            String selection =  listGrades.getSelectionModel().getSelectedItem();
-            commandList.add(new RemoveGradeCommand(new Grade(Integer.parseInt(selection.substring(0, selection.length() - 1)), selection.charAt(selection.length() - 1))));
+            Grade selection =  listGrades.getSelectionModel().getSelectedItem();
+            commandList.add(new RemoveGradeCommand(selection));
 
             listGrades.getItems().remove(selection);
             btnOk.setDisable(false);

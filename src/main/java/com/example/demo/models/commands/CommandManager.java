@@ -19,12 +19,15 @@ public class CommandManager {
     }
     public void addCommand(Command command){
         undoStack.push(command);
+        redoStack.clear();
     }
     public void undo(){
-
+        Command command = undoStack.pop();
+        redoStack.push(command);
     }
     public void redo(){
-
+        Command command = redoStack.pop();
+        undoStack.push(command);
     }
     public void clear(){
         undoStack.clear();

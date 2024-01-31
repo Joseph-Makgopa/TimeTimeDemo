@@ -24,9 +24,7 @@ public class Subject implements Serializable {
     }
     @Override
     public String toString() {
-        return "Subject{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 
     @Override

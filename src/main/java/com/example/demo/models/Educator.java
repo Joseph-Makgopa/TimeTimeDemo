@@ -62,11 +62,7 @@ public class Educator implements Serializable {
     }
     @Override
     public String toString() {
-        return "Educator{" +
-                "post=" + post +
-                ", initials='" + initials + '\'' +
-                ", surname='" + surname + '\'' +
-                '}';
+        return post + "," + initials + " " + surname;
     }
 
     @Override

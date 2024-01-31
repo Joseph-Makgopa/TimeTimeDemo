@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-
 
 <AnchorPane prefHeight="550.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.SessionDialogController">
    <children>
@@ -17,44 +16,44 @@
             <AnchorPane prefHeight="157.0" prefWidth="380.0">
                <children>
                   <Label layoutX="20.0" layoutY="30.0" text="Grade" />
-                  <ChoiceBox layoutX="90.0" layoutY="25.0" prefHeight="25.0" prefWidth="135.0" />
                   <Label layoutX="265.0" layoutY="29.0" text="Subject" />
-                  <ChoiceBox layoutX="345.0" layoutY="25.0" prefHeight="25.0" prefWidth="135.0" />
                   <Label layoutX="265.0" layoutY="74.0" text="Educator" />
-                  <ChoiceBox layoutX="345.0" layoutY="70.0" prefHeight="25.0" prefWidth="135.0" />
                   <Label layoutX="20.0" layoutY="74.0" text="Amount" />
-                  <Spinner layoutX="90.0" layoutY="71.0" prefHeight="25.0" prefWidth="135.0" />
+                  <Spinner fx:id="spinnerAmount" layoutX="90.0" layoutY="71.0" prefHeight="25.0" prefWidth="135.0" />
                   <Label layoutX="20.0" layoutY="120.0" text="Pair" />
                   <Label layoutX="265.0" layoutY="120.0" text="Split" />
-                  <ChoiceBox layoutX="90.0" layoutY="116.0" prefHeight="25.0" prefWidth="135.0" />
-                  <ChoiceBox layoutX="345.0" layoutY="116.0" prefHeight="25.0" prefWidth="135.0" />
+                  <ComboBox fx:id="comboGrade" layoutX="90.0" layoutY="25.0" prefHeight="25.0" prefWidth="135.0" />
+                  <ComboBox fx:id="comboSubject" layoutX="345.0" layoutY="25.0" prefHeight="25.0" prefWidth="135.0" />
+                  <ComboBox fx:id="comboEducator" layoutX="345.0" layoutY="70.0" prefHeight="25.0" prefWidth="135.0" />
+                  <ComboBox fx:id="comboSplit" layoutX="345.0" layoutY="116.0" prefHeight="25.0" prefWidth="135.0" />
+                  <ComboBox fx:id="comboPair" layoutX="90.0" layoutY="116.0" prefHeight="25.0" prefWidth="135.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="40.0" prefWidth="380.0">
                <children>
-                  <Button layoutX="400.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Remove" />
-                  <Button layoutX="275.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Add" />
+                  <Button layoutX="400.0" layoutY="5.0" mnemonicParsing="false" onAction="#remove" prefHeight="30.0" prefWidth="80.0" text="Remove" />
+                  <Button layoutX="275.0" layoutY="5.0" mnemonicParsing="false" onAction="#add" prefHeight="30.0" prefWidth="80.0" text="Add" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="305.0" prefWidth="500.0">
                <children>
-                  <TableView layoutX="20.0" layoutY="19.0" prefHeight="272.0" prefWidth="461.0">
+                  <TableView fx:id="tableSessions" layoutX="20.0" layoutY="19.0" onMouseClicked="#rowSelection" prefHeight="272.0" prefWidth="461.0">
                     <columns>
-                      <TableColumn prefWidth="40.0" text="Id" />
-                      <TableColumn prefWidth="44.0" text="Grade" />
-                        <TableColumn prefWidth="104.0" text="Subject" />
-                        <TableColumn minWidth="5.0" prefWidth="123.0" text="Educator" />
-                        <TableColumn minWidth="5.0" prefWidth="56.0" text="Amount" />
-                        <TableColumn minWidth="5.0" prefWidth="48.0" text="Pair" />
-                        <TableColumn minWidth="5.0" prefWidth="48.0" text="Split" />
+                      <TableColumn fx:id="columnId" prefWidth="40.0" text="Id" />
+                      <TableColumn fx:id="columnGrade" prefWidth="44.0" text="Grade" />
+                        <TableColumn fx:id="columnSubject" prefWidth="104.0" text="Subject" />
+                        <TableColumn fx:id="columnEducator" minWidth="5.0" prefWidth="123.0" text="Educator" />
+                        <TableColumn fx:id="columnAmount" minWidth="5.0" prefWidth="56.0" text="Amount" />
+                        <TableColumn fx:id="columnPair" minWidth="5.0" prefWidth="48.0" text="Pair" />
+                        <TableColumn fx:id="columnSplit" minWidth="5.0" prefWidth="48.0" text="Split" />
                     </columns>
                   </TableView>
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="45.0" prefWidth="500.0">
                <children>
-                  <Button layoutX="400.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
-                  <Button layoutX="275.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Ok" />
+                  <Button layoutX="400.0" layoutY="5.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
+                  <Button fx:id="btnOk" layoutX="275.0" layoutY="5.0" mnemonicParsing="false" onAction="#ok" prefHeight="30.0" prefWidth="80.0" text="Ok" />
                </children>
             </AnchorPane>
          </children>
