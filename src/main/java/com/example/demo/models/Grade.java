@@ -17,7 +17,9 @@ public class Grade implements Serializable {
         this.numberView = new SimpleIntegerProperty(number);
         this.divisionView = new SimpleStringProperty(division.toString());
     }
-
+    public Grade clone(){
+        return new Grade(number, division);
+    }
     public Integer getNumber() {
         return number;
     }

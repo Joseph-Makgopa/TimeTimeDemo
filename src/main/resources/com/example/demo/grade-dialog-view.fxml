@@ -15,26 +15,26 @@
             <AnchorPane prefHeight="71.0" prefWidth="380.0">
                <children>
                   <Label layoutX="20.0" layoutY="30.0" text="Grade" />
-                  <Spinner layoutX="72.0" layoutY="25.0" prefWidth="80.0" />
-                  <ComboBox fx:id="comboSubGrade" layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
-                  <Label layoutX="190.0" layoutY="30.0" text="Sub grade" />
+                  <Spinner fx:id="spinnerNumber" layoutX="72.0" layoutY="25.0" prefWidth="80.0" />
+                  <ComboBox fx:id="comboDivision" layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
+                  <Label layoutX="210.0" layoutY="30.0" text="Division" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="17.0" prefWidth="380.0">
                <children>
-                  <Button layoutX="175.0" layoutY="8.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Add" />
-                  <Button layoutX="275.0" layoutY="8.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Remove" />
+                  <Button layoutX="175.0" layoutY="8.0" mnemonicParsing="false" onAction="#add" prefHeight="30.0" prefWidth="80.0" text="Add" />
+                  <Button layoutX="275.0" layoutY="8.0" mnemonicParsing="false" onAction="#remove" prefHeight="30.0" prefWidth="80.0" text="Remove" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="82.0" prefWidth="380.0">
                <children>
-                  <ListView layoutX="20.0" layoutY="14.0" prefHeight="185.0" prefWidth="335.0" />
+                  <ListView fx:id="listGrades" layoutX="20.0" layoutY="14.0" prefHeight="185.0" prefWidth="335.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="55.0" prefWidth="380.0">
                <children>
-                  <Button layoutX="275.0" layoutY="16.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
-                  <Button layoutX="175.0" layoutY="16.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Ok" />
+                  <Button layoutX="275.0" layoutY="16.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="80.0" text="Cancel" />
+                  <Button fx:id="btnOk" layoutX="175.0" layoutY="16.0" mnemonicParsing="false" onAction="#ok" prefHeight="30.0" prefWidth="80.0" text="Ok" />
                </children></AnchorPane>
          </children>
       </VBox>

@@ -5,6 +5,9 @@ import java.util.Queue;
 
 public class CommandList implements Command{
     ArrayList<Command> commands;
+    public ArrayList<Command> getCommands(){
+        return commands;
+    }
     public CommandList(){
         commands = new ArrayList<>();
     }

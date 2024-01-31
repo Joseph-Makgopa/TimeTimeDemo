@@ -53,7 +53,9 @@ public class Session implements Serializable {
         this.splitView = new SimpleIntegerProperty(split);
         this.pairView = new SimpleIntegerProperty(pair);
     }
-
+    public Session clone(){
+        return new Session(grade, educator, subject, amount, split, pair);
+    }
     public Integer getId() {
         return id;
     }

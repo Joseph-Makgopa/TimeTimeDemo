@@ -12,6 +12,9 @@ public class Subject implements Serializable {
         this.name = name;
         this.nameView = new SimpleStringProperty(name);
     }
+    public Subject clone(){
+        return new Subject(name);
+    }
     public void setName(String name) {
         this.name = name;
         nameView.set(name);

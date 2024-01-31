@@ -22,6 +22,9 @@ public class Educator implements Serializable {
         this.initialsView = new SimpleStringProperty(initials);
         this.surnameView = new SimpleStringProperty(surname);
     }
+    public Educator clone(){
+        return new Educator(post,initials,surname);
+    }
     public Integer getPost() {
         return post;
     }
@@ -48,7 +51,15 @@ public class Educator implements Serializable {
         this.initials = initials;
         initialsView.set(initials);
     }
-
+    public int getPostView() {
+        return postView.get();
+    }
+    public String getInitialsView() {
+        return initialsView.get();
+    }
+    public String getSurnameView() {
+        return surnameView.get();
+    }
     @Override
     public String toString() {
         return "Educator{" +
