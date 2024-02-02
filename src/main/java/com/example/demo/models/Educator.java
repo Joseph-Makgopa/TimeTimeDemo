@@ -10,9 +10,9 @@ public class Educator implements Serializable {
     private Integer post;
     private String initials;
     private String surname;
-    private transient final SimpleIntegerProperty postView;
-    private transient final SimpleStringProperty initialsView;
-    private transient final SimpleStringProperty surnameView;
+    private transient SimpleIntegerProperty postView;
+    private transient SimpleStringProperty initialsView;
+    private transient SimpleStringProperty surnameView;
     public Educator(Integer post, String initials, String surname){
         this.post = post;
         this.initials = initials;
@@ -59,6 +59,11 @@ public class Educator implements Serializable {
     }
     public String getSurnameView() {
         return surnameView.get();
+    }
+    public void refreshView(){
+        this.postView = new SimpleIntegerProperty(this.post);
+        this.initialsView = new SimpleStringProperty(this.initials);
+        this.surnameView = new SimpleStringProperty(this.surname);
     }
     @Override
     public String toString() {

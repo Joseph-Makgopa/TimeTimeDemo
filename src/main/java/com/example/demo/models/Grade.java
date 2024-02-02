@@ -9,8 +9,8 @@ import java.util.Objects;
 public class Grade implements Serializable {
     private Integer number;
     private Character division;
-    private transient final SimpleIntegerProperty numberView;
-    private transient final SimpleStringProperty divisionView;
+    private transient SimpleIntegerProperty numberView;
+    private transient SimpleStringProperty divisionView;
     public Grade(Integer number, Character division){
         this.number = number;
         this.division = division;
@@ -36,6 +36,11 @@ public class Grade implements Serializable {
     public void setDivision(Character division) {
         this.division = division;
         divisionView.set(division.toString());
+    }
+
+    public void refreshView(){
+        this.numberView = new SimpleIntegerProperty(this.number);
+        this.divisionView = new SimpleStringProperty(this.division.toString());
     }
 
     @Override

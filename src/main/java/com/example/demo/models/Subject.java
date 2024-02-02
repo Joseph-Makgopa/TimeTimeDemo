@@ -7,7 +7,10 @@ import java.util.Objects;
 
 public class Subject implements Serializable {
     private String name;
-    private transient final SimpleStringProperty nameView;
+    private transient SimpleStringProperty nameView;
+    public void refreshView(){
+        this.nameView = new SimpleStringProperty(name);
+    }
     public Subject(String name){
         this.name = name;
         this.nameView = new SimpleStringProperty(name);

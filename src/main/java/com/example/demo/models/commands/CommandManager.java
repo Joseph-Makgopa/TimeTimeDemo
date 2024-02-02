@@ -1,5 +1,7 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.models.State;
+
 import java.util.Stack;
 
 public class CommandManager {
@@ -20,14 +22,17 @@ public class CommandManager {
     public void addCommand(Command command){
         undoStack.push(command);
         redoStack.clear();
+        State.getInstance().saveRequired = true;
     }
     public void undo(){
         Command command = undoStack.pop();
         redoStack.push(command);
+        State.getInstance().saveRequired = true;
     }
     public void redo(){
         Command command = redoStack.pop();
         undoStack.push(command);
+        State.getInstance().saveRequired = true;
     }
     public void clear(){
         undoStack.clear();

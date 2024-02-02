@@ -14,13 +14,13 @@ public class Session implements Serializable {
     private Integer amount;
     private Integer split;
     private Integer pair;
-    private transient final SimpleIntegerProperty idView;
-    private transient final SimpleStringProperty gradeView;
-    private transient final SimpleStringProperty educatorView;
-    private transient final SimpleStringProperty subjectView;
-    private transient final SimpleIntegerProperty amountView;
-    private transient final SimpleIntegerProperty splitView;
-    private transient final SimpleIntegerProperty pairView;
+    private transient SimpleIntegerProperty idView;
+    private transient SimpleStringProperty gradeView;
+    private transient SimpleStringProperty educatorView;
+    private transient SimpleStringProperty subjectView;
+    private transient SimpleIntegerProperty amountView;
+    private transient SimpleIntegerProperty splitView;
+    private transient SimpleIntegerProperty pairView;
     public static int counter = 0;
     public Session(Integer id, Grade grade, Educator educator, Subject subject, Integer amount, Integer split, Integer pair){
         this.id = id;
@@ -108,7 +108,7 @@ public class Session implements Serializable {
 
     public void setGrade(Grade grade) {
         this.grade = grade;
-        this.gradeView.set(grade.getNumber().toString() + grade.getDivision());
+        this.gradeView.set(grade.toString());
     }
 
     public Subject getSubject() {
@@ -117,7 +117,7 @@ public class Session implements Serializable {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
-        this.subjectView.set(subject.getName());
+        this.subjectView.set(subject.toString());
     }
 
     public Integer getAmount() {
@@ -172,6 +172,22 @@ public class Session implements Serializable {
 
     public int getPairView() {
         return pairView.get();
+    }
+    public void refreshView(){
+        this.idView = new SimpleIntegerProperty(this.id);
+        this.gradeView = new SimpleStringProperty(this.grade.toString());
+        this.subjectView = new SimpleStringProperty(this.subject.toString());
+        this.educatorView = new SimpleStringProperty(this.educator.toString());
+        this.amountView = new SimpleIntegerProperty(this.amount);
+        if(split == null)
+            this.splitView = new SimpleIntegerProperty(0);
+        else
+            this.splitView = new SimpleIntegerProperty(split);
+
+        if(pair == null)
+            this.pairView = new SimpleIntegerProperty(0);
+        else
+            this.pairView = new SimpleIntegerProperty(pair);
     }
 
     @Override
