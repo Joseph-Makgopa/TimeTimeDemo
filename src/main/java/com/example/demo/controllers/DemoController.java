@@ -1,26 +1,242 @@
 package com.example.demo.controllers;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.models.GradeSchedule;
 import com.example.demo.models.State;
+import com.example.demo.models.WeekDay;
+import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
+import com.example.demo.models.commands.UpdateStructureCommand;
 import com.example.demo.utilities.Notification;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.action.Action;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.NoSuchElementException;
+import java.net.URL;
+import java.util.*;
 
-public class DemoController {
+public class DemoController implements Initializable {
     private Stage stage;
+    @FXML
+    private TabPane paneTimeTable;
+    @FXML
+    CheckBox checkMonday, checkTuesday, checkWednesday, checkThursday, checkFriday, checkSaturday, checkSunday;
+    @FXML
+    Spinner<Integer> spinnerMondayPeriods, spinnerTuesdayPeriods, spinnerWednesdayPeriods, spinnerThursdayPeriods, spinnerFridayPeriods, spinnerSaturdayPeriods, spinnerSundayPeriods, spinnerBreak, spinnerPeriod;
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        SpinnerValueFactory<Integer> spinnerMondayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerTuesdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerWednesdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerThursdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerFridayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerSaturdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerSundayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerBreakFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+        SpinnerValueFactory<Integer> spinnerPeriodFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
+
+        spinnerMondayPeriodsFactory.setValue(1);
+        spinnerMondayPeriods.setValueFactory(spinnerMondayPeriodsFactory);
+
+        spinnerTuesdayPeriodsFactory.setValue(1);
+        spinnerTuesdayPeriods.setValueFactory(spinnerTuesdayPeriodsFactory);
+
+        spinnerWednesdayPeriodsFactory.setValue(1);
+        spinnerWednesdayPeriods.setValueFactory(spinnerWednesdayPeriodsFactory);
+
+        spinnerThursdayPeriodsFactory.setValue(1);
+        spinnerThursdayPeriods.setValueFactory(spinnerThursdayPeriodsFactory);
+
+        spinnerFridayPeriodsFactory.setValue(1);
+        spinnerFridayPeriods.setValueFactory(spinnerFridayPeriodsFactory);
+
+        spinnerSaturdayPeriodsFactory.setValue(1);
+        spinnerSaturdayPeriods.setValueFactory(spinnerSaturdayPeriodsFactory);
+
+        spinnerSundayPeriodsFactory.setValue(1);
+        spinnerSundayPeriods.setValueFactory(spinnerSundayPeriodsFactory);
+
+        spinnerBreakFactory.setValue(1);
+        spinnerBreak.setValueFactory(spinnerBreakFactory);
+
+        spinnerPeriodFactory.setValue(1);
+        spinnerPeriod.setValueFactory(spinnerPeriodFactory);
+
+        updateTable();
+    }
+    @FXML
+    public void applyStructure(ActionEvent event){
+        Map<WeekDay, Integer> days = new HashMap<>();
+
+        if(checkMonday.isSelected()){
+            days.put(WeekDay.MONDAY, spinnerMondayPeriods.getValue());
+        }
+
+        if(checkTuesday.isSelected()){
+            days.put(WeekDay.TUESDAY, spinnerTuesdayPeriods.getValue());
+        }
+
+        if(checkWednesday.isSelected()){
+            days.put(WeekDay.WEDNESDAY, spinnerWednesdayPeriods.getValue());
+        }
+
+        if(checkThursday.isSelected()){
+            days.put(WeekDay.THURSDAY, spinnerThursdayPeriods.getValue());
+        }
+
+        if(checkFriday.isSelected()){
+            days.put(WeekDay.FRIDAY, spinnerWednesdayPeriods.getValue());
+        }
+
+        if(checkSaturday.isSelected()){
+            days.put(WeekDay.SATURDAY, spinnerSaturdayPeriods.getValue());
+        }
+
+        if(checkSunday.isSelected()){
+            days.put(WeekDay.SUNDAY, spinnerSundayPeriods.getValue());
+        }
+
+        Command command = new UpdateStructureCommand(days);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
+        updateTable();
+    }
+    public void updateTable(){
+        paneTimeTable.getTabs().clear();
+        Tab[] tabs = new Tab[7];
+
+        State.getInstance().days.forEach((day, periods) ->{
+
+            TableView<GradeSchedule> daySchedule = new TableView<>();
+
+            AnchorPane anchorPane = new AnchorPane(daySchedule);
+            AnchorPane.setTopAnchor(daySchedule, 0.0);
+            AnchorPane.setLeftAnchor(daySchedule, 0.0);
+            AnchorPane.setBottomAnchor(daySchedule, 0.0);
+            AnchorPane.setRightAnchor(daySchedule, 0.0);
+
+            Tab tab = new Tab("",anchorPane);
+
+            daySchedule.getColumns().add(new TableColumn<>("Grade"));
+
+            for(int count = 0; count < periods; count++)
+                daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
+
+
+            switch (day){
+             case MONDAY : {
+                tab.setText("Monday");
+                tabs[0] = tab;
+             }break;
+             case TUESDAY : {
+                 tab.setText("Tuesday");
+                 tabs[1] = tab;
+             }break;
+             case WEDNESDAY : {
+                 tab.setText("Wednesday");
+                 tabs[2] = tab;
+             }break;
+             case THURSDAY: {
+                 tab.setText("Thursday");
+                 tabs[3] = tab;
+             }break;
+             case FRIDAY : {
+                 tab.setText("Friday");
+                 tabs[4] = tab;
+             }break;
+             case SATURDAY : {
+                 tab.setText("Saturday");
+                 tabs[5] = tab;
+             }break;
+             case SUNDAY : {
+                 tab.setText("Sunday");
+                 tabs[6] = tab;
+             }break;
+            }
+        });
+
+        paneTimeTable.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
+    }
+    @FXML
+    public void revertStructure(ActionEvent event){
+        Integer period = State.getInstance().days.get(WeekDay.MONDAY);
+
+        if(period != null) {
+            spinnerMondayPeriods.getValueFactory().setValue(period);
+            checkMonday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.TUESDAY);
+        if(period != null) {
+            spinnerTuesdayPeriods.getValueFactory().setValue(period);
+            checkTuesday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.WEDNESDAY);
+        if(period != null) {
+            spinnerWednesdayPeriods.getValueFactory().setValue(period);
+            checkWednesday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.THURSDAY);
+        if(period != null) {
+            spinnerThursdayPeriods.getValueFactory().setValue(period);
+            checkThursday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.FRIDAY);
+        if(period != null) {
+            spinnerFridayPeriods.getValueFactory().setValue(period);
+            checkFriday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.SATURDAY);
+        if(period != null) {
+            spinnerSaturdayPeriods.getValueFactory().setValue(period);
+            checkSaturday.setSelected(true);
+        }
+
+        period = State.getInstance().days.get(WeekDay.SUNDAY);
+        if(period != null) {
+            spinnerSundayPeriods.getValueFactory().setValue(period);
+            checkSunday.setSelected(true);
+        }
+    }
+    void initialiseTableStructure(){
+
+    }
+    @FXML
+    void selectMondayTab(ActionEvent event){
+        System.out.println("Monday");
+    }
+    @FXML
+    void clearFilter(ActionEvent event){
+
+    }
+    @FXML
+    void random(ActionEvent event){
+
+    }
+    @FXML
+    void arrange(ActionEvent event){
+
+    }
+    @FXML
+    void position(ActionEvent event){
+
+    }
     public Stage getStage() {
         return stage;
     }
@@ -151,5 +367,4 @@ public class DemoController {
     public void close(ActionEvent event){
         stage.close();
     }
-
 }

@@ -44,6 +44,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
         tableEducators.setItems(listEducators);
 
         listEducators.addAll(State.getInstance().educators.values());
+
     }
     @FXML
     public void add(ActionEvent event){

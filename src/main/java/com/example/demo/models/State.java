@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class State {
-    public final ArrayList<Day> days;
+    public final Map<WeekDay, Integer> days;
     public final ArrayList<Subject> subjects;
     public final ArrayList<Grade> grades;
     public final Map<Integer, Educator> educators;
@@ -19,7 +19,7 @@ public class State {
     public String filepath = "";
     private static State instance = null;
     private State(){
-        days = new ArrayList<>();
+        days = new HashMap<>();
         subjects = new ArrayList<>();
         grades = new ArrayList<>();
         educators = new HashMap<>();
@@ -43,7 +43,7 @@ public class State {
     public void setFields(File file){
         try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))){
             this.days.clear();
-            this.days.addAll((ArrayList<Day>) objectInputStream.readObject());
+            this.days.putAll((Map<WeekDay, Integer>) objectInputStream.readObject());
 
             this.subjects.clear();
             this.subjects.addAll((ArrayList<Subject>) objectInputStream.readObject());
