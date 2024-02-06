@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.models.Grade;
 import com.example.demo.models.GradeSchedule;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
@@ -8,6 +9,8 @@ import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
 import com.example.demo.utilities.Notification;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -108,10 +111,11 @@ public class DemoController implements Initializable {
             days.put(WeekDay.SUNDAY, spinnerSundayPeriods.getValue());
         }
 
-        Command command = new UpdateStructureCommand(days);
+        Command command = new UpdateStructureCommand(days, spinnerBreak.getValue());
         command.execute();
         CommandManager.getInstance().addCommand(command);
         updateTable();
+        State.getInstance().saveRequired = true;
     }
     public void updateTable(){
         paneTimeTable.getTabs().clear();
@@ -134,6 +138,7 @@ public class DemoController implements Initializable {
             for(int count = 0; count < periods; count++)
                 daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
 
+            setupTable(daySchedule);
 
             switch (day){
              case MONDAY : {
@@ -168,6 +173,17 @@ public class DemoController implements Initializable {
         });
 
         paneTimeTable.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
+
+    }
+
+    public void setupTable(TableView<GradeSchedule> table){
+        TableColumn<GradeSchedule,?> gradeColumn = table.getColumns().get(0);
+        gradeColumn.setCellValueFactory(row -> new SimpleObjectProperty(row.getValue().getGrade().toString()));
+        table.getItems().clear();
+
+        for(Grade grade: State.getInstance().grades){
+            table.getItems().add(new GradeSchedule(grade, table.getColumns().size() - 1));
+        }
     }
     @FXML
     public void revertStructure(ActionEvent event){

@@ -14,6 +14,7 @@ public class State {
     public final ArrayList<Grade> grades;
     public final Map<Integer, Educator> educators;
     public final Map<Integer, Session> sessions;
+    public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
     public String filepath = "";

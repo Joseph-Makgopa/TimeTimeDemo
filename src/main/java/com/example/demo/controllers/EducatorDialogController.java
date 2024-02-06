@@ -5,6 +5,7 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.State;
 import com.example.demo.models.commands.*;
 import com.example.demo.utilities.Notification;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,7 +39,8 @@ public class EducatorDialogController extends BaseDataDialogController implement
 
         btnOk.setDisable(true);
 
-        columnPost.setCellValueFactory(new PropertyValueFactory<>("postView"));
+        //columnPost.setCellValueFactory(new PropertyValueFactory<>("postView"));
+        columnPost.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getPost().toString()));
         columnInitials.setCellValueFactory(new PropertyValueFactory<>("initialsView"));
         columnSurname.setCellValueFactory(new PropertyValueFactory<>("surnameView"));
         tableEducators.setItems(listEducators);

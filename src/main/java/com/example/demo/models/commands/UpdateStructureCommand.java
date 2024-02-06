@@ -7,26 +7,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateStructureCommand implements Command{
-    private Map<WeekDay, Integer> old;
-    private Map<WeekDay, Integer> fresh;
-    public UpdateStructureCommand(Map<WeekDay, Integer> days){
-        old = new HashMap<>();
+    private Map<WeekDay, Integer> oldDays;
+    private Integer oldBreakAfter;
+    private Map<WeekDay, Integer> freshDays;
+    private Integer freshBreakAfter;
+    public UpdateStructureCommand(Map<WeekDay, Integer> days, Integer breakAfter){
+        oldDays = new HashMap<>();
+        oldBreakAfter = State.getInstance().breakAfter;
+
         State.getInstance().days.forEach((key, value) -> {
-            old.put(key, value);
+            oldDays.put(key, value);
         });
 
-        fresh = new HashMap<>();
-        fresh.putAll(days);
+        freshDays = new HashMap<>();
+        freshDays.putAll(days);
+        freshBreakAfter = breakAfter;
     }
     @Override
     public void execute() {
         State.getInstance().days.clear();
-        State.getInstance().days.putAll(fresh);
+        State.getInstance().days.putAll(freshDays);
+        State.getInstance().breakAfter = freshBreakAfter;
     }
 
     @Override
     public void reverse() {
         State.getInstance().days.clear();
-        State.getInstance().days.putAll(old);
+        State.getInstance().days.putAll(oldDays);
+        State.getInstance().breakAfter = oldBreakAfter;
     }
 }
