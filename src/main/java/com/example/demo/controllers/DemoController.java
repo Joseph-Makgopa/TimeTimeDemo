@@ -5,6 +5,8 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.GradeSchedule;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
+import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.assignable.PairAssignable;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
@@ -33,6 +35,10 @@ import java.util.*;
 public class DemoController implements Initializable {
     private Stage stage;
     @FXML
+    private TableView<Assignable> tableAssign;
+    @FXML
+    private TableColumn<Assignable, String> columnGrade, columnDetail, columnRemain;
+    @FXML
     private TabPane paneTimeTable;
     @FXML
     CheckBox checkMonday, checkTuesday, checkWednesday, checkThursday, checkFriday, checkSaturday, checkSunday;
@@ -40,6 +46,21 @@ public class DemoController implements Initializable {
     Spinner<Integer> spinnerMondayPeriods, spinnerTuesdayPeriods, spinnerWednesdayPeriods, spinnerThursdayPeriods, spinnerFridayPeriods, spinnerSaturdayPeriods, spinnerSundayPeriods, spinnerBreak, spinnerPeriod;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        columnGrade.setCellValueFactory(entry ->{
+            String result = State.getInstance().sessions.get(entry.getValue().getSessionRef()).getGrade().toString();
+
+            if(!entry.getValue().affectSingleSlot()){
+                PairAssignable pairAssignable = (PairAssignable) entry.getValue();
+                result += " / " + State.getInstance().sessions.get(pairAssignable.getPairRef()).getGrade().toString();
+            }
+
+            return new SimpleObjectProperty<>(result);
+        });
+        columnDetail.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getDetails()));
+        columnRemain.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getRemain().toString()));
+
+        tableAssign.getItems().addAll(State.getInstance().assignables.values());
+
         SpinnerValueFactory<Integer> spinnerMondayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
         SpinnerValueFactory<Integer> spinnerTuesdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
         SpinnerValueFactory<Integer> spinnerWednesdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
@@ -78,6 +99,10 @@ public class DemoController implements Initializable {
         spinnerPeriod.setValueFactory(spinnerPeriodFactory);
 
         updateTable();
+    }
+    public void updateTableAssign(){
+        tableAssign.getItems().clear();
+        tableAssign.getItems().addAll(State.getInstance().assignables.values());
     }
     @FXML
     public void applyStructure(ActionEvent event){
@@ -272,6 +297,7 @@ public class DemoController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();
+            updateTableAssign();
         }catch(IOException error){
             error.printStackTrace();
         }

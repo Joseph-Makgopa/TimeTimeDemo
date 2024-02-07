@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.example.demo.models.assignable.Assignable;
 import com.example.demo.utilities.Notification;
 import javafx.scene.control.Alert;
 
@@ -14,6 +15,7 @@ public class State {
     public final ArrayList<Grade> grades;
     public final Map<Integer, Educator> educators;
     public final Map<Integer, Session> sessions;
+    public final Map<Integer, Assignable> assignables;
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
@@ -25,6 +27,7 @@ public class State {
         grades = new ArrayList<>();
         educators = new HashMap<>();
         sessions = new HashMap<>();
+        assignables = new HashMap<>();
     }
     public static State getInstance(){
         if(instance == null){
@@ -66,6 +69,10 @@ public class State {
             for(Session session: this.sessions.values())
                 session.refreshView();
 
+            this.assignables.clear();
+            this.assignables.putAll((Map<Integer, Assignable>) objectInputStream.readObject());
+
+            this.breakAfter = (Integer) objectInputStream.readObject();
             this.saveRequired = false;
             this.filename = file.getName();
             this.filepath = file.getPath();
@@ -85,6 +92,8 @@ public class State {
             objectOutputStream.writeObject(this.grades);
             objectOutputStream.writeObject(this.educators);
             objectOutputStream.writeObject(this.sessions);
+            objectOutputStream.writeObject(this.assignables);
+            objectOutputStream.writeObject(this.breakAfter);
             this.saveRequired = false;
             this.filename = file.getName().split(".")[0];
             this.filepath = file.getPath();

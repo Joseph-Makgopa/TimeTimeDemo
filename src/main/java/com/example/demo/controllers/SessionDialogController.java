@@ -141,4 +141,9 @@ public class SessionDialogController extends BaseDataDialogController implements
         listSessions.removeAll(selection);
         btnOk.setDisable(false);
     }
+    @Override
+    public void ok(ActionEvent event){
+        commandList.add(new SetAssignablesCommand());
+        super.ok(event);
+    }
 }
