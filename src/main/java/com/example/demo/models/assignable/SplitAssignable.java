@@ -18,7 +18,11 @@ public class SplitAssignable extends Assignable{
     }
     @Override
     public Boolean affectSingleSlot(){
-        return false;
+        return true;
+    }
+    @Override
+    public Boolean shareSingleSlot(){
+        return true;
     }
     @Override
     public String getDetails(){

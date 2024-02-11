@@ -2,6 +2,7 @@ package com.example.demo.models;
 
 import com.example.demo.models.assignable.Assignable;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Triplet;
 import javafx.scene.control.Alert;
 
 import java.io.*;
@@ -16,6 +17,7 @@ public class State {
     public final Map<Integer, Educator> educators;
     public final Map<Integer, Session> sessions;
     public final Map<Integer, Assignable> assignables;
+    public final Map<Triplet<WeekDay, Grade, Integer>, Integer> timetable;
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
@@ -28,6 +30,7 @@ public class State {
         educators = new HashMap<>();
         sessions = new HashMap<>();
         assignables = new HashMap<>();
+        timetable = new HashMap<>();
     }
     public static State getInstance(){
         if(instance == null){
@@ -72,6 +75,9 @@ public class State {
             this.assignables.clear();
             this.assignables.putAll((Map<Integer, Assignable>) objectInputStream.readObject());
 
+            this.timetable.clear();
+            this.timetable.putAll((Map<Triplet<WeekDay, Grade, Integer>, Integer>) objectInputStream.readObject());
+
             this.breakAfter = (Integer) objectInputStream.readObject();
             this.saveRequired = false;
             this.filename = file.getName();
@@ -79,10 +85,13 @@ public class State {
 
         }catch(FileNotFoundException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
+            error.printStackTrace();
         }catch (IOException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
+            error.printStackTrace();
         }catch (ClassNotFoundException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
+            error.printStackTrace();
         }
     }
     public void saveFields(File file){
@@ -93,9 +102,10 @@ public class State {
             objectOutputStream.writeObject(this.educators);
             objectOutputStream.writeObject(this.sessions);
             objectOutputStream.writeObject(this.assignables);
+            objectOutputStream.writeObject(this.timetable);
             objectOutputStream.writeObject(this.breakAfter);
             this.saveRequired = false;
-            this.filename = file.getName().split(".")[0];
+            this.filename = file.getName();
             this.filepath = file.getPath();
 
         }catch(FileNotFoundException error){

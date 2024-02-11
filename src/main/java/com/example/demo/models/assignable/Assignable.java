@@ -4,9 +4,10 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Assignable {
+public class Assignable implements Serializable {
     private static Integer counter = 0;
     private Integer id;
     protected Integer sessionRef;
@@ -23,6 +24,9 @@ public class Assignable {
     }
     public Boolean affectSingleSlot(){
         return true;
+    }
+    public Boolean shareSingleSlot(){
+        return false;
     }
     public String getDetails(){
         Session session = State.getInstance().sessions.get(sessionRef);

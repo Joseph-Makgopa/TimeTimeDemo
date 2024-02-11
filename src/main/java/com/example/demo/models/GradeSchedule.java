@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class GradeSchedule {
     private Grade grade;
-    private ArrayList<Integer> periods;
+    private ArrayList<Integer> periods = new ArrayList<>();
     public GradeSchedule(Grade grade, Integer periods){
         this.grade = grade;
-        this.periods = new ArrayList<>(periods);
+
+        for(int count = 0; count < periods; count++)
+            this.periods.add(null);
     }
 
     public Grade getGrade() {
@@ -24,5 +26,13 @@ public class GradeSchedule {
 
     public void setPeriods(ArrayList<Integer> periods) {
         this.periods = periods;
+    }
+
+    @Override
+    public String toString() {
+        return "GradeSchedule{" +
+                "grade=" + grade +
+                ", periods=" + periods +
+                '}';
     }
 }

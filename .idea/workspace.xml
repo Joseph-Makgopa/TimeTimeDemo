@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the setupTable methods in the demoController">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/PairAssignable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/SplitAssignable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/SetAssignablesCommand.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added functionality to populate tableAssign">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Filter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Triplet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SessionDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SessionDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/GradeSchedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/GradeSchedule.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/Assignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/Assignable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/SplitAssignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/SplitAssignable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -211,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1707245667196</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="added functionality to populate tableAssign">
+      <created>1707312414201</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1707312414201</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -245,6 +252,7 @@
     <MESSAGE value="implemented the design of the right side panel" />
     <MESSAGE value="implemented the applyStructure and updateStructure methods in the demoController" />
     <MESSAGE value="implemented the setupTable methods in the demoController" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented the setupTable methods in the demoController" />
+    <MESSAGE value="added functionality to populate tableAssign" />
+    <option name="LAST_COMMIT_MESSAGE" value="added functionality to populate tableAssign" />
   </component>
 </project>

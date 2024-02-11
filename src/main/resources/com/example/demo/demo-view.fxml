@@ -33,6 +33,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save" />
                   <MenuItem mnemonicParsing="false" onAction="#saveAsFile" text="Save As" />
                   <MenuItem mnemonicParsing="false" text="Export" />
+                  <MenuItem mnemonicParsing="false" onAction="#print" text="Print" />
               <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
             </items>
           </Menu>
@@ -66,7 +67,7 @@
    <center>
       <TabPane fx:id="paneTimeTable" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="Monday">
+          <Tab fx:id="MONDAY" text="Monday">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -78,32 +79,32 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="Tuesday">
+            <Tab fx:id="TUESDAY" text="Tuesday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Wednesday">
+            <Tab fx:id="WEDNESDAY" text="Wednesday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Thursday">
+            <Tab fx:id="THURSDAY" text="Thursday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Friday">
+            <Tab fx:id="FRIDAY" text="Friday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Saturday">
+            <Tab fx:id="SATURDAY" text="Saturday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Sunday">
+            <Tab fx:id="SUNDAY" text="Sunday">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
@@ -204,13 +205,13 @@
                               <HBox prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
                                  <children>
                                     <Label prefHeight="35.0" prefWidth="140.0" text="Number" />
-                                    <ComboBox fx:id="comboNumber" prefHeight="25.0" prefWidth="134.0" />
+                                    <ComboBox fx:id="comboNumber" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="30.0" prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
                                  <children>
                                     <Label prefHeight="35.0" prefWidth="140.0" text="Division" />
-                                    <ComboBox fx:id="comboDivision" prefHeight="25.0" prefWidth="134.0" />
+                                    <ComboBox fx:id="comboDivision" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <Separator prefHeight="15.0" prefWidth="200.0" />
@@ -219,7 +220,7 @@
                               <HBox layoutX="10.0" layoutY="30.0" prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
                                  <children>
                                     <Label prefHeight="35.0" prefWidth="140.0" text="Name" />
-                                    <ComboBox fx:id="comboSubject" prefHeight="25.0" prefWidth="134.0" />
+                                    <ComboBox fx:id="comboSubject" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <Separator layoutX="10.0" layoutY="112.0" prefHeight="15.0" prefWidth="200.0" />
@@ -228,7 +229,7 @@
                               <HBox layoutX="10.0" layoutY="115.0" prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
                                  <children>
                                     <Label prefHeight="35.0" prefWidth="140.0" text="Name" />
-                                    <ComboBox fx:id="comboEducator" prefHeight="25.0" prefWidth="134.0" />
+                                    <ComboBox fx:id="comboEducator" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <Separator layoutX="10.0" layoutY="175.0" prefHeight="15.0" prefWidth="200.0" />
@@ -251,7 +252,7 @@
                            <children>
                               <AnchorPane prefHeight="25.0" prefWidth="258.0">
                                  <children>
-                                    <TextField fx:id="txtSearch" layoutY="14.0" prefHeight="39.0" prefWidth="258.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <TextField fx:id="txtSearch" layoutY="14.0" onKeyTyped="#search" prefHeight="39.0" prefWidth="258.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="309.0" prefWidth="258.0">
