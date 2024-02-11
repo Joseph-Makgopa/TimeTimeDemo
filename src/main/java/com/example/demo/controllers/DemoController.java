@@ -425,9 +425,6 @@ public class DemoController implements Initializable {
             checkSunday.setSelected(true);
         }
     }
-    void initialiseTableStructure(){
-
-    }
     @FXML
     void random(ActionEvent event){
 
