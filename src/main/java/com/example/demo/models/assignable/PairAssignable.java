@@ -25,6 +25,10 @@ public class PairAssignable extends Assignable{
     public Integer getPairRef() {
         return pairRef;
     }
+    @Override
+    public Integer getOtherRef(){
+        return pairRef;
+    }
 
     @Override
     public String getDetails(){

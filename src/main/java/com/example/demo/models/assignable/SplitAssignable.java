@@ -37,6 +37,10 @@ public class SplitAssignable extends Assignable{
     public Integer getSplitRef() {
         return splitRef;
     }
+    @Override
+    public Integer getOtherRef(){
+        return splitRef;
+    }
 
     @Override
     public boolean equals(Object o) {

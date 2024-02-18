@@ -4,10 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the filter functionality and the print functionality">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/View.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added the services package and its classes">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Row.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/WeekDaySchedule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/PositionCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/Assignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/Assignable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/PairAssignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/PairAssignable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/SplitAssignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/SplitAssignable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/CommandList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/CommandList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/SideBarService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Filter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +33,8 @@
       <list>
         <option value="Interface" />
         <option value="FxmlFile" />
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -219,7 +233,14 @@
       <option name="project" value="LOCAL" />
       <updated>1707651370173</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="added the services package and its classes">
+      <created>1707652953667</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1707652953667</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -255,6 +276,7 @@
     <MESSAGE value="implemented the setupTable methods in the demoController" />
     <MESSAGE value="added functionality to populate tableAssign" />
     <MESSAGE value="implemented the filter functionality and the print functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented the filter functionality and the print functionality" />
+    <MESSAGE value="added the services package and its classes" />
+    <option name="LAST_COMMIT_MESSAGE" value="added the services package and its classes" />
   </component>
 </project>

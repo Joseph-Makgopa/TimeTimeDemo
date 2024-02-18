@@ -14,6 +14,12 @@ public class CommandList implements Command{
     public void add(Command command){
         commands.add(command);
     }
+    public Integer size(){
+        return commands.size();
+    }
+    public Boolean isEmpty(){
+        return commands.isEmpty();
+    }
     public void execute(){
         for(int count = 0; count < commands.size(); count++){
             commands.get(count).execute();

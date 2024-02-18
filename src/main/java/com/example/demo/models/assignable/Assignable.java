@@ -58,6 +58,9 @@ public class Assignable implements Serializable {
     public Integer getSessionRef() {
         return sessionRef;
     }
+    public Integer getOtherRef(){
+        return null;
+    }
 
     @Override
     public boolean equals(Object o) {

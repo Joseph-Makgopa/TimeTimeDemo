@@ -7,6 +7,7 @@ import com.example.demo.models.assignable.PairAssignable;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
+import com.example.demo.services.*;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Triplet;
@@ -61,8 +62,14 @@ public class DemoController implements Initializable {
     private ComboBox<Subject> comboSubject;
     @FXML
     private ComboBox<Educator> comboEducator;
-    private Map<WeekDay, ObservableList<GradeSchedule>> weeklyTable = new HashMap<>();
-    private View view;
+    @FXML
+    private ComboBox<WeekDay> comboDay;
+    @FXML
+    private CheckMenuItem menuWeekDays, menuGrades, menuEducators;
+    private View view = View.WeekDayView;
+    private DemoService service = new WeekDayViewService();
+    private ToolBarService toolbarService = new ToolBarService();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
@@ -119,8 +126,11 @@ public class DemoController implements Initializable {
         spinnerPeriodFactory.setValue(1);
         spinnerPeriod.setValueFactory(spinnerPeriodFactory);
 
-        setupWeeklyTable();
-        populateTable();
+        service.setupTable(paneTimeTable);
+        service.populateTable();
+
+        menuWeekDays.setSelected(true);
+        menuWeekDays.setDisable(true);
     }
     public void updateGradeFilterOptions(){
         comboNumber.getItems().clear();
@@ -159,63 +169,22 @@ public class DemoController implements Initializable {
         comboNumber.setValue(null);
         comboDivision.setValue(null);
         filter.clear();
-        populateTable();
+        service.populateTable();
     }
     @FXML
     public void updateFilter(ActionEvent event){
         filter.set(comboNumber.getValue(), comboDivision.getValue(), comboSubject.getValue(), comboEducator.getValue());
-
-        Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
-
-        if(tab == null){
-            Notification.show("Filter error","You did not select the day.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
-        TableView<GradeSchedule> table = (TableView<GradeSchedule>)((AnchorPane)tab.getContent()).getChildren().get(0);
-        table.setItems(filter.exec(weeklyTable.get(day)));
-        table.refresh();
+        service.updateFilter(filter, paneTimeTable);
     }
     @FXML
     public void search(KeyEvent event){
-        String text = txtSearch.getText().toUpperCase();
-        tableAssign.getItems().clear();
-
-        if(text == null || text.isEmpty()){
-            tableAssign.getItems().addAll(State.getInstance().assignables.values());
-            return;
-        }
-
-        State.getInstance().assignables.values().forEach(entry -> {
-            if(entry.getDetails().toUpperCase().contains(text)){
-                tableAssign.getItems().add(entry);
-                return;
-            }
-
-            if(entry.getRemain().toString().contains(text)){
-                tableAssign.getItems().add(entry);
-                return;
-            }
-
-            if(State.getInstance().sessions.get(entry.getSessionRef()).getGrade().toString().contains(text)){
-                tableAssign.getItems().add(entry);
-                return;
-            }
-
-            if(!entry.affectSingleSlot()){
-                PairAssignable pairAssignable = (PairAssignable) entry;
-                if(State.getInstance().sessions.get(pairAssignable.getPairRef()).getGrade().toString().contains(text)){
-                    tableAssign.getItems().add(entry);
-                }
-            }
-        });
-
+        tableAssign.setItems(service.search(txtSearch.getText().toUpperCase()));
         event.consume();
     }
     public void updateTableAssign(){
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
+        tableAssign.refresh();
     }
     @FXML
     public void applyStructure(ActionEvent event){
@@ -257,6 +226,8 @@ public class DemoController implements Initializable {
         Command command = new UpdateStructureCommand(days, spinnerBreak.getValue());
         command.execute();
         CommandManager.getInstance().addCommand(command);
+        comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
+
         setupWeeklyTable();
         State.getInstance().saveRequired = true;
     }
@@ -266,119 +237,7 @@ public class DemoController implements Initializable {
          * Call the function to set up the timetable for each day
          * **/
 
-        paneTimeTable.getTabs().clear();
-        Tab[] tabs = new Tab[7];
-
-        State.getInstance().days.forEach((day, periods) ->{
-
-            TableView<GradeSchedule> daySchedule = new TableView<>();
-            daySchedule.setId(day.toString());
-
-            AnchorPane anchorPane = new AnchorPane(daySchedule);
-            AnchorPane.setTopAnchor(daySchedule, 0.0);
-            AnchorPane.setLeftAnchor(daySchedule, 0.0);
-            AnchorPane.setBottomAnchor(daySchedule, 0.0);
-            AnchorPane.setRightAnchor(daySchedule, 0.0);
-
-            Tab tab = new Tab("",anchorPane);
-
-            daySchedule.getColumns().add(new TableColumn<>("Grade"));
-
-            for(int count = 0; count < periods; count++)
-                daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
-
-            setupDayTable(day, daySchedule);
-
-            switch (day){
-             case MONDAY : {
-                tab.setText("Monday");
-                tabs[0] = tab;
-             }break;
-             case TUESDAY : {
-                 tab.setText("Tuesday");
-                 tabs[1] = tab;
-             }break;
-             case WEDNESDAY : {
-                 tab.setText("Wednesday");
-                 tabs[2] = tab;
-             }break;
-             case THURSDAY: {
-                 tab.setText("Thursday");
-                 tabs[3] = tab;
-             }break;
-             case FRIDAY : {
-                 tab.setText("Friday");
-                 tabs[4] = tab;
-             }break;
-             case SATURDAY : {
-                 tab.setText("Saturday");
-                 tabs[5] = tab;
-             }break;
-             case SUNDAY : {
-                 tab.setText("Sunday");
-                 tabs[6] = tab;
-             }break;
-            }
-        });
-
-        paneTimeTable.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
-    }
-
-    public void setupDayTable(WeekDay day, TableView<GradeSchedule> table){
-        /**
-         * setup the columns for a table and add the referenced ObservableList
-         * **/
-
-        TableColumn<GradeSchedule,?> column = table.getColumns().get(0);
-        column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getGrade().toString()));
-
-        DoubleBinding width = table.widthProperty().subtract(table.getColumns().size() - 3).divide(table.getColumns().size());
-        column.prefWidthProperty().bind(width);
-        column.setStyle("-fx-alignment: center;-fx-font-weight: bold");
-
-        for(int count = 1; count < table.getColumns().size(); count++){
-            column = table.getColumns().get(count);
-            column.prefWidthProperty().bind(width);
-            column.setStyle("-fx-alignment: center");
-
-            final Integer index = count - 1;
-
-            column.setCellValueFactory(entry ->{
-                Integer id = entry.getValue().getPeriods().get(index);
-
-                if(id == null){
-                    return new SimpleObjectProperty("");
-                }
-
-                return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
-            });
-        }
-
-        table.setItems(weeklyTable.get(day));
-    }
-    public void populateTable(){
-        /**
-         * Add data to the ObservableList that is referenced by the tableview
-         * **/
-
-        State.getInstance().days.forEach((day, numPeriods) -> {
-            ObservableList<GradeSchedule> gradeSchedules = FXCollections.observableArrayList();
-
-            State.getInstance().grades.forEach(grade -> {
-                GradeSchedule gradeSchedule = new GradeSchedule(grade, numPeriods);
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
-
-                for(int period = 0; period < periods.size(); period++){
-                    Triplet<WeekDay, Grade, Integer> index = new Triplet<>(day, grade, period);
-                    periods.set(period, State.getInstance().timetable.get(index));
-                }
-
-                gradeSchedules.add(gradeSchedule);
-            });
-
-            weeklyTable.put(day, gradeSchedules);
-        });
-
+        service.setupTable(paneTimeTable);
     }
     @FXML
     public void revertStructure(ActionEvent event){
@@ -435,15 +294,13 @@ public class DemoController implements Initializable {
     }
     @FXML
     void position(ActionEvent event){
+        WeekDay day = comboDay.getValue();
         Assignable selected = tableAssign.getSelectionModel().getSelectedItem();
-        Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
 
-        if(tab == null){
+        if(day == null){
             Notification.show("Assignment error","You did not select the day.", Alert.AlertType.ERROR);
             return;
         }
-
-        WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
 
         if(selected == null){
             Notification.show("Assignment error","You did not select a lesson.", Alert.AlertType.ERROR);
@@ -460,35 +317,8 @@ public class DemoController implements Initializable {
             return;
         }
 
-        ObservableList<GradeSchedule> gradeSchedules = weeklyTable.get(day);
-
-        for(GradeSchedule gradeSchedule: gradeSchedules){
-            if(gradeSchedule.getGrade().equals(State.getInstance().sessions.get(selected.getSessionRef()).getGrade())){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
-                Assignable assignable = null;
-                Triplet<WeekDay, Grade, Integer> triplet = new Triplet(day, gradeSchedule.getGrade(), period);
-
-                if(State.getInstance().timetable.get(triplet) != null){
-                    if(State.getInstance().timetable.get(triplet).equals(selected.getId()))
-                        break;
-
-                    assignable = State.getInstance().assignables.get(State.getInstance().timetable.get(triplet));
-                    assignable.setRemain(assignable.getRemain() + 1);
-                }
-
-                State.getInstance().timetable.put(triplet, selected.getId());
-
-                periods.set(period,selected.getId());
-                selected.setRemain(selected.getRemain() - 1);
-
-                AnchorPane pane = (AnchorPane)tab.getContent();
-                ((TableView<GradeSchedule>)pane.getChildren().get(0)).refresh();
-                tableAssign.refresh();
-                State.getInstance().saveRequired = true;
-
-                break;
-            }
-        }
+        service.position(paneTimeTable, selected, day, period);
+        tableAssign.refresh();
     }
     public Stage getStage() {
         return stage;
@@ -497,84 +327,88 @@ public class DemoController implements Initializable {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    private void showDataDialog(String title, String resource){
-        FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource(resource));
-
-        try {
-            Parent parent = fxmlLoader.load();
-
-            Scene scene = new Scene(parent);
-            Stage stage = new Stage();
-            stage.setTitle(title);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-            updateTableAssign();
-        }catch(IOException error){
-            error.printStackTrace();
-        }
-    }
-
     @FXML
     public void showSubjectDialog(ActionEvent event){
-        showDataDialog("Subjects", "subject-dialog-view.fxml");
+        toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml");
+        updateTableAssign();
         updateSubjectFilterOptions();
     }
-
     @FXML
     public void showGradeDialog(ActionEvent event){
-        showDataDialog("Grades", "grade-dialog-view.fxml");
+        toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml");
+        updateTableAssign();
         updateGradeFilterOptions();
     }
     @FXML
     public void showEducatorDialog(ActionEvent event){
-        showDataDialog("Educators", "educator-dialog-view.fxml");
+        toolbarService.showDataDialog("Educators", "educator-dialog-view.fxml");
+        updateTableAssign();
         updateEducatorFilterOptions();
     }
     @FXML
     public void showSessionDialog(ActionEvent event){
-        showDataDialog("Sessions", "session-dialog-view.fxml");
+        toolbarService.showDataDialog("Sessions", "session-dialog-view.fxml");
+        updateTableAssign();
     }
     @FXML
     public void undo(ActionEvent event){
         CommandManager.getInstance().undo();
     }
-
     @FXML
     public void redo(ActionEvent event){
         CommandManager.getInstance().redo();
     }
     @FXML
+    public void viewWeekDays(ActionEvent event){
+        if(menuGrades.isSelected()){
+            menuGrades.setSelected(false);
+            menuGrades.setDisable(false);
+        }else if(menuEducators.isSelected()){
+            menuEducators.setSelected(false);
+            menuEducators.setDisable(false);
+        }
+
+        menuWeekDays.setSelected(true);
+        menuWeekDays.setDisable(true);
+        service = new WeekDayViewService();
+        service.populateTable();
+        service.setupTable(paneTimeTable);
+    }
+    @FXML
+    public void viewGrades(ActionEvent event){
+        if(menuWeekDays.isSelected()){
+            menuWeekDays.setSelected(false);
+            menuWeekDays.setDisable(false);
+        }else if(menuEducators.isSelected()){
+            menuEducators.setSelected(false);
+            menuEducators.setDisable(false);
+        }
+
+        menuGrades.setSelected(true);
+        menuGrades.setDisable(true);
+        service = new GradeViewService();
+        service.populateTable();
+        service.setupTable(paneTimeTable);
+    }
+    @FXML
+    public void viewEducators(ActionEvent event){
+        if(menuGrades.isSelected()){
+            menuGrades.setSelected(false);
+            menuGrades.setDisable(false);
+        }else if(menuWeekDays.isSelected()){
+            menuWeekDays.setSelected(false);
+            menuWeekDays.setDisable(false);
+        }
+
+        menuEducators.setSelected(true);
+        menuEducators.setDisable(true);
+        service = new EducatorViewService();
+        service.populateTable();
+        service.setupTable(paneTimeTable);
+    }
+    @FXML
     public void createFile(ActionEvent event){
-        if(State.getInstance().saveRequired){
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to discard changes?", ButtonType.YES, ButtonType.NO);
-            ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
-
-            if(ButtonType.NO.equals(result))
-                return;
-        }
-
-        TextInputDialog fileNameDialog = new TextInputDialog();
-        fileNameDialog.setContentText("Name: ");
-        fileNameDialog.setTitle("New File");
-        fileNameDialog.setHeaderText(null);
-
-        try {
-            String filename = fileNameDialog.showAndWait().get();
-
-            if (filename == null || filename.equals("")) {
-                Notification.show("New File Error", "File name is missing.", Alert.AlertType.ERROR);
-                return;
-            }
-
-            stage.setTitle(filename + " - TimeTable");
-
-            State.getInstance().reset();
-            State.getInstance().filename = filename;
-            State.getInstance().saveRequired = true;
-        }catch(NoSuchElementException error){
-
-        }
+        toolbarService.createFile(stage);
     }
     public void populateStructure(){
         State.getInstance().days.forEach((day, periods) -> {
@@ -610,36 +444,21 @@ public class DemoController implements Initializable {
             }
         });
     }
-    public void populateAssign(){
-
-    }
     @FXML
     public void openFile(ActionEvent event){
-        if(State.getInstance().saveRequired){
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to discard changes?", ButtonType.YES, ButtonType.NO);
-            ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
-
-            if(ButtonType.NO.equals(result))
-                return;
-        }
-
-        FileChooser fileChooser = new FileChooser();
-
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TimeTable files (*.tt)", "*.tt");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        File file = fileChooser.showOpenDialog(stage);
+        File file = toolbarService.openFile(stage);
 
         if(file != null){
             State.getInstance().setFields(file);
             stage.setTitle(file.getName() + " - TimeTable");
-            populateTable();
+            service.populateTable();
             populateStructure();
             applyStructure(event);
             updateTableAssign();
             updateEducatorFilterOptions();
             updateGradeFilterOptions();
             updateSubjectFilterOptions();
+            comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
         }
     }
     @FXML
@@ -666,35 +485,7 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void print(ActionEvent event){
-        System.out.println("action");
-
-        Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
-
-        if(tab == null){
-            Notification.show("Print error","You did not select the day.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
-        TableView<GradeSchedule> table = (TableView<GradeSchedule>)((AnchorPane)tab.getContent()).getChildren().get(0);
-
-        PrinterJob printerJob = PrinterJob.createPrinterJob();
-        Printer printer = Printer.getDefaultPrinter();
-        PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,0.1,0.1,0.1,0.1);
-
-        Scale scale = new Scale(pageLayout.getPrintableWidth() / table.getWidth(), pageLayout.getPrintableHeight() / table.getHeight());
-
-        table.getTransforms().add(scale);
-
-        if(printerJob != null && printerJob.showPrintDialog(this.stage)){
-            boolean success = printerJob.printPage(pageLayout, table);
-
-            if(success){
-                printerJob.endJob();
-
-            }
-
-        }
+        service.print(paneTimeTable, stage);
     }
     @FXML
     public void close(ActionEvent event){
