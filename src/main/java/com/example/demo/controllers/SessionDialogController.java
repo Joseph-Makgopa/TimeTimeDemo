@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.models.*;
 import com.example.demo.models.commands.*;
 import com.example.demo.utilities.Notification;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,11 +11,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SessionDialogController extends BaseDataDialogController implements Initializable {
+    @FXML
+    TextField txtSearch;
     @FXML
     ComboBox<Grade> comboGrade;
     @FXML
@@ -22,7 +26,7 @@ public class SessionDialogController extends BaseDataDialogController implements
     @FXML
     ComboBox<Educator> comboEducator;
     @FXML
-    ComboBox<Integer> comboPair, comboSplit;
+    ComboBox<String> comboPair, comboSplit;
     @FXML
     Spinner<Integer> spinnerAmount;
     @FXML
@@ -41,17 +45,29 @@ public class SessionDialogController extends BaseDataDialogController implements
         comboSubject.getItems().addAll(State.getInstance().subjects.stream().toList());
         comboGrade.getItems().addAll(State.getInstance().grades.stream().toList());
         comboEducator.getItems().addAll(State.getInstance().educators.values().stream().toList());
-        comboPair.getItems().addAll(State.getInstance().sessions.keySet().stream().toList());
-        comboSplit.getItems().addAll(State.getInstance().sessions.keySet().stream().toList());
-
+        comboPair.getItems().addAll(State.getInstance().sessions.keySet().stream().map(id -> id.toString()).toList());
+        comboPair.getItems().add(0, "");
+        comboSplit.getItems().addAll(State.getInstance().sessions.keySet().stream().map(id -> id.toString()).toList());
+        comboSplit.getItems().add(0, "");
         btnOk.setDisable(true);
 
-        columnId.setCellValueFactory(new PropertyValueFactory<>("idView"));
-        columnGrade.setCellValueFactory(new PropertyValueFactory<>("gradeView"));
-        columnSubject.setCellValueFactory(new PropertyValueFactory<>("subjectView"));
-        columnAmount.setCellValueFactory(new PropertyValueFactory<>("amountView"));
-        columnPair.setCellValueFactory(new PropertyValueFactory<>("pairView"));
-        columnSplit.setCellValueFactory(new PropertyValueFactory<>("splitView"));
+        columnId.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getId().toString()));
+        columnGrade.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getGrade().toString()));
+        columnSubject.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getSubject().toString()));
+        columnEducator.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getEducator().toString()));
+        columnAmount.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getAmount().toString()));
+        columnPair.setCellValueFactory(entry -> {
+            if(entry.getValue().getPair() == null)
+                return new SimpleObjectProperty<>("");
+
+            return new SimpleObjectProperty<>(entry.getValue().getPair().toString());
+        });
+        columnSplit.setCellValueFactory(entry -> {
+            if(entry.getValue().getSplit() == null)
+                return new SimpleObjectProperty<>("");
+
+            return new SimpleObjectProperty<>(entry.getValue().getSplit().toString());
+        });
 
         tableSessions.setItems(listSessions);
 
@@ -65,9 +81,42 @@ public class SessionDialogController extends BaseDataDialogController implements
             comboSubject.setValue(session.getSubject());
             comboEducator.setValue(session.getEducator());
             spinnerAmount.getValueFactory().setValue(session.getAmount());
-            comboPair.setValue(session.getPair());
-            comboSplit.setValue(session.getSplit());
+            comboPair.setValue(session.getPair() == null ? "" : session.getPair().toString());
+            comboSplit.setValue(session.getSplit() == null ? "" : session.getSplit().toString());
         }
+    }
+    @FXML
+    public void search(KeyEvent event){
+        String text = txtSearch.getText().toUpperCase();
+
+        if(text.isEmpty()){
+            tableSessions.setItems(listSessions);
+            return;
+        }
+
+        tableSessions.setItems(FXCollections.observableArrayList(listSessions.stream().filter(entry -> {
+            if(entry.getId().toString().contains(text))
+                return true;
+
+            if(entry.getGrade().toString().toUpperCase().contains(text))
+                return true;
+
+            if(entry.getSubject().toString().toUpperCase().contains(text))
+                return true;
+
+            if(entry.getEducator().toString().toUpperCase().contains(text))
+                return true;
+
+            if(entry.getAmount().toString().contains(text))
+                return true;
+
+            if(entry.getPair() != null) {
+                if (entry.getPair().toString().contains(text))
+                    return true;
+            }
+
+            return entry.getSplit() != null && entry.getSplit().toString().contains(text);
+        }).toList()));
     }
     @FXML
     public void add(ActionEvent event){
@@ -75,8 +124,8 @@ public class SessionDialogController extends BaseDataDialogController implements
         Subject subject = comboSubject.getValue();
         Educator educator = comboEducator.getValue();
         Integer amount = spinnerAmount.getValue();
-        Integer pair = comboPair.getValue();
-        Integer split = comboSplit.getValue();
+        Integer pair = (comboPair.getValue() == null || comboPair.getValue().isEmpty()) ? null : Integer.parseInt(comboPair.getValue());
+        Integer split = (comboSplit.getValue() == null || comboSplit.getValue().isEmpty()) ? null : Integer.parseInt(comboSplit.getValue());
 
         if(grade == null){
             Notification.show("Session error", "Educator is missing.", Alert.AlertType.ERROR);
@@ -94,6 +143,58 @@ public class SessionDialogController extends BaseDataDialogController implements
         }
 
         Session session = new Session(grade, educator, subject, amount, split, pair);
+
+        if(split != null){
+            Session splitSession = null;
+
+            for(Session entry: listSessions){
+                if(entry.getId().equals(split)){
+                    splitSession = entry;
+                    break;
+                }
+            }
+
+            if(splitSession == null){
+                Notification.show("Session error", "Split session is missing.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if(!splitSession.getAmount().equals(amount)){
+                Notification.show("Session error", "Amount of sessions must be equal to the split session amounts.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if(!splitSession.getGrade().equals(grade)){
+                Notification.show("Session error", "Split sessions must be of the same grade.", Alert.AlertType.ERROR);
+                return;
+            }
+        }
+
+        if(pair != null){
+            Session pairSession = null;
+
+            for(Session entry: listSessions){
+                if(entry.getId().equals(pair)){
+                    pairSession = entry;
+                    break;
+                }
+            }
+
+            if(pairSession == null){
+                Notification.show("Session error", "Pair session is missing.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if(!pairSession.getAmount().equals(amount)){
+                Notification.show("Session error", "Amount of sessions must be equal to the pair session amounts.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if(pairSession.getGrade().equals(grade)){
+                Notification.show("Session error", "Pair sessions must be of the different grades.", Alert.AlertType.ERROR);
+                return;
+            }
+        }
 
         if(listSessions.contains(session)){
             Notification.show("Session error", "Duplicate session is detected.", Alert.AlertType.ERROR);
@@ -114,6 +215,42 @@ public class SessionDialogController extends BaseDataDialogController implements
                     return;
                 }
 
+                if(pair != null){
+                    for(Session value: listSessions){
+                        if(pair.equals(value.getId())){
+                            if(value.getPair() != null){
+                                for(Session other: listSessions){
+                                    if(other.getId().equals(value.getPair())){
+                                        other.setPair(null);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            value.setPair(entry.getId());
+                            break;
+                        }
+                    }
+                }
+
+                if(split != null){
+                    for(Session value: listSessions){
+                        if(split.equals(value.getId())){
+                            if(value.getSplit() != null){
+                                for(Session other: listSessions){
+                                    if(other.getId().equals(value.getSplit())){
+                                        other.setSplit(null);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            value.setSplit(entry.getId());
+                            break;
+                        }
+                    }
+                }
+
                 session.setId(entry.getId());
                 listSessions.set(count, session);
                 commandList.add(new UpdateSessionCommand(entry, session));
@@ -122,11 +259,49 @@ public class SessionDialogController extends BaseDataDialogController implements
             }
         }
 
+        if(split != null){
+            for(Session value: listSessions){
+                if(split.equals(value.getId())){
+                    if(value.getSplit() != null){
+                        for(Session other: listSessions){
+                            if(other.getId().equals(value.getSplit())){
+                                other.setSplit(null);
+                                break;
+                            }
+                        }
+                    }
+                    value.setSplit(session.getId());
+                    break;
+                }
+            }
+        }
+
+        if(pair != null){
+            for(Session value: listSessions){
+                if(pair.equals(value.getId())){
+                    if(value.getPair() != null){
+                        for(Session other: listSessions){
+                            if(other.getId().equals(value.getPair())){
+                                other.setPair(null);
+                                break;
+                            }
+                        }
+                    }
+
+                    value.setPair(session.getId());
+                    break;
+                }
+            }
+        }
+
         listSessions.add(session);
-        comboPair.getItems().add(session.getId());
-        comboSplit.getItems().add(session.getId());
+        comboPair.getItems().add(session.getId().toString());
+        comboSplit.getItems().add(session.getId().toString());
         commandList.add(new AddSessionCommand(session));
+        tableSessions.refresh();
         btnOk.setDisable(false);
+        txtSearch.clear();
+        search(null);
     }
     @FXML
     public void remove(ActionEvent event){
@@ -134,12 +309,14 @@ public class SessionDialogController extends BaseDataDialogController implements
 
         for(Session session: selection) {
             commandList.add(new RemoveSessionCommand(session));
-            comboPair.getItems().remove(session.getId());
-            comboSplit.getItems().remove(session.getId());
+            comboPair.getItems().remove(session.getId().toString());
+            comboSplit.getItems().remove(session.getId().toString());
         }
 
         listSessions.removeAll(selection);
         btnOk.setDisable(false);
+        txtSearch.clear();
+        search(null);
     }
     @Override
     public void ok(ActionEvent event){

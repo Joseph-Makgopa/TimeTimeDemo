@@ -3,43 +3,92 @@ package com.example.demo.models.assignable;
 import com.example.demo.models.Grade;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
+import com.example.demo.utilities.Pair;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Assignable implements Serializable {
     private static Integer counter = 0;
-    private Integer id;
-    protected Integer sessionRef;
+    private Pair<Integer, Integer> id;
     private Integer remain;
+    private Integer getPairId(){
+        Session session = State.getInstance().sessions.get(id.getFirst());
+        if(session.getPair() != null){
+            return session.getPair();
+        }
+
+        if(id.getSecond() != null){
+            session = State.getInstance().sessions.get(id.getSecond());
+            if(session.getPair() != null){
+                return session.getPair();
+            }
+        }
+
+        return null;
+    }
     public Assignable(Integer sessionRef) throws NullPointerException{
-        id = counter++;
 
         if(State.getInstance().sessions.get(sessionRef) == null){
             throw new NullPointerException("Session id '"+ sessionRef.toString() + "' not found.");
         }
 
-        this.sessionRef = sessionRef;
-        remain = State.getInstance().sessions.get(sessionRef).getAmount();
-    }
-    public Boolean affectSingleSlot(){
-        return true;
-    }
-    public Boolean shareSingleSlot(){
-        return false;
-    }
-    public String getDetails(){
-        Session session = State.getInstance().sessions.get(sessionRef);
-        return session.getEducator().getPost() + " " + session.getSubject();
-    }
-    public String getDetailsByGrade(Grade grade){
-        Session session = State.getInstance().sessions.get(sessionRef);
+        id = new Pair<>(sessionRef, null);
+        Integer share = State.getInstance().sessions.get(sessionRef).getSplit();
 
-        if(session.getGrade().equals(grade)){
-            return session.getEducator().getPost() + " " + session.getSubject();
+        if(share != null){
+            id.setSecond(share);
         }
 
-        return "";
+        remain = State.getInstance().sessions.get(sessionRef).getAmount();
+    }
+    public Pair<Session, Session> getSessions(){
+        return new Pair<>(State.getInstance().sessions.get(id.getFirst()), State.getInstance().sessions.get(id.getSecond()));
+    }
+    public Boolean isShare(){
+        return id.getFirst() != null && id.getSecond() != null;
+    }
+    public Boolean isPair(){
+        Session session = State.getInstance().sessions.get(id.getFirst());
+        if(session.getPair() != null){
+            return true;
+        }
+
+        if(id.getSecond() != null){
+            session = State.getInstance().sessions.get(id.getSecond());
+            if(session.getPair() != null){
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public Assignable getPair(){
+        Integer pairId = getPairId();
+        if(pairId != null){
+            for(Pair<Integer, Integer> id: State.getInstance().assignables.keySet()){
+                if(id.getFirst() != null && id.getFirst().equals(pairId)){
+                    return State.getInstance().assignables.get(id);
+                }
+
+                if(id.getSecond() != null && id.getSecond().equals(pairId)){
+                    return State.getInstance().assignables.get(id);
+                }
+            }
+        }
+
+        return null;
+    }
+    public String getDetails(){
+        Session session = State.getInstance().sessions.get(id.getFirst());
+        String result =  session.getEducator().getPost() + " " + session.getSubject();
+
+        session = State.getInstance().sessions.get(id.getSecond());
+        if(session != null){
+            result += " / " + session.getEducator().getPost() + " " + session.getSubject();
+        }
+
+        return result;
     }
     public void setRemain(Integer remain){
         this.remain = remain;
@@ -47,19 +96,9 @@ public class Assignable implements Serializable {
     public Integer getRemain(){
         return remain;
     }
-    public Boolean containRef(Integer ref){
-        return sessionRef.equals(ref);
-    }
 
-    public Integer getId() {
+    public Pair<Integer, Integer> getId() {
         return id;
-    }
-
-    public Integer getSessionRef() {
-        return sessionRef;
-    }
-    public Integer getOtherRef(){
-        return null;
     }
 
     @Override
@@ -67,11 +106,11 @@ public class Assignable implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Assignable that = (Assignable) o;
-        return Objects.equals(sessionRef, that.sessionRef);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sessionRef);
+        return Objects.hash(id);
     }
 }

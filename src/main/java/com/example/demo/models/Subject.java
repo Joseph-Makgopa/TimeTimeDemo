@@ -7,20 +7,14 @@ import java.util.Objects;
 
 public class Subject implements Serializable {
     private String name;
-    private transient SimpleStringProperty nameView;
-    public void refreshView(){
-        this.nameView = new SimpleStringProperty(name);
-    }
     public Subject(String name){
         this.name = name;
-        this.nameView = new SimpleStringProperty(name);
     }
     public Subject clone(){
         return new Subject(name);
     }
     public void setName(String name) {
         this.name = name;
-        nameView.set(name);
     }
     public String getName() {
         return name;

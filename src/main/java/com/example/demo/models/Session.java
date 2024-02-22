@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Session implements Serializable {
+public class Session implements Serializable,Comparable<Session> {
     private Integer id;
     private Grade grade;
     private Educator educator;
@@ -14,13 +14,6 @@ public class Session implements Serializable {
     private Integer amount;
     private Integer split;
     private Integer pair;
-    private transient SimpleIntegerProperty idView;
-    private transient SimpleStringProperty gradeView;
-    private transient SimpleStringProperty educatorView;
-    private transient SimpleStringProperty subjectView;
-    private transient SimpleIntegerProperty amountView;
-    private transient SimpleIntegerProperty splitView;
-    private transient SimpleIntegerProperty pairView;
     public static int counter = 0;
     public Session(Integer id, Grade grade, Educator educator, Subject subject, Integer amount, Integer split, Integer pair){
         this.id = id;
@@ -28,28 +21,8 @@ public class Session implements Serializable {
         this.educator = educator;
         this.subject = subject;
         this.amount = amount;
-
-        this.idView = new SimpleIntegerProperty(id);
-        this.gradeView = new SimpleStringProperty(grade.getNumber() + " " + grade.getDivision());
-        this.educatorView = new SimpleStringProperty(educator.getInitials() + " " + educator.getSurname() + ", " + educator.getPost());
-        this.subjectView = new SimpleStringProperty(subject.getName());
-        this.amountView = new SimpleIntegerProperty(amount);
-
-        if(split == null) {
-            this.splitView = new SimpleIntegerProperty(0);
-            this.split = null;
-        }else {
-            this.splitView = new SimpleIntegerProperty(split);
-            this.split = split;
-        }
-
-        if(pair == null) {
-            this.pairView = new SimpleIntegerProperty(0);
-            this.pair = null;
-        }else {
-            this.pairView = new SimpleIntegerProperty(pair);
-            this.pair = pair;
-        }
+        this.split = split;
+        this.pair = pair;
 
         counter++;
     }
@@ -59,35 +32,14 @@ public class Session implements Serializable {
         this.educator = educator;
         this.subject = subject;
         this.amount = amount;
-
-        this.idView = new SimpleIntegerProperty(id);
-        this.gradeView = new SimpleStringProperty(grade.getNumber().toString() + grade.getDivision());
-        this.educatorView = new SimpleStringProperty(educator.getInitials() + " " + educator.getSurname() + ", " + educator.getPost());
-        this.subjectView = new SimpleStringProperty(subject.getName());
-        this.amountView = new SimpleIntegerProperty(amount);
-
-        if(split == null) {
-            this.splitView = new SimpleIntegerProperty(0);
-            this.split = null;
-        }else {
-            this.splitView = new SimpleIntegerProperty(split);
-            this.split = split;
-        }
-
-        if(pair == null) {
-            this.pairView = new SimpleIntegerProperty(0);
-            this.pair = null;
-        }else {
-            this.pairView = new SimpleIntegerProperty(pair);
-            this.pair = pair;
-        }
+        this.split = split;
+        this.pair = pair;
     }
     public Session clone(){
         return new Session(grade, educator, subject, amount, split, pair);
     }
     public void setId(Integer id){
         this.id = id;
-        idView.set(id);
     }
     public Integer getId() {
         return id;
@@ -99,7 +51,6 @@ public class Session implements Serializable {
 
     public void setEducator(Educator educator) {
         this.educator = educator;
-        this.educatorView.set(educator.getInitials() + " " + educator.getSurname() + ", " + educator.getPost());
     }
 
     public Grade getGrade() {
@@ -108,7 +59,6 @@ public class Session implements Serializable {
 
     public void setGrade(Grade grade) {
         this.grade = grade;
-        this.gradeView.set(grade.toString());
     }
 
     public Subject getSubject() {
@@ -117,7 +67,6 @@ public class Session implements Serializable {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
-        this.subjectView.set(subject.toString());
     }
 
     public Integer getAmount() {
@@ -126,7 +75,6 @@ public class Session implements Serializable {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
-        this.amountView.set(amount);
     }
 
     public Integer getPair() {
@@ -135,7 +83,6 @@ public class Session implements Serializable {
 
     public void setPair(Integer pair) {
         this.pair = pair;
-        this.pairView.set(pair);
     }
 
     public Integer getSplit() {
@@ -144,50 +91,6 @@ public class Session implements Serializable {
 
     public void setSplit(Integer split) {
         this.split = split;
-        this.splitView.set(split);
-    }
-    public Integer getIdView(){
-        return idView.get();
-    }
-
-    public String getGradeView() {
-        return gradeView.get();
-    }
-
-    public String getEducatorView() {
-        return educatorView.get();
-    }
-
-    public String getSubjectView() {
-        return subjectView.get();
-    }
-
-    public int getAmountView() {
-        return amountView.get();
-    }
-
-    public int getSplitView() {
-        return splitView.get();
-    }
-
-    public int getPairView() {
-        return pairView.get();
-    }
-    public void refreshView(){
-        this.idView = new SimpleIntegerProperty(this.id);
-        this.gradeView = new SimpleStringProperty(this.grade.toString());
-        this.subjectView = new SimpleStringProperty(this.subject.toString());
-        this.educatorView = new SimpleStringProperty(this.educator.toString());
-        this.amountView = new SimpleIntegerProperty(this.amount);
-        if(split == null)
-            this.splitView = new SimpleIntegerProperty(0);
-        else
-            this.splitView = new SimpleIntegerProperty(split);
-
-        if(pair == null)
-            this.pairView = new SimpleIntegerProperty(0);
-        else
-            this.pairView = new SimpleIntegerProperty(pair);
     }
 
     @Override
@@ -214,5 +117,10 @@ public class Session implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, grade, educator, subject, amount, split, pair);
+    }
+
+    @Override
+    public int compareTo(Session o) {
+        return id.compareTo(o.getId());
     }
 }

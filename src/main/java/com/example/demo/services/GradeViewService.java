@@ -2,11 +2,11 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.assignable.Assignable;
-import com.example.demo.models.assignable.SplitAssignable;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,22 +23,24 @@ import java.util.*;
 public class GradeViewService extends DemoService{
     private Map<Grade, ObservableList<Row<WeekDay>>> gradeTable = new HashMap<>();
 
+    public GradeViewService(TabPane pane){
+        super(pane);
+    }
     public ObservableList<Row<WeekDay>> filter(Filter filter, Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {
             if(filter.subject != null){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
                 for(int count = 0; count < periods.size() && !found; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
-                        Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                         if(session.getSubject().equals(filter.subject)){
                             found = true;
-                        }else if(assignable.shareSingleSlot()){
-                            SplitAssignable splitAssignable = (SplitAssignable) assignable;
-                            session = State.getInstance().sessions.get(splitAssignable.getSplitRef());
+                        }else if(assignable.isShare()){
+                            session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
                             if(session.getSubject().equals(filter.subject)){
                                 found = true;
@@ -52,13 +54,13 @@ public class GradeViewService extends DemoService{
             }
 
             if(filter.educator != null){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
                 for(int count = 0; count < periods.size() && !found; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
-                        Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                         if(filter.educator.equals(session.getEducator()))
                             found = true;
@@ -88,7 +90,7 @@ public class GradeViewService extends DemoService{
     }
 
     @Override
-    public void setupTable(TabPane pane) {
+    public void setupTable() {
         pane.getTabs().clear();
 
         State.getInstance().grades.forEach(grade -> {
@@ -129,7 +131,7 @@ public class GradeViewService extends DemoService{
             final Integer index = count - 1;
 
             column.setCellValueFactory(entry ->{
-                Integer id = null;
+                Pair<Integer, Integer> id = null;
 
                 try {
                     id = entry.getValue().getPeriods().get(index);
@@ -150,6 +152,7 @@ public class GradeViewService extends DemoService{
 
     @Override
     public void populateTable() {
+        gradeTable.clear();
         State.getInstance().grades.forEach(grade -> {
             ObservableList<Row<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
@@ -158,7 +161,7 @@ public class GradeViewService extends DemoService{
 
                 if(numPeriods != null){
                     Row<WeekDay> daySchedule = new Row<>(day, numPeriods);
-                    ArrayList<Integer> periods = daySchedule.getPeriods();
+                    ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
 
                     for(int period = 0; period < periods.size(); period++){
                         Triplet<WeekDay, Grade, Integer> index = new Triplet<>(day, grade, period);
@@ -174,15 +177,15 @@ public class GradeViewService extends DemoService{
     }
 
     public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
-        Grade grade = State.getInstance().sessions.get(selected.getSessionRef()).getGrade();
+        Grade grade = State.getInstance().sessions.get(selected.getId().getFirst()).getGrade();
         ObservableList<Row<WeekDay>> daySchedules = gradeTable.get(grade);
 
         for(Row<WeekDay> daySchedule: daySchedules){
             if(daySchedule.getHeader().equals(day)){
-                ArrayList<Integer> periods = daySchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
 
-                PositionCommand command = new PositionCommand(selected, triplet, paneTimeTable, periods, grade.toString());
+                PositionCommand command = new PositionCommand(this, selected, triplet);
                 CommandManager.getInstance().addCommand(command);
                 command.execute();
 

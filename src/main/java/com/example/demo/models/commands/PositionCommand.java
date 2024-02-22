@@ -1,9 +1,12 @@
 package com.example.demo.models.commands;
 
 import com.example.demo.models.Grade;
+import com.example.demo.models.Session;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.models.assignable.Assignable;
+import com.example.demo.services.DemoService;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -15,18 +18,18 @@ import java.util.function.Consumer;
 
 public class PositionCommand implements Command{
     private Assignable oldAssignable;
+    private Assignable oldPairAssignable;
     private Assignable freshAssignable;
-    private TabPane pane;
+    private Assignable freshPairAssignable;
     private Triplet<WeekDay, Grade, Integer> triplet;
-    private ArrayList<Integer> periods;
-    private String tabRef;
-    public PositionCommand(Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet, TabPane pane, ArrayList<Integer> periods, String tabRef){
+    private DemoService service;
+    public PositionCommand(DemoService service, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
         this.oldAssignable = null;
+        this.oldPairAssignable = null;
         this.freshAssignable = assignable;
+        this.freshPairAssignable = assignable.getPair();
         this.triplet = triplet;
-        this.pane = pane;
-        this.periods = periods;
-        this.tabRef = tabRef;
+        this.service = service;
     }
 
     @Override
@@ -41,40 +44,58 @@ public class PositionCommand implements Command{
         }
 
         State.getInstance().timetable.put(triplet, freshAssignable.getId());
-
-        periods.set(triplet.getThird(),freshAssignable.getId());
         freshAssignable.setRemain(freshAssignable.getRemain() - 1);
-        State.getInstance().saveRequired = true;
 
-        for(Tab tab: pane.getTabs()){
-            if(tab.getText().toUpperCase().equals(tabRef.toUpperCase().toString())){
-                ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh();
-                break;
+        if(freshAssignable.isPair()){
+            Triplet<WeekDay, Grade, Integer> pairTriplet = triplet.clone();
+            Pair<Session, Session> session = freshPairAssignable.getSessions();
+            pairTriplet.setSecond(session.getFirst().getGrade());
+
+            if(State.getInstance().timetable.get(pairTriplet) != null){
+                oldPairAssignable = State.getInstance().assignables.get(State.getInstance().timetable.get(pairTriplet));
+
+                if(oldPairAssignable.getId().equals(freshPairAssignable))
+                    return;
+
+                oldPairAssignable.setRemain(oldPairAssignable.getRemain() + 1);
             }
+
+            State.getInstance().timetable.put(pairTriplet, freshPairAssignable.getId());
+            freshPairAssignable.setRemain(freshPairAssignable.getRemain() - 1);
         }
+
+        service.refresh();
+        State.getInstance().saveRequired = true;
     }
 
     @Override
     public void reverse() {
         if(oldAssignable == null){
             State.getInstance().timetable.remove(triplet);
-            periods.set(triplet.getThird(), null);
-        }else if(oldAssignable.getId().equals(freshAssignable.getId())) {
-            return;
-        }else{
+            freshAssignable.setRemain(freshAssignable.getRemain() + 1);
+        }else if(!oldAssignable.getId().equals(freshAssignable.getId())){
             State.getInstance().timetable.put(triplet, oldAssignable.getId());
-            periods.set(triplet.getThird(), oldAssignable.getId());
-            oldAssignable.setRemain(oldAssignable.getRemain() + 1);
+            oldAssignable.setRemain(oldAssignable.getRemain() - 1);
+            freshAssignable.setRemain(freshAssignable.getRemain() + 1);
         }
 
-        freshAssignable.setRemain(freshAssignable.getRemain() - 1);
-        State.getInstance().saveRequired = true;
+        if(freshPairAssignable != null) {
+            Triplet<WeekDay, Grade, Integer> pairTriplet = triplet.clone();
+            Pair<Session, Session> session = freshPairAssignable.getSessions();
+            pairTriplet.setSecond(session.getFirst().getGrade());
 
-        for(Tab tab: pane.getTabs()){
-            if(tab.getText().equals(tabRef)){
-                ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh();
-                break;
+            if(oldPairAssignable == null) {
+                State.getInstance().timetable.remove(pairTriplet);
+                freshPairAssignable.setRemain(freshPairAssignable.getRemain() + 1);
+            }else if(!oldPairAssignable.getId().equals(freshPairAssignable.getId())){
+                State.getInstance().timetable.put(pairTriplet, oldPairAssignable.getId());
+                oldPairAssignable.setRemain(oldPairAssignable.getRemain() - 1);
+                freshPairAssignable.setRemain(freshPairAssignable.getRemain() + 1);
             }
         }
+
+        State.getInstance().saveRequired = true;
+
+        service.refresh();
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.models;
 
 import com.example.demo.models.assignable.Assignable;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.scene.control.Alert;
 
@@ -16,8 +17,8 @@ public class State {
     public final ArrayList<Grade> grades;
     public final Map<Integer, Educator> educators;
     public final Map<Integer, Session> sessions;
-    public final Map<Integer, Assignable> assignables;
-    public final Map<Triplet<WeekDay, Grade, Integer>, Integer> timetable;
+    public final Map<Pair<Integer, Integer>, Assignable> assignables;
+    public final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> timetable;
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
@@ -54,29 +55,21 @@ public class State {
 
             this.subjects.clear();
             this.subjects.addAll((ArrayList<Subject>) objectInputStream.readObject());
-            for (Subject subject : this.subjects)
-                subject.refreshView();
 
             this.grades.clear();
             this.grades.addAll((ArrayList<Grade>) objectInputStream.readObject());
-            for(Grade grade: this.grades)
-                grade.refreshView();
 
             this.educators.clear();
             this.educators.putAll((Map<Integer, Educator>) objectInputStream.readObject());
-            for(Educator educator: this.educators.values())
-                educator.refreshView();
 
             this.sessions.clear();
             this.sessions.putAll((Map<Integer, Session>) objectInputStream.readObject());
-            for(Session session: this.sessions.values())
-                session.refreshView();
 
             this.assignables.clear();
-            this.assignables.putAll((Map<Integer, Assignable>) objectInputStream.readObject());
+            this.assignables.putAll((Map<Pair<Integer, Integer>, Assignable>) objectInputStream.readObject());
 
             this.timetable.clear();
-            this.timetable.putAll((Map<Triplet<WeekDay, Grade, Integer>, Integer>) objectInputStream.readObject());
+            this.timetable.putAll((Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer,Integer>>) objectInputStream.readObject());
 
             this.breakAfter = (Integer) objectInputStream.readObject();
             this.saveRequired = false;
@@ -109,8 +102,10 @@ public class State {
             this.filepath = file.getPath();
 
         }catch(FileNotFoundException error){
+            //error.printStackTrace();
             Notification.show("File save error","Failed to save file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
         }catch (IOException error){
+            //error.printStackTrace();
             Notification.show("File save error","Failed to save file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
         }
     }

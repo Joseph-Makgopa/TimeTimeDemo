@@ -2,13 +2,12 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.assignable.Assignable;
-import com.example.demo.models.assignable.PairAssignable;
-import com.example.demo.models.assignable.SplitAssignable;
 import com.example.demo.models.commands.CommandList;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,11 +26,13 @@ import java.util.Map;
 
 public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Row<WeekDay>>> educatorTable = new HashMap<>();
-
+    public EducatorViewService(TabPane pane){
+        super(pane);
+    }
     public ObservableList<Row<WeekDay>> filter(Filter filter, Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
             if(filter.subject != null){
-                ArrayList<Integer> periods = daySchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Boolean foundSubject = false;
                 Boolean foundNumber = false;
                 Boolean foundDivision = false;
@@ -47,13 +48,12 @@ public class EducatorViewService extends DemoService{
                 for(int count = 0; count < periods.size() && !foundSubject && !foundNumber && !foundDivision; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
-                        Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                         if(session.getSubject().equals(filter.subject)){
                             foundSubject = true;
-                        }else if(assignable.shareSingleSlot()){
-                            SplitAssignable splitAssignable = (SplitAssignable) assignable;
-                            session = State.getInstance().sessions.get(splitAssignable.getSplitRef());
+                        }else if(assignable.isShare()){
+                            session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
                             if(session.getSubject().equals(filter.subject)){
                                 foundSubject = true;
@@ -93,7 +93,7 @@ public class EducatorViewService extends DemoService{
     }
 
     @Override
-    public void setupTable(TabPane pane) {
+    public void setupTable() {
         pane.getTabs().clear();
 
         State.getInstance().educators.forEach((post, educator) -> {
@@ -116,7 +116,6 @@ public class EducatorViewService extends DemoService{
             setupEducatorTable(educator, daySchedule);
             pane.getTabs().add(tab);
         });
-
     }
 
     public void setupEducatorTable(Educator educator, TableView<Row<WeekDay>> table){
@@ -135,7 +134,7 @@ public class EducatorViewService extends DemoService{
             final Integer index = count - 1;
 
             column.setCellValueFactory(entry ->{
-                Integer id = null;
+                Pair<Integer, Integer> id = null;
 
                 try {
                     id = entry.getValue().getPeriods().get(index);
@@ -148,14 +147,14 @@ public class EducatorViewService extends DemoService{
                 }
 
                 Assignable assignable = State.getInstance().assignables.get(id);
-                Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                 if(!session.getEducator().equals(educator)){
-                    if(assignable.getOtherRef() == null){
+                    if(assignable.getId().getFirst() == null){
                         return new SimpleObjectProperty("");
                     }
 
-                    session = State.getInstance().sessions.get(assignable.getOtherRef());
+                    session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                     if(!session.getEducator().equals(educator)){
                         return new SimpleObjectProperty("");
@@ -171,6 +170,7 @@ public class EducatorViewService extends DemoService{
 
     @Override
     public void populateTable() {
+        educatorTable.clear();
         State.getInstance().educators.forEach((post, educator) -> {
             ObservableList<Row<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
@@ -179,7 +179,7 @@ public class EducatorViewService extends DemoService{
 
                 if(numPeriods != null){
                     Row<WeekDay> daySchedule = new Row<>(day, numPeriods);
-                    ArrayList<Integer> periods = daySchedule.getPeriods();
+                    ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
 
                     for(int period = 0; period < periods.size(); period++){
                         final Integer finalPeriod = period;
@@ -187,11 +187,11 @@ public class EducatorViewService extends DemoService{
                         State.getInstance().timetable.forEach((triplet, id) -> {
                             if(triplet.getFirst().equals(day) && triplet.getThird().equals(finalPeriod)){
                                 Assignable assignable = State.getInstance().assignables.get(id);
-                                Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                                Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                                 if(!session.getEducator().equals(educator)){
-                                    if(assignable.getOtherRef() != null){
-                                        session = State.getInstance().sessions.get(assignable.getOtherRef());
+                                    if(assignable.getId().getFirst() != null){
+                                        session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                                         if(session.getEducator().equals(educator)){
                                             periods.set(finalPeriod, State.getInstance().timetable.get(new Triplet<>(day, session.getGrade(), finalPeriod)));
@@ -212,18 +212,18 @@ public class EducatorViewService extends DemoService{
         });
     }
     public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
-        Session session = State.getInstance().sessions.get(selected.getSessionRef());
-        Session sessionOther = State.getInstance().sessions.get(selected.getOtherRef());
+        Session session = State.getInstance().sessions.get(selected.getId().getFirst());
+        Session sessionOther = State.getInstance().sessions.get(selected.getId().getSecond());
         CommandList commandList = new CommandList();
 
         ObservableList<Row<WeekDay>> daySchedules = educatorTable.get(session.getEducator());
 
         for(Row<WeekDay> daySchedule: daySchedules){
             if(daySchedule.getHeader().equals(day)){
-                ArrayList<Integer> periods = daySchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
 
-                PositionCommand command = new PositionCommand(selected, triplet, paneTimeTable, periods, session.getEducator().toString());
+                PositionCommand command = new PositionCommand(this, selected, triplet);
                 commandList.add(command);
 
                 break;
@@ -235,10 +235,10 @@ public class EducatorViewService extends DemoService{
 
             for(Row<WeekDay> daySchedule: daySchedules){
                 if(daySchedule.getHeader().equals(day)){
-                    ArrayList<Integer> periods = daySchedule.getPeriods();
+                    ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                     Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
 
-                    PositionCommand command = new PositionCommand(selected, triplet, paneTimeTable, periods, sessionOther.getEducator().toString());
+                    PositionCommand command = new PositionCommand(this, selected, triplet);
                     commandList.add(command);
 
                     break;

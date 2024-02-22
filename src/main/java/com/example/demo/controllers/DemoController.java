@@ -3,7 +3,6 @@ package com.example.demo.controllers;
 import com.example.demo.DemoApplication;
 import com.example.demo.models.*;
 import com.example.demo.models.assignable.Assignable;
-import com.example.demo.models.assignable.PairAssignable;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
@@ -67,20 +66,16 @@ public class DemoController implements Initializable {
     @FXML
     private CheckMenuItem menuWeekDays, menuGrades, menuEducators;
     private View view = View.WeekDayView;
-    private DemoService service = new WeekDayViewService();
+    private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
+        service = new WeekDayViewService(paneTimeTable);
 
         columnGrade.setCellValueFactory(entry ->{
-            String result = State.getInstance().sessions.get(entry.getValue().getSessionRef()).getGrade().toString();
-
-            if(!entry.getValue().affectSingleSlot()){
-                PairAssignable pairAssignable = (PairAssignable) entry.getValue();
-                result += " / " + State.getInstance().sessions.get(pairAssignable.getPairRef()).getGrade().toString();
-            }
+            String result = State.getInstance().sessions.get(entry.getValue().getId().getFirst()).getGrade().toString();
 
             return new SimpleObjectProperty<>(result);
         });
@@ -126,8 +121,9 @@ public class DemoController implements Initializable {
         spinnerPeriodFactory.setValue(1);
         spinnerPeriod.setValueFactory(spinnerPeriodFactory);
 
-        service.setupTable(paneTimeTable);
-        service.populateTable();
+
+        service.refresh();
+
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
@@ -228,16 +224,9 @@ public class DemoController implements Initializable {
         CommandManager.getInstance().addCommand(command);
         comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
 
-        setupWeeklyTable();
+        service.populateTable();
+        service.setupTable();
         State.getInstance().saveRequired = true;
-    }
-    public void setupWeeklyTable(){
-        /**
-         * Add tabs to the timetable pane
-         * Call the function to set up the timetable for each day
-         * **/
-
-        service.setupTable(paneTimeTable);
     }
     @FXML
     public void revertStructure(ActionEvent event){
@@ -338,6 +327,7 @@ public class DemoController implements Initializable {
         toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml");
         updateTableAssign();
         updateGradeFilterOptions();
+        service.refresh();
     }
     @FXML
     public void showEducatorDialog(ActionEvent event){
@@ -370,9 +360,8 @@ public class DemoController implements Initializable {
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
-        service = new WeekDayViewService();
-        service.populateTable();
-        service.setupTable(paneTimeTable);
+        service = new WeekDayViewService(paneTimeTable);
+        service.refresh();
     }
     @FXML
     public void viewGrades(ActionEvent event){
@@ -386,9 +375,8 @@ public class DemoController implements Initializable {
 
         menuGrades.setSelected(true);
         menuGrades.setDisable(true);
-        service = new GradeViewService();
-        service.populateTable();
-        service.setupTable(paneTimeTable);
+        service = new GradeViewService(paneTimeTable);
+        service.refresh();
     }
     @FXML
     public void viewEducators(ActionEvent event){
@@ -402,9 +390,8 @@ public class DemoController implements Initializable {
 
         menuEducators.setSelected(true);
         menuEducators.setDisable(true);
-        service = new EducatorViewService();
-        service.populateTable();
-        service.setupTable(paneTimeTable);
+        service = new EducatorViewService(paneTimeTable);
+        service.refresh();
     }
     @FXML
     public void createFile(ActionEvent event){

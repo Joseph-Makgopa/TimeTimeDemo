@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -37,6 +39,13 @@ public class GradeDialogController extends BaseDataDialogController implements I
 
         listGrades.getItems().addAll(State.getInstance().grades);
         btnOk.setDisable(true);
+    }
+    @FXML
+    public void enter(KeyEvent event){
+        if(event.getCode().equals(KeyCode.ENTER)){
+            add(null);
+        }
+        event.consume();
     }
     @FXML
     public void add(ActionEvent event){
@@ -72,5 +81,10 @@ public class GradeDialogController extends BaseDataDialogController implements I
         }catch(NumberFormatException error){
             Notification.show("Grade removal error", "Something went wrong. Failed to remove grade.", Alert.AlertType.ERROR);
         }
+    }
+    @Override
+    public void ok(ActionEvent event){
+        commandList.add(new UpdateGradesCommand());
+        super.ok(event);
     }
 }

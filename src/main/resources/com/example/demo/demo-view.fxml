@@ -133,56 +133,56 @@
                                  <children>
                                     <CheckBox fx:id="checkMonday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Monday" />
-                                    <Spinner fx:id="spinnerMondayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerMondayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="10.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkTuesday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Tuesday" />
-                                    <Spinner fx:id="spinnerTuesdayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerTuesdayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="41.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkWednesday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Wednesday" />
-                                    <Spinner fx:id="spinnerWednesdayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerWednesdayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="72.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkThursday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Thursday" />
-                                    <Spinner fx:id="spinnerThursdayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerThursdayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="103.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkFriday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Friday" />
-                                    <Spinner fx:id="spinnerFridayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerFridayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="134.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkSaturday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Saturday" />
-                                    <Spinner fx:id="spinnerSaturdayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerSaturdayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <HBox layoutX="10.0" layoutY="165.0" prefHeight="31.0" prefWidth="377.0" style="-fx-alignment: center;">
                                  <children>
                                     <CheckBox fx:id="checkSunday" mnemonicParsing="false" prefHeight="31.0" prefWidth="8.0" />
                                     <Label prefHeight="31.0" prefWidth="140.0" style="-fx-alignment: center;" text="Sunday" />
-                                    <Spinner fx:id="spinnerSundayPeriods" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerSundayPeriods" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <Separator prefHeight="29.0" prefWidth="258.0" />
                               <HBox prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
                                  <children>
                                     <Label prefHeight="31.0" prefWidth="158.0" text="Break After" />
-                                    <Spinner fx:id="spinnerBreak" prefHeight="25.0" prefWidth="100.0" />
+                                    <Spinner fx:id="spinnerBreak" editable="true" prefHeight="25.0" prefWidth="100.0" />
                                  </children>
                               </HBox>
                               <Separator prefHeight="22.0" prefWidth="258.0" />

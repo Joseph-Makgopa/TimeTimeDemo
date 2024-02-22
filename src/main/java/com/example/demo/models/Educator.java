@@ -10,17 +10,10 @@ public class Educator implements Serializable {
     private Integer post;
     private String initials;
     private String surname;
-    private transient SimpleIntegerProperty postView;
-    private transient SimpleStringProperty initialsView;
-    private transient SimpleStringProperty surnameView;
     public Educator(Integer post, String initials, String surname){
         this.post = post;
         this.initials = initials;
         this.surname = surname;
-
-        this.postView = new SimpleIntegerProperty(post);
-        this.initialsView = new SimpleStringProperty(initials);
-        this.surnameView = new SimpleStringProperty(surname);
     }
     public Educator clone(){
         return new Educator(post,initials,surname);
@@ -31,7 +24,6 @@ public class Educator implements Serializable {
 
     public void setPost(Integer post) {
         this.post = post;
-        postView.set(post);
     }
 
     public String getSurname() {
@@ -40,7 +32,6 @@ public class Educator implements Serializable {
 
     public void setSurname(String surname) {
         this.surname = surname;
-        surnameView.set(surname);
     }
 
     public String getInitials() {
@@ -49,21 +40,6 @@ public class Educator implements Serializable {
 
     public void setInitials(String initials) {
         this.initials = initials;
-        initialsView.set(initials);
-    }
-    public int getPostView() {
-        return postView.get();
-    }
-    public String getInitialsView() {
-        return initialsView.get();
-    }
-    public String getSurnameView() {
-        return surnameView.get();
-    }
-    public void refreshView(){
-        this.postView = new SimpleIntegerProperty(this.post);
-        this.initialsView = new SimpleStringProperty(this.initials);
-        this.surnameView = new SimpleStringProperty(this.surname);
     }
     @Override
     public String toString() {

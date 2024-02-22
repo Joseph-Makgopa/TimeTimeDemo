@@ -1,8 +1,8 @@
 package com.example.demo;
 
 import com.example.demo.controllers.DemoController;
-import com.example.demo.models.State;
-import com.example.demo.models.Subject;
+import com.example.demo.models.*;
+import com.example.demo.utilities.Pair;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,11 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class DemoApplication extends Application {
     @Override

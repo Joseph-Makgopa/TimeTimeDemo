@@ -2,17 +2,16 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.assignable.Assignable;
-import com.example.demo.models.assignable.SplitAssignable;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.print.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -26,7 +25,10 @@ import java.util.Map;
 
 public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Row<Grade>>> weeklyTable = new HashMap<>();
-    public void setupTable(TabPane pane){
+    public WeekDayViewService(TabPane pane){
+        super(pane);
+    }
+    public void setupTable(){
         pane.getTabs().clear();
         Tab[] tabs = new Tab[7];
 
@@ -105,7 +107,7 @@ public class WeekDayViewService extends DemoService{
             final Integer index = count - 1;
 
             column.setCellValueFactory(entry ->{
-                Integer id = entry.getValue().getPeriods().get(index);
+                Pair<Integer, Integer> id = entry.getValue().getPeriods().get(index);
 
                 if(id == null){
                     return new SimpleObjectProperty("");
@@ -123,12 +125,13 @@ public class WeekDayViewService extends DemoService{
          * Add data to the ObservableList that is referenced by the tableview
          * **/
 
+        weeklyTable.clear();
         State.getInstance().days.forEach((day, numPeriods) -> {
             ObservableList<Row<Grade>> gradeSchedules = FXCollections.observableArrayList();
 
             State.getInstance().grades.forEach(grade -> {
                 Row<Grade> gradeSchedule = new Row<>(grade, numPeriods);
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
 
                 for(int period = 0; period < periods.size(); period++){
                     Triplet<WeekDay, Grade, Integer> index = new Triplet<>(day, grade, period);
@@ -152,19 +155,18 @@ public class WeekDayViewService extends DemoService{
             }
 
             if(filter.subject != null){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
                 for(int count = 0; count < periods.size() && !found; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
-                        Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                         if(session.getSubject().equals(filter.subject)){
                             found = true;
-                        }else if(assignable.shareSingleSlot()){
-                            SplitAssignable splitAssignable = (SplitAssignable) assignable;
-                            session = State.getInstance().sessions.get(splitAssignable.getSplitRef());
+                        }else if(assignable.isShare()){
+                            session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
                             if(session.getSubject().equals(filter.subject)){
                                 found = true;
@@ -178,13 +180,13 @@ public class WeekDayViewService extends DemoService{
             }
 
             if(filter.educator != null){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
                 for(int count = 0; count < periods.size() && !found; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
-                        Session session = State.getInstance().sessions.get(assignable.getSessionRef());
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
                         if(filter.educator.equals(session.getEducator()))
                             found = true;
@@ -217,11 +219,11 @@ public class WeekDayViewService extends DemoService{
         ObservableList<Row<Grade>> gradeSchedules = weeklyTable.get(day);
 
         for(Row<Grade> gradeSchedule: gradeSchedules){
-            if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getSessionRef()).getGrade())){
-                ArrayList<Integer> periods = gradeSchedule.getPeriods();
-                Triplet<WeekDay, Grade, Integer> triplet = new Triplet(day, gradeSchedule.getHeader(), period);
+            if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getId().getFirst()).getGrade())){
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
+                Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
 
-                PositionCommand command = new PositionCommand(selected, triplet, paneTimeTable, periods, day.toString());
+                PositionCommand command = new PositionCommand(this, selected, triplet);
                 CommandManager.getInstance().addCommand(command);
                 command.execute();
 

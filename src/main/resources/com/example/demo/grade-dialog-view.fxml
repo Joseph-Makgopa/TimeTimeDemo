@@ -15,8 +15,8 @@
             <AnchorPane prefHeight="71.0" prefWidth="380.0">
                <children>
                   <Label layoutX="20.0" layoutY="30.0" text="Grade" />
-                  <Spinner fx:id="spinnerNumber" layoutX="72.0" layoutY="25.0" prefWidth="80.0" />
-                  <ComboBox fx:id="comboDivision" layoutX="275.0" layoutY="25.0" prefWidth="80.0" />
+                  <Spinner fx:id="spinnerNumber" editable="true" layoutX="72.0" layoutY="25.0" onKeyPressed="#enter" onKeyTyped="#enter" prefWidth="80.0" />
+                  <ComboBox fx:id="comboDivision" layoutX="275.0" layoutY="25.0" onKeyPressed="#enter" prefWidth="80.0" />
                   <Label layoutX="210.0" layoutY="30.0" text="Division" />
                </children>
             </AnchorPane>

@@ -13,8 +13,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 public class EducatorDialogController extends BaseDataDialogController implements Initializable {
@@ -39,14 +43,26 @@ public class EducatorDialogController extends BaseDataDialogController implement
 
         btnOk.setDisable(true);
 
-        //columnPost.setCellValueFactory(new PropertyValueFactory<>("postView"));
         columnPost.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getPost().toString()));
-        columnInitials.setCellValueFactory(new PropertyValueFactory<>("initialsView"));
-        columnSurname.setCellValueFactory(new PropertyValueFactory<>("surnameView"));
+        columnInitials.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getInitials()));
+        columnSurname.setCellValueFactory(entry -> new SimpleObjectProperty<>(entry.getValue().getSurname()));
         tableEducators.setItems(listEducators);
 
         listEducators.addAll(State.getInstance().educators.values());
 
+        try {
+            Integer max = listEducators.stream().map(entry -> entry.getPost()).max(Comparator.naturalOrder()).get();
+            spinnerPost.getValueFactory().setValue(max + 1);
+        }catch(NoSuchElementException error){
+        }
+
+    }
+    @FXML
+    public void enter(KeyEvent event){
+        if(event.getCode().equals(KeyCode.ENTER)){
+            add(null);
+        }
+        event.consume();
     }
     @FXML
     public void add(ActionEvent event){
@@ -62,6 +78,19 @@ public class EducatorDialogController extends BaseDataDialogController implement
         if(surname == null || surname.isEmpty()){
             Notification.show("Educator error", "Surname is missing.", Alert.AlertType.ERROR);
             return;
+        }else {
+            String[] surnames = surname.split(" ");
+            surname = "";
+
+            for(int count = 0; count < surnames.length; count++){
+                surname += Character.toString(surnames[count].charAt(0)).toUpperCase();
+
+                if(surnames[count].length() > 1)
+                    surname += surnames[count].substring(1, surnames[count].length()).toLowerCase();
+
+                if(count != (surnames.length - 1))
+                    surname += " ";
+            }
         }
 
         Educator educator = new Educator(post, initials, surname);
@@ -82,11 +111,18 @@ public class EducatorDialogController extends BaseDataDialogController implement
             }
         }
 
-
         listEducators.add(educator);
         commandList.add(new AddEducatorCommand(educator));
         txtInitials.clear();
         txtSurname.clear();
+
+        try {
+            Integer max = listEducators.stream().map(entry -> entry.getPost()).max(Comparator.naturalOrder()).get();
+            spinnerPost.getValueFactory().setValue(max + 1);
+        }catch(NoSuchElementException error){
+             spinnerPost.getValueFactory().setValue(post + 1);
+        }
+
         btnOk.setDisable(false);
     }
     @FXML

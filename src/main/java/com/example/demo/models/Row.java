@@ -1,10 +1,12 @@
 package com.example.demo.models;
 
+import com.example.demo.utilities.Pair;
+
 import java.util.ArrayList;
 
 public class Row <T>{
     private T header;
-    private ArrayList<Integer> periods = new ArrayList<>();
+    private ArrayList<Pair<Integer, Integer>> periods = new ArrayList<>();
     public Row(T header, Integer periods){
         this.header = header;
 
@@ -20,11 +22,11 @@ public class Row <T>{
         this.header = header;
     }
 
-    public ArrayList<Integer> getPeriods() {
+    public ArrayList<Pair<Integer, Integer>> getPeriods() {
         return periods;
     }
 
-    public void setPeriods(ArrayList<Integer> periods) {
+    public void setPeriods(ArrayList<Pair<Integer, Integer>> periods) {
         this.periods = periods;
     }
 

@@ -27,6 +27,7 @@ public class ToolBarService {
 
             Scene scene = new Scene(parent);
             Stage stage = new Stage();
+            stage.setResizable(false);
             stage.setTitle(title);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
