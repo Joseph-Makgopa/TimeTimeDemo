@@ -2,10 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.State;
 import com.example.demo.models.Subject;
-import com.example.demo.models.commands.AddSubjectCommand;
-import com.example.demo.models.commands.CommandList;
-import com.example.demo.models.commands.CommandManager;
-import com.example.demo.models.commands.RemoveSubjectCommand;
+import com.example.demo.models.commands.*;
 import com.example.demo.utilities.Notification;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,10 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
@@ -75,5 +69,10 @@ public class SubjectDialogController extends BaseDataDialogController implements
         listSubject.getItems().remove(selection);
         commandList.add(new RemoveSubjectCommand(new Subject(selection)));
         btnOk.setDisable(false);
+    }
+    @Override
+    public void ok(ActionEvent event){
+        commandList.add(new UpdateSubjectsCommand());
+        super.ok(event);
     }
 }

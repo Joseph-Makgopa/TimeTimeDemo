@@ -3,7 +3,7 @@ package com.example.demo.utilities;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Triplet<A, B, C> implements Serializable {
+public class Triplet<A, B, C> implements Serializable, Comparable<Triplet<A, B, C>> {
     private A first;
     private B second;
     private C third;
@@ -38,7 +38,9 @@ public class Triplet<A, B, C> implements Serializable {
     public String toString() {
         return "("  + first + ", "+ second + ", "+ third +")";
     }
-
+    public boolean equals(A first, B second, C third){
+        return Objects.equals(this.first, first ) && Objects.equals(this.second, second) && Objects.equals(this.third, third);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,5 +52,10 @@ public class Triplet<A, B, C> implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(first, second, third);
+    }
+
+    @Override
+    public int compareTo(Triplet<A, B, C> o) {
+        return 0;
     }
 }

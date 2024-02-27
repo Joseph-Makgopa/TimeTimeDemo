@@ -1,7 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.models.*;
-import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.CommandList;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
@@ -98,6 +98,22 @@ public class EducatorViewService extends DemoService{
 
         State.getInstance().educators.forEach((post, educator) -> {
             TableView<Row<WeekDay>> daySchedule = new TableView<>();
+
+//            ContextMenu contextMenu = new ContextMenu();
+//            MenuItem clearCellMenuItem = new MenuItem("Clear cell");
+//            MenuItem clearRowMenuItem = new MenuItem("Clear row");
+//            MenuItem clearColMenuItem = new MenuItem("Clear column");
+//            MenuItem clearTableMenuItem = new MenuItem("Clear table");
+//
+//            clearCellMenuItem.setOnAction(event -> {
+//                TablePosition<Row<WeekDay>, ?> editEvent = daySchedule.getEditingCell();
+//                if (editEvent != null) {
+//                    editEvent.
+//                }
+//            });
+//            clearRowMenuItem.setOnAction(event -> {});
+//            clearColMenuItem.setOnAction(event -> {});
+//            clearTableMenuItem.setOnAction(event -> {});
 
             AnchorPane anchorPane = new AnchorPane(daySchedule);
             AnchorPane.setTopAnchor(daySchedule, 0.0);

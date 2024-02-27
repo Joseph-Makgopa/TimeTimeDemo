@@ -4,17 +4,10 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
-import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.Assignable;
 import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
-
-import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class PositionCommand implements Command{
     private Assignable oldAssignable;

@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Grade implements Serializable {
+public class Grade implements Serializable, Comparable<Grade> {
     private Integer number;
     private Character division;
     public Grade(Integer number, Character division){
@@ -51,5 +51,16 @@ public class Grade implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(number, division);
+    }
+
+    @Override
+    public int compareTo(Grade grade) {
+        int result = number.compareTo(grade.number);
+
+        if(result == 0){
+            result = division.compareTo(grade.division);
+        }
+
+        return result;
     }
 }

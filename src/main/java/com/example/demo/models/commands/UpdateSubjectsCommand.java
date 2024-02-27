@@ -11,11 +11,11 @@ import com.example.demo.utilities.Triplet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UpdateGradesCommand implements Command {
+public class UpdateSubjectsCommand implements Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    public UpdateGradesCommand(){
+    public UpdateSubjectsCommand(){
         oldSessions = new HashMap<>();
         oldSessions.putAll(State.getInstance().sessions);
 
@@ -29,7 +29,7 @@ public class UpdateGradesCommand implements Command {
     public void execute() {
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
-            if(State.getInstance().grades.contains(session.getGrade())){
+            if(State.getInstance().subjects.contains(session.getSubject())){
                 State.getInstance().sessions.put(id, session);
             }
         });
@@ -43,7 +43,7 @@ public class UpdateGradesCommand implements Command {
 
         State.getInstance().timetable.clear();
         oldTimeTable.forEach((triplet, id) -> {
-            if(State.getInstance().grades.contains(triplet.getSecond())){
+            if(State.getInstance().assignables.containsKey(id)){
                 State.getInstance().timetable.put(triplet, id);
             }
         });

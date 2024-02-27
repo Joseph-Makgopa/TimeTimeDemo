@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Educator implements Serializable {
+public class Educator implements Serializable, Comparable<Educator> {
     private Integer post;
     private String initials;
     private String surname;
@@ -57,5 +57,10 @@ public class Educator implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(post, initials, surname);
+    }
+
+    @Override
+    public int compareTo(Educator o) {
+        return post.compareTo(o.post);
     }
 }

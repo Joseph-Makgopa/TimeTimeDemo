@@ -1,7 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.models.*;
-import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;

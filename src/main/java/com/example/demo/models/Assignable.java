@@ -1,8 +1,5 @@
-package com.example.demo.models.assignable;
+package com.example.demo.models;
 
-import com.example.demo.models.Grade;
-import com.example.demo.models.Session;
-import com.example.demo.models.State;
 import com.example.demo.utilities.Pair;
 
 import java.io.Serializable;
@@ -96,11 +93,27 @@ public class Assignable implements Serializable {
     public Integer getRemain(){
         return remain;
     }
+    public void decrement(){
+        remain--;
+    }
+    public void increment(){
+        remain++;
+    }
+    public void reset(){
+        Pair<Session, Session> sessions = getSessions();
 
+        remain = sessions.getFirst().getAmount();
+
+        Assignable assignable = getPair();
+
+        if(assignable != null){
+            sessions = getSessions();
+            assignable.remain = sessions.getFirst().getAmount();
+        }
+    }
     public Pair<Integer, Integer> getId() {
         return id;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,7 +121,6 @@ public class Assignable implements Serializable {
         Assignable that = (Assignable) o;
         return Objects.equals(id, that.id);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(id);

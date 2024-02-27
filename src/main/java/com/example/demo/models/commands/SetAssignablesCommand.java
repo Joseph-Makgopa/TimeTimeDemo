@@ -1,10 +1,9 @@
 package com.example.demo.models.commands;
 
 import com.example.demo.models.State;
-import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.Assignable;
 import com.example.demo.utilities.Pair;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class SetAssignablesCommand implements Command{
@@ -20,6 +19,14 @@ public class SetAssignablesCommand implements Command{
             Assignable assignable = new Assignable(id);
 
             State.getInstance().assignables.putIfAbsent(assignable.getId(), assignable);
+        });
+
+        State.getInstance().timetable.clear();
+
+        State.getInstance().timetable.forEach((triplet, reference) -> {
+            if(State.getInstance().assignables.containsKey(reference)){
+                State.getInstance().timetable.put(triplet, reference);
+            }
         });
     }
 

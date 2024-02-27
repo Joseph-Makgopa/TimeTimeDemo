@@ -1,6 +1,5 @@
 package com.example.demo.models;
 
-import com.example.demo.models.assignable.Assignable;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;

@@ -1,40 +1,26 @@
 package com.example.demo.controllers;
 
-import com.example.demo.DemoApplication;
 import com.example.demo.models.*;
-import com.example.demo.models.assignable.Assignable;
+import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
 import com.example.demo.services.*;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
+import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.print.*;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -124,9 +110,68 @@ public class DemoController implements Initializable {
 
         service.refresh();
 
-
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem clearMenuItem = new MenuItem("Clear");
+        MenuItem arrangeOneMenuItem = new MenuItem("Arrange one");
+        MenuItem arrangeAllMenuItem = new MenuItem("Arrange All");
+
+        clearMenuItem.setOnAction(event -> {
+            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+            if(assignable != null) {
+                for(Triplet<WeekDay, Grade, Integer> triplet: State.getInstance().timetable.keySet()){
+                    Pair<Integer, Integer> reference  = State.getInstance().timetable.get(triplet);
+
+                    if(assignable.getId().equals(reference)){
+                        assignable.setRemain(assignable.getRemain() + 1);
+                        State.getInstance().timetable.remove(triplet);
+
+                        Assignable pair = assignable.getPair();
+
+                        if(pair != null){
+                            Pair<Session, Session> session = pair.getSessions();
+                            triplet = new Triplet<>(triplet.getFirst(), session.getFirst().getGrade(), triplet.getThird());
+
+                            pair.setRemain(pair.getRemain() + 1);
+                            State.getInstance().timetable.remove(triplet);
+                        }
+                    }
+                }
+            }
+
+            tableAssign.refresh();
+            service.refresh();
+        });
+
+        arrangeOneMenuItem.setOnAction(event -> {
+
+        });
+
+        arrangeAllMenuItem.setOnAction(event -> {
+
+        });
+
+        contextMenu.getItems().addAll(clearMenuItem, arrangeOneMenuItem, arrangeAllMenuItem);
+
+        tableAssign.setRowFactory(tableView -> {
+            final TableRow<Assignable> row = new TableRow<>();
+
+//            row.setOnMouseClicked(event -> {
+//                if (event.getClickCount() == 2 && !row.isEmpty()) {
+//                    // Perform action on double click (if needed)
+//                    System.out.println("Double click on: " + row.getItem());
+//                }
+//            });
+
+            row.setOnContextMenuRequested(event -> {
+                contextMenu.show(row, event.getScreenX(), event.getScreenY());
+            });
+
+            return row;
+        });
     }
     public void updateGradeFilterOptions(){
         comboNumber.getItems().clear();
@@ -157,6 +202,9 @@ public class DemoController implements Initializable {
             if(!comboEducator.getItems().contains(educator))
                 comboEducator.getItems().add(educator);
         });
+    }
+    public void updateDayFilterOptions(){
+
     }
     @FXML
     public void clearFilter(ActionEvent event){
@@ -321,6 +369,7 @@ public class DemoController implements Initializable {
         toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml");
         updateTableAssign();
         updateSubjectFilterOptions();
+        service.refresh();
     }
     @FXML
     public void showGradeDialog(ActionEvent event){

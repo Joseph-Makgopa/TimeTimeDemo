@@ -241,6 +241,15 @@
                                  </children>
                               </HBox>
                               <Separator layoutX="10.0" layoutY="175.0" prefHeight="15.0" prefWidth="200.0" />
+                              <Label layoutX="10.0" layoutY="203.0" prefHeight="20.0" prefWidth="260.0" style="-fx-font-weight: bold;" text="Day" />
+                              <Separator layoutX="10.0" layoutY="335.0" prefHeight="15.0" prefWidth="200.0" />
+                              <HBox layoutX="10.0" layoutY="238.0" prefHeight="31.0" prefWidth="258.0" style="-fx-alignment: center;">
+                                 <children>
+                                    <Label prefHeight="35.0" prefWidth="140.0" text="WeekDay" />
+                                    <ComboBox fx:id="comboEducator1" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
+                                 </children>
+                              </HBox>
+                              <Separator layoutX="10.0" layoutY="269.0" prefHeight="15.0" prefWidth="200.0" />
                               <AnchorPane prefHeight="52.0" prefWidth="258.0">
                                  <children>
                                     <Button layoutY="20.0" mnemonicParsing="false" onAction="#clearFilter" prefHeight="30.0" prefWidth="75.0" text="Clear" />

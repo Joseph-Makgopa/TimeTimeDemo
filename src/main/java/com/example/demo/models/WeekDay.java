@@ -1,6 +1,6 @@
 package com.example.demo.models;
 
-public enum WeekDay {
+public enum WeekDay implements Comparable<WeekDay>{
     MONDAY,
     TUESDAY,
     WEDNESDAY,
