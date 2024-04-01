@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Assignable implements Serializable {
-    private static Integer counter = 0;
     private Pair<Integer, Integer> id;
     private Integer remain;
     private Integer getPairId(){
@@ -24,6 +23,10 @@ public class Assignable implements Serializable {
 
         return null;
     }
+    private Assignable(Pair<Integer, Integer> id, Integer remain){
+        this.id = id;
+        this.remain = remain;
+    }
     public Assignable(Integer sessionRef) throws NullPointerException{
 
         if(State.getInstance().sessions.get(sessionRef) == null){
@@ -39,8 +42,28 @@ public class Assignable implements Serializable {
 
         remain = State.getInstance().sessions.get(sessionRef).getAmount();
     }
+    public Assignable clone(){
+        return new Assignable(id, remain);
+    }
     public Pair<Session, Session> getSessions(){
         return new Pair<>(State.getInstance().sessions.get(id.getFirst()), State.getInstance().sessions.get(id.getSecond()));
+    }
+    public Grade getGrade(){
+        return State.getInstance().sessions.get(id.getFirst()).getGrade();
+    }
+    public Pair<Educator, Educator> getEducators(){
+        if(id.getSecond() != null){
+            return new Pair<>(State.getInstance().sessions.get(id.getFirst()).getEducator(), State.getInstance().sessions.get(id.getSecond()).getEducator());
+        }
+
+        return new Pair<>(State.getInstance().sessions.get(id.getFirst()).getEducator(), null);
+    }
+    public Boolean hasEducator(Educator educator){
+        if(id.getSecond() != null){
+            return State.getInstance().sessions.get(id.getFirst()).getEducator().equals(educator) || State.getInstance().sessions.get(id.getSecond()).getEducator().equals(educator);
+        }
+
+        return State.getInstance().sessions.get(id.getFirst()).getEducator().equals(educator);
     }
     public Boolean isShare(){
         return id.getFirst() != null && id.getSecond() != null;
