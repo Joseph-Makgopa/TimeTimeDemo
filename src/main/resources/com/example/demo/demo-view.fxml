@@ -10,6 +10,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -17,6 +18,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -29,39 +31,92 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#createFile" text="New" />
-                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAsFile" text="Save As" />
-                  <MenuItem mnemonicParsing="false" text="Export" />
-                  <MenuItem mnemonicParsing="false" onAction="#print" text="Print" />
+                  <MenuItem mnemonicParsing="false" onAction="#createFile" text="New">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open Recent" />
               <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveAsFile" text="Save As...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Export">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#print" text="Print">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Undo" />
-                  <MenuItem mnemonicParsing="false" text="Redo" />
+              <MenuItem mnemonicParsing="false" text="Undo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Redo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Clear Table" />
+                  <MenuItem mnemonicParsing="false" text="Clear Tab" />
+                  <MenuItem mnemonicParsing="false" text="Clear Row" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="View">
                <items>
-                  <CheckMenuItem fx:id="menuWeekDays" mnemonicParsing="false" onAction="#viewWeekDays" text="Weekdays" />
-                  <CheckMenuItem fx:id="menuGrades" mnemonicParsing="false" onAction="#viewGrades" text="Grades" />
-                  <CheckMenuItem fx:id="menuEducators" mnemonicParsing="false" onAction="#viewEducators" text="Educators" />
+                  <CheckMenuItem fx:id="menuWeekDays" mnemonicParsing="false" onAction="#viewWeekDays" text="Weekdays">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <CheckMenuItem fx:id="menuGrades" mnemonicParsing="false" onAction="#viewGrades" text="Grades">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DIGIT1" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <CheckMenuItem fx:id="menuEducators" mnemonicParsing="false" onAction="#viewEducators" text="Educators">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DIGIT2" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></CheckMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Hide Right Panel">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DIGIT3" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Data">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#showSubjectDialog" text="Subjects" />
-                  <MenuItem mnemonicParsing="false" onAction="#showGradeDialog" text="Grades" />
-                  <MenuItem mnemonicParsing="false" onAction="#showEducatorDialog" text="Educators" />
-                  <MenuItem mnemonicParsing="false" onAction="#showSessionDialog" text="Sessions" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Table">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Generate" />
+                <MenuItem mnemonicParsing="false" onAction="#showSubjectDialog" text="Subjects">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="DIGIT0" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#showGradeDialog" text="Grades">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="DIGIT1" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#showEducatorDialog" text="Educators">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="DIGIT2" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#showSessionDialog" text="Sessions">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="DIGIT3" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

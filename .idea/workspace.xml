@@ -4,30 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added UpdateGradesCommand">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/LessonSlotOptions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/SlotOptions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/UpdateEducatorsCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/UpdateSubjectsCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/TripletManager.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the arrange algorithm, updated file menu functionality and edit menu functionality">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SubjectDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SubjectDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Educator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Grade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Grade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/WeekDay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/WeekDay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/assignable/Assignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Assignable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/PositionCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/PositionCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/SetAssignablesCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/SetAssignablesCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/UpdateGradesCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/UpdateGradesCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Triplet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/utilities/Triplet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
