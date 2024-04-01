@@ -484,6 +484,8 @@ public class DemoController implements Initializable {
         checkSunday.setSelected(false);
         spinnerSundayPeriods.getValueFactory().setValue(1);
 
+        spinnerBreak.getValueFactory().setValue(State.getInstance().breakAfter);
+
         State.getInstance().days.forEach((day, periods) -> {
             switch(day){
                 case MONDAY :{

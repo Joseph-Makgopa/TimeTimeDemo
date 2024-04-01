@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class State implements Serializable{
@@ -18,6 +19,7 @@ public class State implements Serializable{
     public final Map<Integer, Session> sessions;
     public final Map<Pair<Integer, Integer>, Assignable> assignables;
     public final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> timetable;
+    public static LinkedList<String> recent = new LinkedList<>();
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
@@ -37,6 +39,37 @@ public class State implements Serializable{
             instance = new State();
         }
         return instance;
+    }
+    public static LinkedList<String> getRecent(){
+        if(recent == null){
+            try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("timetable_data.dat"))){
+                recent = (LinkedList<String>) objectInputStream.readObject();
+            }catch(FileNotFoundException error){
+                recent = new LinkedList<>();
+                error.printStackTrace();
+            }catch (IOException error){
+                recent = new LinkedList<>();
+                error.printStackTrace();
+            }catch (ClassNotFoundException error){
+                recent = new LinkedList<>();
+                error.printStackTrace();
+            }
+        }
+
+        return recent;
+    }
+    public static void saveRecent(){
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("timetable_data.dat")))){
+            if(recent == null){
+                objectOutputStream.writeObject(new LinkedList<>());
+            }
+
+            objectOutputStream.writeObject(recent);
+        }catch(FileNotFoundException error){
+            error.printStackTrace();
+        }catch (IOException error){
+            error.printStackTrace();
+        }
     }
     public void reset(){
         days.clear();
