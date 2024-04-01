@@ -18,8 +18,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -307,6 +313,62 @@ public class EducatorViewService extends DemoService{
 
     @Override
     public void export(File file) {
+        Workbook workbook = new XSSFWorkbook();
 
+        educatorTable.forEach((educator, ranks) -> {
+            Sheet sheet = workbook.createSheet(educator.toString());
+
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 14);
+
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFont(headerFont);
+
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellValue("Day");
+            cell.setCellStyle(headerCellStyle);
+
+            Integer periods = State.getInstance().days.values().stream().max(Comparator.naturalOrder()).get();
+
+            for(Integer i = 1; i <= periods; i++) {
+                cell = row.createCell(i);
+                cell.setCellValue(i);
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            for(Integer i = 0; i < ranks.size(); i++){
+                row = sheet.createRow(i + 1);
+
+                cell = row.createCell(0);
+                cell.setCellValue(ranks.get(i).getHeader().toString());
+                cell.setCellStyle(headerCellStyle);
+                ArrayList<Pair<Integer, Integer>> references = ranks.get(i).getPeriods();
+
+                for(Integer col = 1; col <= periods; col++){
+                    cell = row.createCell(col);
+                    cell.setCellValue(State.getInstance().assignables.get(references.get(col - 1)).getDetails());
+                }
+            }
+
+            for(int i = 0; i <= periods; i ++){
+                sheet.autoSizeColumn(i);
+            }
+        });
+
+        try(FileOutputStream fileOutputStream = new FileOutputStream(file)){
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+
+            workbook.close();
+        }catch(FileNotFoundException error){
+            error.printStackTrace();
+            Notification.show("Export error.", "Failed to export.", Alert.AlertType.ERROR);
+        }catch(IOException error){
+            error.printStackTrace();
+            Notification.show("Export error.", "Failed to export.", Alert.AlertType.ERROR);
+        }
     }
 }
