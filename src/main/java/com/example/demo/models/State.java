@@ -51,7 +51,7 @@ public class State implements Serializable{
         filename  = "Untitled";
         filepath = "";
     }
-    public void open(File file){
+    public Boolean open(File file){
         try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))){
             reset();
             State state = (State) objectInputStream.readObject();
@@ -68,6 +68,7 @@ public class State implements Serializable{
             filename = file.getName();
             filepath = file.getPath();
 
+            return true;
         }catch(FileNotFoundException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
             error.printStackTrace();
@@ -78,6 +79,8 @@ public class State implements Serializable{
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
             error.printStackTrace();
         }
+
+        return false;
     }
     public void save(File file){
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file))){

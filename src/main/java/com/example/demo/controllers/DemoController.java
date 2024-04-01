@@ -203,6 +203,12 @@ public class DemoController implements Initializable {
                 comboEducator.getItems().add(educator);
         });
     }
+    public void updateFilterOptions(){
+        updateSubjectFilterOptions();
+        updateEducatorFilterOptions();
+        updateGradeFilterOptions();
+        updateDayFilterOptions();
+    }
     public void updateDayFilterOptions(){
 
     }
@@ -443,10 +449,41 @@ public class DemoController implements Initializable {
         service.refresh();
     }
     @FXML
-    public void createFile(ActionEvent event){
-        toolbarService.createFile(stage);
+    public void newFile(ActionEvent event){
+        if(State.getInstance().saveRequired){
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to discard changes?", ButtonType.YES, ButtonType.NO);
+            ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
+
+            if(ButtonType.NO.equals(result))
+                return;
+        }
+
+        State.getInstance().reset();
+        stage.setTitle(State.getInstance().filename + " - TimeTable");
+        service.populateTable();
+        populateStructure();
+        applyStructure(event);
+        updateTableAssign();
+        updateFilterOptions();
+        comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
+        State.getInstance().saveRequired = false;
     }
     public void populateStructure(){
+        checkMonday.setSelected(false);
+        spinnerMondayPeriods.getValueFactory().setValue(1);
+        checkTuesday.setSelected(false);
+        spinnerTuesdayPeriods.getValueFactory().setValue(1);
+        checkWednesday.setSelected(false);
+        spinnerWednesdayPeriods.getValueFactory().setValue(1);
+        checkThursday.setSelected(false);
+        spinnerThursdayPeriods.getValueFactory().setValue(1);
+        checkFriday.setSelected(false);
+        spinnerFridayPeriods.getValueFactory().setValue(1);
+        checkSaturday.setSelected(false);
+        spinnerSaturdayPeriods.getValueFactory().setValue(1);
+        checkSunday.setSelected(false);
+        spinnerSundayPeriods.getValueFactory().setValue(1);
+
         State.getInstance().days.forEach((day, periods) -> {
             switch(day){
                 case MONDAY :{

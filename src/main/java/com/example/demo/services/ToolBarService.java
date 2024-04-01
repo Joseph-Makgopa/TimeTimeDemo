@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.DemoApplication;
 import com.example.demo.models.State;
 import com.example.demo.utilities.Notification;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -35,6 +36,9 @@ public class ToolBarService {
         }catch(IOException error){
             error.printStackTrace();
         }
+    }
+    public void save(){
+
     }
 
     public void createFile(Stage stage){

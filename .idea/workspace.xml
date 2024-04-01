@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the getEducator, getGrade and hasEducator function in Assignable class">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the save and open function in the State class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -253,7 +256,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711970124596</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="implemented the save and open function in the State class">
+      <created>1711971146458</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1711971146458</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -268,7 +278,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added Command interface and initial models" />
     <MESSAGE value="Implemented the educator class" />
     <MESSAGE value="implemented grade class" />
     <MESSAGE value="implemented session class" />
@@ -293,6 +302,7 @@
     <MESSAGE value="added UpdateGradesCommand" />
     <MESSAGE value="updated the toolbar menu options" />
     <MESSAGE value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
+    <MESSAGE value="implemented the save and open function in the State class" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented the save and open function in the State class" />
   </component>
 </project>
