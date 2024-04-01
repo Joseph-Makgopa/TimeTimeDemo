@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class State {
+public class State implements Serializable{
     public final Map<WeekDay, Integer> days;
     public final ArrayList<Subject> subjects;
     public final ArrayList<Grade> grades;
@@ -44,36 +44,29 @@ public class State {
         grades.clear();
         educators.clear();
         sessions.clear();
+        assignables.clear();
+        timetable.clear();
+        breakAfter = 1;
         saveRequired = false;
         filename  = "Untitled";
+        filepath = "";
     }
-    public void setFields(File file){
+    public void open(File file){
         try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))){
-            this.days.clear();
-            this.days.putAll((Map<WeekDay, Integer>) objectInputStream.readObject());
+            reset();
+            State state = (State) objectInputStream.readObject();
 
-            this.subjects.clear();
-            this.subjects.addAll((ArrayList<Subject>) objectInputStream.readObject());
+            days.putAll(state.days);
+            subjects.addAll(state.subjects);
+            grades.addAll(state.grades);
+            educators.putAll(state.educators);
+            sessions.putAll(state.sessions);
+            assignables.putAll(state.assignables);
+            timetable.putAll(state.timetable);
 
-            this.grades.clear();
-            this.grades.addAll((ArrayList<Grade>) objectInputStream.readObject());
-
-            this.educators.clear();
-            this.educators.putAll((Map<Integer, Educator>) objectInputStream.readObject());
-
-            this.sessions.clear();
-            this.sessions.putAll((Map<Integer, Session>) objectInputStream.readObject());
-
-            this.assignables.clear();
-            this.assignables.putAll((Map<Pair<Integer, Integer>, Assignable>) objectInputStream.readObject());
-
-            this.timetable.clear();
-            this.timetable.putAll((Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer,Integer>>) objectInputStream.readObject());
-
-            this.breakAfter = (Integer) objectInputStream.readObject();
-            this.saveRequired = false;
-            this.filename = file.getName();
-            this.filepath = file.getPath();
+            breakAfter = state.breakAfter;
+            filename = file.getName();
+            filepath = file.getPath();
 
         }catch(FileNotFoundException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
@@ -86,25 +79,14 @@ public class State {
             error.printStackTrace();
         }
     }
-    public void saveFields(File file){
+    public void save(File file){
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file))){
-            objectOutputStream.writeObject(this.days);
-            objectOutputStream.writeObject(this.subjects);
-            objectOutputStream.writeObject(this.grades);
-            objectOutputStream.writeObject(this.educators);
-            objectOutputStream.writeObject(this.sessions);
-            objectOutputStream.writeObject(this.assignables);
-            objectOutputStream.writeObject(this.timetable);
-            objectOutputStream.writeObject(this.breakAfter);
-            this.saveRequired = false;
-            this.filename = file.getName();
-            this.filepath = file.getPath();
-
+            objectOutputStream.writeObject(this);
         }catch(FileNotFoundException error){
-            //error.printStackTrace();
+            error.printStackTrace();
             Notification.show("File save error","Failed to save file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
         }catch (IOException error){
-            //error.printStackTrace();
+            error.printStackTrace();
             Notification.show("File save error","Failed to save file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
         }
     }

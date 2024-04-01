@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the toolbar menu options">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Assignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Assignable.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the getEducator, getGrade and hasEducator function in Assignable class">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,7 +246,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711969150808</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="implemented the getEducator, getGrade and hasEducator function in Assignable class">
+      <created>1711970124596</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1711970124596</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -260,7 +268,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="initials project with initial classes" />
     <MESSAGE value="Added Command interface and initial models" />
     <MESSAGE value="Implemented the educator class" />
     <MESSAGE value="implemented grade class" />
@@ -285,6 +292,7 @@
     <MESSAGE value="updated the position function in the services educator, weekday and grade view services" />
     <MESSAGE value="added UpdateGradesCommand" />
     <MESSAGE value="updated the toolbar menu options" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the toolbar menu options" />
+    <MESSAGE value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
   </component>
 </project>
