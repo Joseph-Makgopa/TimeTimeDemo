@@ -13,6 +13,7 @@ import com.example.demo.utilities.Triplet;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -51,9 +52,13 @@ public class DemoController implements Initializable {
     private ComboBox<WeekDay> comboDay;
     @FXML
     private CheckMenuItem menuWeekDays, menuGrades, menuEducators;
+    @FXML
+    private Menu fileMenu;
+    private Menu openRecentMenu = new Menu("Open Recent");
     private View view = View.WeekDayView;
     private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -172,6 +177,42 @@ public class DemoController implements Initializable {
 
             return row;
         });
+
+        fileMenu.getItems().add(2, openRecentMenu);
+        setupRecentMenu();
+    }
+    public void setupRecentMenu(){
+        openRecentMenu.getItems().clear();
+
+        LinkedList<String> recent = State.getRecent();
+
+        MenuItem item;
+
+        for(int count = 0; count < recent.size(); count++){
+            item = new MenuItem((count + 1) + ". " + recent.get(count));
+            final String path = recent.get(count);
+
+            item.setOnAction(event -> {
+                File file = new File(path);
+
+                if(State.getInstance().open(file)){
+                    stage.setTitle(file.getName() + " - TimeTable");
+                    service.populateTable();
+                    populateStructure();
+                    applyStructure(event);
+                    updateTableAssign();
+                    updateFilterOptions();
+                    comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
+                    State.getInstance().saveRequired = false;
+
+                    recent.remove(path);
+                    recent.addFirst(path);
+                    setupRecentMenu();
+                }
+            });
+
+            openRecentMenu.getItems().add(item);
+        }
     }
     public void updateGradeFilterOptions(){
         comboNumber.getItems().clear();
@@ -532,6 +573,16 @@ public class DemoController implements Initializable {
             updateFilterOptions();
             comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
             State.getInstance().saveRequired = false;
+
+            LinkedList<String> recent = State.getRecent();
+
+            recent.remove(State.getInstance().filepath);
+            recent.addFirst(State.getInstance().filepath);
+
+            while(recent.size() > 10)
+                recent.removeLast();
+
+            setupRecentMenu();
         }
     }
     @FXML
@@ -554,6 +605,16 @@ public class DemoController implements Initializable {
         if (file != null) {
             State.getInstance().save(file);
             stage.setTitle(file.getName() + " - TimeTable");
+
+            LinkedList<String> recent = State.getRecent();
+
+            recent.remove(State.getInstance().filepath);
+            recent.addFirst(State.getInstance().filepath);
+
+            while(recent.size() > 10)
+                recent.removeLast();
+
+            setupRecentMenu();
         }
     }
     @FXML

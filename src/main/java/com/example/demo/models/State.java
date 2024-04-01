@@ -19,7 +19,7 @@ public class State implements Serializable{
     public final Map<Integer, Session> sessions;
     public final Map<Pair<Integer, Integer>, Assignable> assignables;
     public final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> timetable;
-    public static LinkedList<String> recent = new LinkedList<>();
+    public static LinkedList<String> recent = null;
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
     public String filename  = "Untitled";
@@ -59,9 +59,10 @@ public class State implements Serializable{
         return recent;
     }
     public static void saveRecent(){
-        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("timetable_data.dat")))){
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("timetable_data.dat"))){
             if(recent == null){
                 objectOutputStream.writeObject(new LinkedList<>());
+                return;
             }
 
             objectOutputStream.writeObject(recent);

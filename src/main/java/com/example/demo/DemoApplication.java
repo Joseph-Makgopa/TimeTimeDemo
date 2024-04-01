@@ -30,9 +30,13 @@ public class DemoApplication extends Application {
 
                 ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
 
-                if (ButtonType.NO.equals(result))
+                if (ButtonType.NO.equals(result)) {
                     event.consume();
+                    return;
+                }
             }
+
+            State.saveRecent();
         });
     }
 

@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the saveAsFile method">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added the getRecent and saveRecent methods in State class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,7 +284,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711974007930</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="added the getRecent and saveRecent methods in State class">
+      <created>1711975751640</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1711975751640</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -297,7 +306,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added the containers for subjects, grades, educators and sessions in state class" />
     <MESSAGE value="added menu items to the tool bar menus" />
     <MESSAGE value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
     <MESSAGE value="implemented the design of the subject-dialog" />
@@ -322,6 +330,7 @@
     <MESSAGE value="updated the newFile function in the DemoController" />
     <MESSAGE value="updated the openFile function in DemoController" />
     <MESSAGE value="updated the saveAsFile method" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the saveAsFile method" />
+    <MESSAGE value="added the getRecent and saveRecent methods in State class" />
+    <option name="LAST_COMMIT_MESSAGE" value="added the getRecent and saveRecent methods in State class" />
   </component>
 </project>
