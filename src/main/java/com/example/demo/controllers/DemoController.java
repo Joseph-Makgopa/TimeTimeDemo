@@ -623,7 +623,12 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void export(ActionEvent event){
+        FileChooser fileChooser = new FileChooser();
 
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Microsoft Excel Files (*.xlsx)", "*.xlsx");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        service.export(fileChooser.showSaveDialog(stage));
     }
     @FXML
     public void close(ActionEvent event){

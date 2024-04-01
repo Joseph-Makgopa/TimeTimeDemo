@@ -268,7 +268,12 @@ public class GradeViewService extends DemoService{
 
                 for(Integer col = 1; col <= periods; col++){
                     cell = row.createCell(col);
-                    cell.setCellValue(State.getInstance().assignables.get(references.get(col - 1)).getDetails());
+                    Assignable assignable = State.getInstance().assignables.get(references.get(col - 1));
+
+                    if(assignable == null)
+                        cell.setCellValue("");
+                    else
+                        cell.setCellValue(assignable.getDetails());
                 }
             }
 
