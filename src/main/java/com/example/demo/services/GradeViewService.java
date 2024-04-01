@@ -18,15 +18,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.*;
 
 public class GradeViewService extends DemoService{
-    private Map<Grade, ObservableList<Row<WeekDay>>> gradeTable = new HashMap<>();
+    private Map<Grade, ObservableList<Rank<WeekDay>>> gradeTable = new HashMap<>();
 
     public GradeViewService(TabPane pane){
         super(pane);
     }
-    public ObservableList<Row<WeekDay>> filter(Filter filter, Grade grade){
+    public ObservableList<Rank<WeekDay>> filter(Filter filter, Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {
             if(filter.subject != null){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
@@ -84,7 +85,7 @@ public class GradeViewService extends DemoService{
 
         String[] split = tab.getText().split(" ");
         Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(1));
-        TableView<Row<WeekDay>> table = (TableView<Row<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
         table.setItems(filter(filter, grade));
         table.refresh();
     }
@@ -94,7 +95,7 @@ public class GradeViewService extends DemoService{
         pane.getTabs().clear();
 
         State.getInstance().grades.forEach(grade -> {
-            TableView<Row<WeekDay>> daySchedule = new TableView<>();
+            TableView<Rank<WeekDay>> daySchedule = new TableView<>();
 
             AnchorPane anchorPane = new AnchorPane(daySchedule);
             AnchorPane.setTopAnchor(daySchedule, 0.0);
@@ -115,8 +116,8 @@ public class GradeViewService extends DemoService{
         });
     }
 
-    public void setupGradeTable(Grade grade, TableView<Row<WeekDay>> table){
-        TableColumn<Row<WeekDay>,?> column = table.getColumns().get(0);
+    public void setupGradeTable(Grade grade, TableView<Rank<WeekDay>> table){
+        TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
 
         DoubleBinding width = table.widthProperty().subtract(table.getColumns().size() - 3).divide(table.getColumns().size());
@@ -154,13 +155,13 @@ public class GradeViewService extends DemoService{
     public void populateTable() {
         gradeTable.clear();
         State.getInstance().grades.forEach(grade -> {
-            ObservableList<Row<WeekDay>> daySchedules = FXCollections.observableArrayList();
+            ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
                 Integer numPeriods = State.getInstance().days.get(day);
 
                 if(numPeriods != null){
-                    Row<WeekDay> daySchedule = new Row<>(day, numPeriods);
+                    Rank<WeekDay> daySchedule = new Rank<>(day, numPeriods);
                     ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
 
                     for(int period = 0; period < periods.size(); period++){
@@ -178,9 +179,9 @@ public class GradeViewService extends DemoService{
 
     public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
         Grade grade = State.getInstance().sessions.get(selected.getId().getFirst()).getGrade();
-        ObservableList<Row<WeekDay>> daySchedules = gradeTable.get(grade);
+        ObservableList<Rank<WeekDay>> daySchedules = gradeTable.get(grade);
 
-        for(Row<WeekDay> daySchedule: daySchedules){
+        for(Rank<WeekDay> daySchedule: daySchedules){
             if(daySchedule.getHeader().equals(day)){
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
@@ -204,7 +205,7 @@ public class GradeViewService extends DemoService{
 
         String[] split = tab.getText().split(" ");
         Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
-        TableView<Row<WeekDay>> table = (TableView<Row<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
 
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         Printer printer = Printer.getDefaultPrinter();
@@ -221,5 +222,10 @@ public class GradeViewService extends DemoService{
                 printerJob.endJob();
 
         }
+    }
+
+    @Override
+    public void export(File file) {
+
     }
 }

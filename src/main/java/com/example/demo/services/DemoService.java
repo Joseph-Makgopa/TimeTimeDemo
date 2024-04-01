@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.*;
 
 public abstract class DemoService {
@@ -61,6 +62,7 @@ public abstract class DemoService {
     public abstract void populateTable();
     public abstract void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period);
     public abstract void print(TabPane pane, Stage stage);
+    public abstract void export(File file);
     public abstract void updateFilter(Filter filter, TabPane pane);
     protected void setTeacherLessonCount(){
         teacherLessonCount = new HashMap<>();

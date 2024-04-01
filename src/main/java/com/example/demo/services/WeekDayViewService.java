@@ -17,14 +17,21 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WeekDayViewService extends DemoService{
-    private Map<WeekDay, ObservableList<Row<Grade>>> weeklyTable = new HashMap<>();
+    private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
     public WeekDayViewService(TabPane pane){
         super(pane);
     }
@@ -34,7 +41,7 @@ public class WeekDayViewService extends DemoService{
 
         State.getInstance().days.forEach((day, periods) ->{
 
-            TableView<Row<Grade>> daySchedule = new TableView<>();
+            TableView<Rank<Grade>> daySchedule = new TableView<>();
             daySchedule.setId(day.toString());
 
             AnchorPane anchorPane = new AnchorPane(daySchedule);
@@ -87,12 +94,12 @@ public class WeekDayViewService extends DemoService{
         pane.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
     }
 
-    public void setupDayTable(WeekDay day, TableView<Row<Grade>> table){
+    public void setupDayTable(WeekDay day, TableView<Rank<Grade>> table){
         /**
          * setup the columns for a table and add the referenced ObservableList
          * **/
 
-        TableColumn<Row<Grade>,?> column = table.getColumns().get(0);
+        TableColumn<Rank<Grade>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
 
         DoubleBinding width = table.widthProperty().subtract(table.getColumns().size() - 3).divide(table.getColumns().size());
@@ -127,10 +134,10 @@ public class WeekDayViewService extends DemoService{
 
         weeklyTable.clear();
         State.getInstance().days.forEach((day, numPeriods) -> {
-            ObservableList<Row<Grade>> gradeSchedules = FXCollections.observableArrayList();
+            ObservableList<Rank<Grade>> gradeSchedules = FXCollections.observableArrayList();
 
             State.getInstance().grades.forEach(grade -> {
-                Row<Grade> gradeSchedule = new Row<>(grade, numPeriods);
+                Rank<Grade> gradeSchedule = new Rank<>(grade, numPeriods);
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
 
                 for(int period = 0; period < periods.size(); period++){
@@ -144,7 +151,7 @@ public class WeekDayViewService extends DemoService{
             weeklyTable.put(day, gradeSchedules);
         });
     }
-    public ObservableList<Row<Grade>> filter(Filter filter, WeekDay day){
+    public ObservableList<Rank<Grade>> filter(Filter filter, WeekDay day){
         return FXCollections.observableArrayList(weeklyTable.get(day).stream().filter(gradeSchedule -> {
             if(filter.number != null && !gradeSchedule.getHeader().getNumber().equals(filter.number)){
                 return false;
@@ -210,15 +217,15 @@ public class WeekDayViewService extends DemoService{
         }
 
         WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
-        TableView<Row<Grade>> table = (TableView<Row<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<Grade>> table = (TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
         table.setItems(filter(filter, day));
         table.refresh();
     }
 
     public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
-        ObservableList<Row<Grade>> gradeSchedules = weeklyTable.get(day);
+        ObservableList<Rank<Grade>> gradeSchedules = weeklyTable.get(day);
 
-        for(Row<Grade> gradeSchedule: gradeSchedules){
+        for(Rank<Grade> gradeSchedule: gradeSchedules){
             if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getId().getFirst()).getGrade())){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
@@ -257,6 +264,65 @@ public class WeekDayViewService extends DemoService{
             if(success)
                 printerJob.endJob();
 
+        }
+    }
+    public void export(File file){
+        Workbook workbook = new XSSFWorkbook();
+
+        weeklyTable.forEach((day, ranks) -> {
+            Sheet sheet = workbook.createSheet(day.toString());
+
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 14);
+
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFont(headerFont);
+
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellValue("Grade");
+            cell.setCellStyle(headerCellStyle);
+
+            Integer periods = State.getInstance().days.get(day);
+
+            for(Integer i = 1; i <= periods; i++) {
+                cell = row.createCell(i);
+                cell.setCellValue(i);
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            for(Integer i = 0; i < ranks.size(); i++){
+                row = sheet.createRow(i + 1);
+
+                cell = row.createCell(0);
+                cell.setCellValue(ranks.get(i).getHeader().toString());
+                cell.setCellStyle(headerCellStyle);
+                ArrayList<Pair<Integer, Integer>> references = ranks.get(i).getPeriods();
+
+                for(Integer col = 1; col <= periods; col++){
+                    cell = row.createCell(col);
+                    cell.setCellValue(State.getInstance().assignables.get(references.get(col - 1)).getDetails());
+                }
+            }
+
+            for(int i = 0; i <= periods; i ++){
+                sheet.autoSizeColumn(i);
+            }
+        });
+
+        try(FileOutputStream fileOutputStream = new FileOutputStream(file)){
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+
+            workbook.close();
+        }catch(FileNotFoundException error){
+            error.printStackTrace();
+            Notification.show("Export error.", "Failed to export.", Alert.AlertType.ERROR);
+        }catch(IOException error){
+            error.printStackTrace();
+            Notification.show("Export error.", "Failed to export.", Alert.AlertType.ERROR);
         }
     }
 }

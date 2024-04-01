@@ -4,10 +4,10 @@ import com.example.demo.utilities.Pair;
 
 import java.util.ArrayList;
 
-public class Row <T>{
+public class Rank<T>{
     private T header;
     private ArrayList<Pair<Integer, Integer>> periods = new ArrayList<>();
-    public Row(T header, Integer periods){
+    public Rank(T header, Integer periods){
         this.header = header;
 
         for(int count = 0; count < periods; count++)

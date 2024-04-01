@@ -50,7 +50,7 @@
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Export">
+                  <MenuItem mnemonicParsing="false" onAction="#export" text="Export">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>

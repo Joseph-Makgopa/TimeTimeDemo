@@ -19,17 +19,18 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EducatorViewService extends DemoService{
-    private Map<Educator, ObservableList<Row<WeekDay>>> educatorTable = new HashMap<>();
+    private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
     public EducatorViewService(TabPane pane){
         super(pane);
     }
-    public ObservableList<Row<WeekDay>> filter(Filter filter, Educator educator){
+    public ObservableList<Rank<WeekDay>> filter(Filter filter, Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
             if(filter.subject != null){
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
@@ -87,7 +88,7 @@ public class EducatorViewService extends DemoService{
 
         Integer index = pane.getSelectionModel().getSelectedIndex();
 
-        TableView<Row<WeekDay>> table = (TableView<Row<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
         table.setItems(filter(filter, State.getInstance().educators.get(index)));
         table.refresh();
     }
@@ -97,7 +98,7 @@ public class EducatorViewService extends DemoService{
         pane.getTabs().clear();
 
         State.getInstance().educators.forEach((post, educator) -> {
-            TableView<Row<WeekDay>> daySchedule = new TableView<>();
+            TableView<Rank<WeekDay>> daySchedule = new TableView<>();
 
 //            ContextMenu contextMenu = new ContextMenu();
 //            MenuItem clearCellMenuItem = new MenuItem("Clear cell");
@@ -134,8 +135,8 @@ public class EducatorViewService extends DemoService{
         });
     }
 
-    public void setupEducatorTable(Educator educator, TableView<Row<WeekDay>> table){
-        TableColumn<Row<WeekDay>,?> column = table.getColumns().get(0);
+    public void setupEducatorTable(Educator educator, TableView<Rank<WeekDay>> table){
+        TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
 
         DoubleBinding width = table.widthProperty().subtract(table.getColumns().size() - 3).divide(table.getColumns().size());
@@ -188,13 +189,13 @@ public class EducatorViewService extends DemoService{
     public void populateTable() {
         educatorTable.clear();
         State.getInstance().educators.forEach((post, educator) -> {
-            ObservableList<Row<WeekDay>> daySchedules = FXCollections.observableArrayList();
+            ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
                 Integer numPeriods = State.getInstance().days.get(day);
 
                 if(numPeriods != null){
-                    Row<WeekDay> daySchedule = new Row<>(day, numPeriods);
+                    Rank<WeekDay> daySchedule = new Rank<>(day, numPeriods);
                     ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
 
                     for(int period = 0; period < periods.size(); period++){
@@ -232,9 +233,9 @@ public class EducatorViewService extends DemoService{
         Session sessionOther = State.getInstance().sessions.get(selected.getId().getSecond());
         CommandList commandList = new CommandList();
 
-        ObservableList<Row<WeekDay>> daySchedules = educatorTable.get(session.getEducator());
+        ObservableList<Rank<WeekDay>> daySchedules = educatorTable.get(session.getEducator());
 
-        for(Row<WeekDay> daySchedule: daySchedules){
+        for(Rank<WeekDay> daySchedule: daySchedules){
             if(daySchedule.getHeader().equals(day)){
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
@@ -249,7 +250,7 @@ public class EducatorViewService extends DemoService{
         if(sessionOther != null){
             daySchedules = educatorTable.get(sessionOther.getEducator());
 
-            for(Row<WeekDay> daySchedule: daySchedules){
+            for(Rank<WeekDay> daySchedule: daySchedules){
                 if(daySchedule.getHeader().equals(day)){
                     ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                     Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
@@ -285,7 +286,7 @@ public class EducatorViewService extends DemoService{
         }
 
         String[] split = tab.getText().split(" ");
-        TableView<Row<WeekDay>> table = (TableView<Row<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
 
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         Printer printer = Printer.getDefaultPrinter();
@@ -302,5 +303,10 @@ public class EducatorViewService extends DemoService{
                 printerJob.endJob();
 
         }
+    }
+
+    @Override
+    public void export(File file) {
+
     }
 }

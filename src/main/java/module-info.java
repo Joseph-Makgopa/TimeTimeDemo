@@ -7,6 +7,8 @@ module com.example.demo {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     opens com.example.demo to javafx.fxml;
     opens com.example.demo.controllers to javafx.fxml;

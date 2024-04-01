@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added the getRecent and saveRecent methods in State class">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented open recent function in DemoController">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Row.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Rank.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -291,7 +296,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711975751640</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="implemented open recent function in DemoController">
+      <created>1711996770068</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1711996770068</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -306,7 +318,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added menu items to the tool bar menus" />
     <MESSAGE value="created subject dialog box and implemented showSubjectDialog method in DemoController" />
     <MESSAGE value="implemented the design of the subject-dialog" />
     <MESSAGE value="implemented the design of the grade dialog" />
@@ -331,6 +342,7 @@
     <MESSAGE value="updated the openFile function in DemoController" />
     <MESSAGE value="updated the saveAsFile method" />
     <MESSAGE value="added the getRecent and saveRecent methods in State class" />
-    <option name="LAST_COMMIT_MESSAGE" value="added the getRecent and saveRecent methods in State class" />
+    <MESSAGE value="implemented open recent function in DemoController" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented open recent function in DemoController" />
   </component>
 </project>
