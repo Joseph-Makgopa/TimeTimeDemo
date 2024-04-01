@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the save and open function in the State class">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the openFile function in DemoController">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ToolBarService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +261,21 @@
       <option name="project" value="LOCAL" />
       <updated>1711971146458</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="updated the newFile function in the DemoController">
+      <created>1711972926327</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1711972926327</updated>
+    </task>
+    <task id="LOCAL-00029" summary="updated the openFile function in DemoController">
+      <created>1711973201821</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1711973201821</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -278,8 +290,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented the educator class" />
-    <MESSAGE value="implemented grade class" />
     <MESSAGE value="implemented session class" />
     <MESSAGE value="added the containers for subjects, grades, educators and sessions in state class" />
     <MESSAGE value="added menu items to the tool bar menus" />
@@ -303,6 +313,8 @@
     <MESSAGE value="updated the toolbar menu options" />
     <MESSAGE value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
     <MESSAGE value="implemented the save and open function in the State class" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented the save and open function in the State class" />
+    <MESSAGE value="updated the newFile function in the DemoController" />
+    <MESSAGE value="updated the openFile function in DemoController" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the openFile function in DemoController" />
   </component>
 </project>

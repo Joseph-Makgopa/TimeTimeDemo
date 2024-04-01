@@ -537,7 +537,7 @@ public class DemoController implements Initializable {
         if(State.getInstance().filename == "Untitled"){
             saveAsFile(event);
         }else{
-            State.getInstance().saveFields(new File(State.getInstance().filepath));
+            State.getInstance().save(new File(State.getInstance().filepath));
         }
     }
     @FXML
@@ -550,7 +550,7 @@ public class DemoController implements Initializable {
         File file = fileChooser.showSaveDialog(stage);
 
         if (file != null) {
-            State.getInstance().saveFields(file);
+            State.getInstance().save(file);
             stage.setTitle(file.getName() + " - TimeTable");
         }
     }

@@ -67,6 +67,7 @@ public class State implements Serializable{
             breakAfter = state.breakAfter;
             filename = file.getName();
             filepath = file.getPath();
+            saveRequired = false;
 
             return true;
         }catch(FileNotFoundException error){
@@ -84,6 +85,9 @@ public class State implements Serializable{
     }
     public void save(File file){
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file))){
+            saveRequired = false;
+            filename = file.getName();
+            filepath = file.getAbsolutePath();
             objectOutputStream.writeObject(this);
         }catch(FileNotFoundException error){
             error.printStackTrace();
