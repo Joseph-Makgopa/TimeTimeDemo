@@ -521,17 +521,15 @@ public class DemoController implements Initializable {
     public void openFile(ActionEvent event){
         File file = toolbarService.openFile(stage);
 
-        if(file != null){
-            State.getInstance().setFields(file);
+        if(file != null && State.getInstance().open(file)){
             stage.setTitle(file.getName() + " - TimeTable");
             service.populateTable();
             populateStructure();
             applyStructure(event);
             updateTableAssign();
-            updateEducatorFilterOptions();
-            updateGradeFilterOptions();
-            updateSubjectFilterOptions();
+            updateFilterOptions();
             comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
+            State.getInstance().saveRequired = false;
         }
     }
     @FXML
