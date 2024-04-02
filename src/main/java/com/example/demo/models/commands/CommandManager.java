@@ -27,11 +27,15 @@ public class CommandManager {
     public void undo(){
         Command command = undoStack.pop();
         redoStack.push(command);
+        command.reverse();
+
         State.getInstance().saveRequired = true;
     }
     public void redo(){
         Command command = redoStack.pop();
         undoStack.push(command);
+        command.execute();
+
         State.getInstance().saveRequired = true;
     }
     public void clear(){

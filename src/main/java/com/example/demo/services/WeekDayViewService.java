@@ -248,13 +248,23 @@ public class WeekDayViewService extends DemoService{
         }
 
         WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
-        TableView<GradeSchedule> table = (TableView<GradeSchedule>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<Grade>> original = (TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<Grade>> table = new TableView<>();
+        table.setMinHeight(original.getHeight());
+        table.setMinWidth(original.getWidth());
+
+        table.getColumns().add(new TableColumn<>("Grade"));
+
+        for(int count = 0; count < State.getInstance().days.get(day); count++)
+            table.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
+
+        setupDayTable(day, table);
 
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         Printer printer = Printer.getDefaultPrinter();
         PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,0.1,0.1,0.1,0.1);
 
-        Scale scale = new Scale(pageLayout.getPrintableWidth() / table.getWidth(), pageLayout.getPrintableHeight() / table.getHeight());
+        Scale scale = new Scale(pageLayout.getPrintableWidth() / original.getWidth(), pageLayout.getPrintableHeight() / original.getHeight());
 
         table.getTransforms().add(scale);
 

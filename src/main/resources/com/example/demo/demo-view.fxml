@@ -62,18 +62,18 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Undo">
+              <MenuItem mnemonicParsing="false" onAction="#undo" text="Undo">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Redo">
+                  <MenuItem mnemonicParsing="false" onAction="#redo" text="Redo">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Clear Table" />
-                  <MenuItem mnemonicParsing="false" text="Clear Tab" />
-                  <MenuItem mnemonicParsing="false" text="Clear Row" />
+                  <MenuItem mnemonicParsing="false" onAction="#clearTable" text="Clear Table" />
+                  <MenuItem mnemonicParsing="false" onAction="#clearTab" text="Clear Tab" />
+                  <MenuItem mnemonicParsing="false" onAction="#clearRow" text="Clear Row" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="View">

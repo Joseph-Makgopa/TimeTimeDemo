@@ -291,14 +291,24 @@ public class EducatorViewService extends DemoService{
             return;
         }
 
-        String[] split = tab.getText().split(" ");
-        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> original = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+        TableView<Rank<WeekDay>> table = new TableView<>();
+        table.setMinWidth(original.getWidth());
+        table.setMinHeight(original.getHeight());
+
+        table.getColumns().add(new TableColumn<>("Day"));
+        Integer max = State.getInstance().days.values().stream().max(Comparator.naturalOrder()).get();
+
+        for(int count = 0; count < max; count++)
+            table.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
+
+        setupEducatorTable(State.getInstance().educators.get(Integer.parseInt(tab.getText().split(",")[0])), table);
 
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         Printer printer = Printer.getDefaultPrinter();
         PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE,0.1,0.1,0.1,0.1);
 
-        Scale scale = new Scale(pageLayout.getPrintableWidth() / table.getWidth(), pageLayout.getPrintableHeight() / table.getHeight());
+        Scale scale = new Scale(pageLayout.getPrintableWidth() / original.getWidth(), pageLayout.getPrintableHeight() / original.getHeight());
 
         table.getTransforms().add(scale);
 

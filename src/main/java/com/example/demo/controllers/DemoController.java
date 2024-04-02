@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
+import com.example.demo.models.commands.ClearTimeTableCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.UpdateStructureCommand;
@@ -443,6 +444,20 @@ public class DemoController implements Initializable {
     @FXML
     public void redo(ActionEvent event){
         CommandManager.getInstance().redo();
+    }
+    @FXML
+    public void clearTable(ActionEvent event){
+        Command command = new ClearTimeTableCommand(service);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
+    }
+    @FXML
+    public void clearTab(ActionEvent event){
+
+    }
+    @FXML
+    public void clearRow(ActionEvent event){
+
     }
     @FXML
     public void viewWeekDays(ActionEvent event){
