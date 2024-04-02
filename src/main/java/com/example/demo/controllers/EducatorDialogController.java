@@ -11,10 +11,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.Comparator;
@@ -56,6 +58,14 @@ public class EducatorDialogController extends BaseDataDialogController implement
         }catch(NoSuchElementException error){
         }
 
+    }
+    @Override
+    public void ok(ActionEvent event){
+        Command command = new UpdateEducatorsCommand(service, commandList);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
+
+        super.ok(event);
     }
     @FXML
     public void enter(KeyEvent event){

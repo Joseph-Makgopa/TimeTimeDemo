@@ -5,6 +5,7 @@ import com.example.demo.models.Session;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.models.Assignable;
+import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -15,18 +16,20 @@ public class UpdateEducatorsCommand implements Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    public UpdateEducatorsCommand(){
-        oldSessions = new HashMap<>();
-        oldSessions.putAll(State.getInstance().sessions);
+    private DemoService service;
+    private CommandList commands;
+    public UpdateEducatorsCommand(DemoService service, CommandList commands){
+        oldSessions = new HashMap<>(State.getInstance().sessions);
+        oldAssignables = new HashMap<>(State.getInstance().assignables);
+        oldTimeTable = new HashMap<>(State.getInstance().timetable);
 
-        oldAssignables = new HashMap<>();
-        oldAssignables.putAll(State.getInstance().assignables);
-
-        oldTimeTable = new HashMap<>();
-        oldTimeTable.putAll(State.getInstance().timetable);
+        this.service = service;
+        this.commands = commands;
     }
     @Override
     public void execute() {
+        commands.execute();
+
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
             if(State.getInstance().educators.containsValue(session.getEducator())){
@@ -47,10 +50,14 @@ public class UpdateEducatorsCommand implements Command{
                 State.getInstance().timetable.put(triplet, id);
             }
         });
+
+        service.refresh();
     }
 
     @Override
     public void reverse() {
+        commands.reverse();
+
         State.getInstance().sessions.clear();
         State.getInstance().sessions.putAll(oldSessions);
 
@@ -59,5 +66,7 @@ public class UpdateEducatorsCommand implements Command{
 
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
+
+        service.refresh();
     }
 }
