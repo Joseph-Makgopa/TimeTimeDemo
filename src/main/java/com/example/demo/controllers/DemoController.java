@@ -60,8 +60,6 @@ public class DemoController implements Initializable {
     private Menu openRecentMenu = new Menu("Open Recent");
     private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
@@ -183,7 +181,7 @@ public class DemoController implements Initializable {
         fileMenu.getItems().add(2, openRecentMenu);
         setupRecentMenu();
 
-        clearTab.setText("Clear Period");
+        clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
     }
     public void setupRecentMenu(){
@@ -456,11 +454,11 @@ public class DemoController implements Initializable {
         CommandManager.getInstance().addCommand(command);
     }
     @FXML
-    public void clearTab(ActionEvent event){
+    public void cleanTab(ActionEvent event){
         service.clearTab();
     }
     @FXML
-    public void clearRow(ActionEvent event){
+    public void cleanRow(ActionEvent event){
         service.clearRow();
     }
     @FXML
@@ -475,7 +473,7 @@ public class DemoController implements Initializable {
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
-        clearTab.setText("Clear Period");
+        clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
         service = new WeekDayViewService(paneTimeTable, tableAssign);
         service.refresh();
@@ -492,7 +490,7 @@ public class DemoController implements Initializable {
 
         menuGrades.setSelected(true);
         menuGrades.setDisable(true);
-        clearTab.setText("Clear Period");
+        clearTab.setText("Clear Grade");
         clearRow.setText("Clear Day");
         service = new GradeViewService(paneTimeTable, tableAssign);
         service.refresh();
@@ -509,7 +507,7 @@ public class DemoController implements Initializable {
 
         menuEducators.setSelected(true);
         menuEducators.setDisable(true);
-        clearTab.setText("Clear Period");
+        clearTab.setText("Clear Educator");
         clearRow.setText("Clear Day");
         service = new EducatorViewService(paneTimeTable, tableAssign);
         service.refresh();

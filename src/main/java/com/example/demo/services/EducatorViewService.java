@@ -2,9 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
-import com.example.demo.models.commands.CommandList;
-import com.example.demo.models.commands.CommandManager;
-import com.example.demo.models.commands.PositionCommand;
+import com.example.demo.models.commands.*;
 import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
@@ -26,10 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
@@ -98,8 +93,54 @@ public class EducatorViewService extends DemoService{
         table.setItems(filter(filter, State.getInstance().educators.get(index)));
         table.refresh();
     }
-    public void clearTab(){}
-    public void clearRow(){}
+    public void clearTab(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            Integer post = Integer.parseInt(tab.getText().split(",")[0]);
+            Educator educator = State.getInstance().educators.get(post);
+
+            LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+            for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                if(entry.getValue() != null) {
+                    if(State.getInstance().assignables.get(entry.getValue()).hasEducator(educator)) {
+                        trash.add(entry);
+                    }
+                }
+            }
+
+            Command command = new ClearSlotsCommand(trash, this);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
+        }
+    }
+    public void clearRow(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            Rank<WeekDay> row = ((TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
+
+            if(row != null){
+                Integer post = Integer.parseInt(tab.getText().split(",")[0]);
+                Educator educator = State.getInstance().educators.get(post);
+
+                LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+                for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                    if(entry.getValue() != null) {
+                        if(State.getInstance().assignables.get(entry.getValue()).hasEducator(educator) && row.getHeader().equals(entry.getKey().getFirst())) {
+                            trash.add(entry);
+                        }
+                    }
+                }
+
+                Command command = new ClearSlotsCommand(trash, this);
+                command.execute();
+                CommandManager.getInstance().addCommand(command);
+            }
+        }
+    }
     @Override
     public void setupTable() {
         pane.getTabs().clear();

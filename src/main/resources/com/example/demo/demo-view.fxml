@@ -72,8 +72,8 @@
                      </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#clearTable" text="Clear Table" />
-                  <MenuItem mnemonicParsing="false" onAction="#clearTab" text="Clear Tab" />
-                  <MenuItem mnemonicParsing="false" onAction="#clearRow" text="Clear Row" />
+                  <MenuItem fx:id="clearTab" mnemonicParsing="false" onAction="#cleanTab" text="Clear Tab" />
+                  <MenuItem fx:id="clearRow" mnemonicParsing="false" onAction="#cleanRow" text="Clear Row" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="View">

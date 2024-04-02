@@ -2,6 +2,8 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
+import com.example.demo.models.commands.ClearSlotsCommand;
+import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;
@@ -95,8 +97,50 @@ public class GradeViewService extends DemoService{
         table.setItems(filter(filter, grade));
         table.refresh();
     }
-    public void clearTab(){}
-    public void clearRow(){}
+    public void clearTab(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            String[] split = tab.getText().split(" ");
+            Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+            LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+            for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                if(entry.getKey().getSecond().equals(grade)){
+                    trash.add(entry);
+                }
+            }
+
+            Command command = new ClearSlotsCommand(trash, this);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
+        }
+    }
+    public void clearRow(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            Rank<WeekDay> row = ((TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
+
+            if(row != null){
+                String[] split = tab.getText().split(" ");
+                Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+                LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+                for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                    if(entry.getKey().getSecond().equals(grade) && entry.getKey().getFirst().equals(row.getHeader())){
+                        trash.add(entry);
+                    }
+                }
+
+                Command command = new ClearSlotsCommand(trash, this);
+                command.execute();
+                CommandManager.getInstance().addCommand(command);
+            }
+        }
+    }
     @Override
     public void setupTable() {
         pane.getTabs().clear();

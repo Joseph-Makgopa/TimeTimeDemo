@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated undo and redo functionality">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ClearSlotsCommand.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented clearTab and clearRow functions in WeekDayViewService">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -335,7 +333,14 @@
       <option name="project" value="LOCAL" />
       <updated>1712063497795</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="implemented clearTab and clearRow functions in WeekDayViewService">
+      <created>1712067776053</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1712067776053</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -350,7 +355,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added skeleton methonds in subjectDialogController" />
     <MESSAGE value="implemented the methods in subjectDialogController" />
     <MESSAGE value="implemented the methods in EducatorDialogController" />
     <MESSAGE value="implemented the methods in SessionsDialogController and the CommandManager" />
@@ -375,6 +379,7 @@
     <MESSAGE value="updated the export function in the EducatorViewService, GradeViewService and WeekDayViewService" />
     <MESSAGE value="implemented the clearTable function" />
     <MESSAGE value="updated undo and redo functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated undo and redo functionality" />
+    <MESSAGE value="implemented clearTab and clearRow functions in WeekDayViewService" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented clearTab and clearRow functions in WeekDayViewService" />
   </component>
 </project>
