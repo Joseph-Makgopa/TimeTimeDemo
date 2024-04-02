@@ -33,8 +33,8 @@ import java.util.Map;
 
 public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
-    public EducatorViewService(TabPane pane){
-        super(pane);
+    public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign){
+        super(pane, tableAssign);
     }
     public ObservableList<Rank<WeekDay>> filter(Filter filter, Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {

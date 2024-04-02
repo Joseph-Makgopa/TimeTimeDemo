@@ -64,7 +64,7 @@ public class DemoController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
-        service = new WeekDayViewService(paneTimeTable);
+        service = new WeekDayViewService(paneTimeTable, tableAssign);
 
         columnGrade.setCellValueFactory(entry ->{
             String result = State.getInstance().sessions.get(entry.getValue().getId().getFirst()).getGrade().toString();
@@ -471,7 +471,7 @@ public class DemoController implements Initializable {
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
-        service = new WeekDayViewService(paneTimeTable);
+        service = new WeekDayViewService(paneTimeTable, tableAssign);
         service.refresh();
     }
     @FXML
@@ -486,7 +486,7 @@ public class DemoController implements Initializable {
 
         menuGrades.setSelected(true);
         menuGrades.setDisable(true);
-        service = new GradeViewService(paneTimeTable);
+        service = new GradeViewService(paneTimeTable, tableAssign);
         service.refresh();
     }
     @FXML
@@ -501,7 +501,7 @@ public class DemoController implements Initializable {
 
         menuEducators.setSelected(true);
         menuEducators.setDisable(true);
-        service = new EducatorViewService(paneTimeTable);
+        service = new EducatorViewService(paneTimeTable, tableAssign);
         service.refresh();
     }
     @FXML

@@ -30,8 +30,8 @@ import java.util.*;
 public class GradeViewService extends DemoService{
     private Map<Grade, ObservableList<Rank<WeekDay>>> gradeTable = new HashMap<>();
 
-    public GradeViewService(TabPane pane){
-        super(pane);
+    public GradeViewService(TabPane pane, TableView<Assignable> tableAssign){
+        super(pane, tableAssign);
     }
     public ObservableList<Rank<WeekDay>> filter(Filter filter, Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {

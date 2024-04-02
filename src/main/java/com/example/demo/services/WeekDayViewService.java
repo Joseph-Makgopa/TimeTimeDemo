@@ -32,8 +32,8 @@ import java.util.Map;
 
 public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
-    public WeekDayViewService(TabPane pane){
-        super(pane);
+    public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign){
+        super(pane, tableAssign);
     }
     public void setupTable(){
         pane.getTabs().clear();

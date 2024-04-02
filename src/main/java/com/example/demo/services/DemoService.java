@@ -23,15 +23,31 @@ public abstract class DemoService {
     private LessonSlotOptions lessonSlotOptions;
     private Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability;
     protected TabPane pane;
-    public DemoService(TabPane pane){
+    protected TableView<Assignable> tableAssign;
+    public DemoService(TabPane pane, TableView<Assignable> tableAssign){
         this.pane = pane;
+        this.tableAssign = tableAssign;
     }
     public void refresh(){
+        Tab focusTab = pane.getSelectionModel().getSelectedItem();
+        String focus = "";
+
+        if(focusTab != null){
+            focus = focusTab.getText();
+        }
+
         populateTable();
         setupTable();
+
         for(Tab tab: pane.getTabs()){
             ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh();
+
+            if(tab.getText().equals(focus)){
+                pane.getSelectionModel().select(tab);
+            }
         }
+
+        tableAssign.refresh();
     }
     public ObservableList<Assignable> search(String text){
         if(text == null || text.isEmpty())

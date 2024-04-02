@@ -2,6 +2,7 @@ package com.example.demo.models.commands;
 
 import com.example.demo.models.State;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class CommandManager {
@@ -25,18 +26,34 @@ public class CommandManager {
         State.getInstance().saveRequired = true;
     }
     public void undo(){
-        Command command = undoStack.pop();
-        redoStack.push(command);
-        command.reverse();
+        try{
+            Command command = undoStack.pop();
 
-        State.getInstance().saveRequired = true;
+            if(command == null)
+                return;
+
+            redoStack.push(command);
+            command.reverse();
+
+            State.getInstance().saveRequired = true;
+        }catch(EmptyStackException error){
+
+        }
     }
     public void redo(){
-        Command command = redoStack.pop();
-        undoStack.push(command);
-        command.execute();
+        try {
+            Command command = redoStack.pop();
 
-        State.getInstance().saveRequired = true;
+            if(command == null)
+                return;
+
+            undoStack.push(command);
+            command.execute();
+
+            State.getInstance().saveRequired = true;
+        }catch(EmptyStackException error){
+
+        }
     }
     public void clear(){
         undoStack.clear();
