@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -57,9 +58,13 @@ public class DemoController implements Initializable {
     private Menu fileMenu;
     @FXML
     private MenuItem clearTab, clearRow;
+    @FXML
+    private BorderPane borderPane;
+    private Boolean showPanel = true;
     private Menu openRecentMenu = new Menu("Open Recent");
     private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
+    private Accordion rightPanel;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
@@ -460,6 +465,21 @@ public class DemoController implements Initializable {
     @FXML
     public void cleanRow(ActionEvent event){
         service.clearRow();
+    }
+    @FXML
+    public void toggleLeftPanel(ActionEvent event){
+        showPanel = !showPanel;
+
+        if(borderPane.getRight() != null)
+            rightPanel = (Accordion) borderPane.getRight();
+
+        if(showPanel)
+            borderPane.setRight(rightPanel);
+        else
+            borderPane.setRight(null);
+
+        MenuItem item = (MenuItem)event.getSource();
+        item.setText((showPanel ? "Hide":"Show") +  " Right Panel");
     }
     @FXML
     public void viewWeekDays(ActionEvent event){

@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented clearTab and clearRow functions in WeekDayViewService">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -340,7 +338,14 @@
       <option name="project" value="LOCAL" />
       <updated>1712067776053</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService">
+      <created>1712069662175</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1712069662175</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -355,7 +360,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented the methods in subjectDialogController" />
     <MESSAGE value="implemented the methods in EducatorDialogController" />
     <MESSAGE value="implemented the methods in SessionsDialogController and the CommandManager" />
     <MESSAGE value="implemented the design of the right side panel" />
@@ -380,6 +384,7 @@
     <MESSAGE value="implemented the clearTable function" />
     <MESSAGE value="updated undo and redo functionality" />
     <MESSAGE value="implemented clearTab and clearRow functions in WeekDayViewService" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented clearTab and clearRow functions in WeekDayViewService" />
+    <MESSAGE value="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService" />
   </component>
 </project>
