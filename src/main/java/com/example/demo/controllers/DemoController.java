@@ -234,7 +234,6 @@ public class DemoController implements Initializable {
                 comboDivision.getItems().add(grade.getDivision());
         });
     }
-
     public void updateSubjectFilterOptions(){
         comboSubject.getItems().clear();
 
@@ -243,7 +242,6 @@ public class DemoController implements Initializable {
                 comboSubject.getItems().add(subject);
         });
     }
-
     public void updateEducatorFilterOptions(){
         comboEducator.getItems().clear();
 
@@ -421,27 +419,27 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void showSubjectDialog(ActionEvent event){
-        toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml");
+        toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml", service);
         updateTableAssign();
         updateSubjectFilterOptions();
         service.refresh();
     }
     @FXML
     public void showGradeDialog(ActionEvent event){
-        toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml");
+        toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml", service);
         updateTableAssign();
         updateGradeFilterOptions();
         service.refresh();
     }
     @FXML
     public void showEducatorDialog(ActionEvent event){
-        toolbarService.showDataDialog("Educators", "educator-dialog-view.fxml");
+        toolbarService.showDataDialog("Educators", "educator-dialog-view.fxml", service);
         updateTableAssign();
         updateEducatorFilterOptions();
     }
     @FXML
     public void showSessionDialog(ActionEvent event){
-        toolbarService.showDataDialog("Sessions", "session-dialog-view.fxml");
+        toolbarService.showDataDialog("Sessions", "session-dialog-view.fxml", service);
         updateTableAssign();
     }
     @FXML

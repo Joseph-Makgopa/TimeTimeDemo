@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.models.State;
 import com.example.demo.models.Subject;
 import com.example.demo.models.commands.*;
+import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Notification;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,7 +63,6 @@ public class SubjectDialogController extends BaseDataDialogController implements
         txtName.clear();
         btnOk.setDisable(false);
     }
-
     @FXML
     public void remove(ActionEvent event){
         String selection =  listSubject.getSelectionModel().getSelectedItem();
@@ -72,7 +72,10 @@ public class SubjectDialogController extends BaseDataDialogController implements
     }
     @Override
     public void ok(ActionEvent event){
-        commandList.add(new UpdateSubjectsCommand());
+        Command command = new UpdateSubjectsCommand(service, commandList);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
+
         super.ok(event);
     }
 }

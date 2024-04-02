@@ -5,6 +5,7 @@ import com.example.demo.models.Session;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.models.Assignable;
+import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -15,18 +16,22 @@ public class UpdateSubjectsCommand implements Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    public UpdateSubjectsCommand(){
-        oldSessions = new HashMap<>();
-        oldSessions.putAll(State.getInstance().sessions);
+    private CommandList commands;
+    private DemoService service;
+    public UpdateSubjectsCommand(DemoService service, CommandList commands){
+        oldSessions = new HashMap<>(State.getInstance().sessions);
 
-        oldAssignables = new HashMap<>();
-        oldAssignables.putAll(State.getInstance().assignables);
+        oldAssignables = new HashMap<>(State.getInstance().assignables);
 
-        oldTimeTable = new HashMap<>();
-        oldTimeTable.putAll(State.getInstance().timetable);
+        oldTimeTable = new HashMap<>(State.getInstance().timetable);
+
+        this.commands = commands;
+        this.service = service;
     }
     @Override
     public void execute() {
+        commands.execute();
+
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
             if(State.getInstance().subjects.contains(session.getSubject())){
@@ -47,10 +52,14 @@ public class UpdateSubjectsCommand implements Command{
                 State.getInstance().timetable.put(triplet, id);
             }
         });
+
+        service.refresh();
     }
 
     @Override
     public void reverse() {
+        commands.reverse();
+
         State.getInstance().sessions.clear();
         State.getInstance().sessions.putAll(oldSessions);
 
@@ -59,5 +68,7 @@ public class UpdateSubjectsCommand implements Command{
 
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
+
+        service.refresh();
     }
 }

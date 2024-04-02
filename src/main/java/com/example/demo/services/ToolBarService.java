@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.controllers.BaseDataDialogController;
 import com.example.demo.models.State;
 import com.example.demo.utilities.Notification;
 import javafx.collections.FXCollections;
@@ -20,11 +21,12 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 public class ToolBarService {
-    public void showDataDialog(String title, String resource){
+    public void showDataDialog(String title, String resource, DemoService service){
         FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource(resource));
 
         try {
             Parent parent = fxmlLoader.load();
+            ((BaseDataDialogController)fxmlLoader.getController()).setService(service);
 
             Scene scene = new Scene(parent);
             Stage stage = new Stage();
@@ -36,9 +38,6 @@ public class ToolBarService {
         }catch(IOException error){
             error.printStackTrace();
         }
-    }
-    public void save(){
-
     }
 
     public void createFile(Stage stage){
