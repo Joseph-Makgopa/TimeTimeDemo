@@ -95,7 +95,8 @@ public class GradeViewService extends DemoService{
         table.setItems(filter(filter, grade));
         table.refresh();
     }
-
+    public void clearTab(){}
+    public void clearRow(){}
     @Override
     public void setupTable() {
         pane.getTabs().clear();

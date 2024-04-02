@@ -49,6 +49,8 @@ public abstract class DemoService {
 
         tableAssign.refresh();
     }
+    public abstract void clearTab();
+    public abstract void clearRow();
     public ObservableList<Assignable> search(String text){
         if(text == null || text.isEmpty())
             return FXCollections.observableArrayList(State.getInstance().assignables.values());

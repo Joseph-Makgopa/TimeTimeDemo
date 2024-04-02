@@ -2,6 +2,8 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
+import com.example.demo.models.commands.ClearSlotsCommand;
+import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Filter;
@@ -25,15 +27,54 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
     public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign){
         super(pane, tableAssign);
+    }
+    public void clearTab(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
+
+            LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+            for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                if(entry.getKey().getFirst().equals(day)){
+                    trash.add(entry);
+                }
+            }
+
+            Command command = new ClearSlotsCommand(trash, this);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
+        }
+    }
+    public void clearRow(){
+        Tab tab = pane.getSelectionModel().getSelectedItem();
+
+        if(tab != null){
+            Rank<Grade> row = ((TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
+
+            if(row != null){
+                WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
+
+                LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+
+                for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+                    if(entry.getKey().getFirst().equals(day) && entry.getKey().getSecond().equals(row.getHeader())){
+                        trash.add(entry);
+                    }
+                }
+
+                Command command = new ClearSlotsCommand(trash, this);
+                command.execute();
+                CommandManager.getInstance().addCommand(command);
+            }
+        }
     }
     public void setupTable(){
         pane.getTabs().clear();

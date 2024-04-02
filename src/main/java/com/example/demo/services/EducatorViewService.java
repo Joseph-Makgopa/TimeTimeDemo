@@ -98,7 +98,8 @@ public class EducatorViewService extends DemoService{
         table.setItems(filter(filter, State.getInstance().educators.get(index)));
         table.refresh();
     }
-
+    public void clearTab(){}
+    public void clearRow(){}
     @Override
     public void setupTable() {
         pane.getTabs().clear();

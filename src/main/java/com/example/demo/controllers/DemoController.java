@@ -55,8 +55,9 @@ public class DemoController implements Initializable {
     private CheckMenuItem menuWeekDays, menuGrades, menuEducators;
     @FXML
     private Menu fileMenu;
+    @FXML
+    private MenuItem clearTab, clearRow;
     private Menu openRecentMenu = new Menu("Open Recent");
-    private View view = View.WeekDayView;
     private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
 
@@ -181,6 +182,9 @@ public class DemoController implements Initializable {
 
         fileMenu.getItems().add(2, openRecentMenu);
         setupRecentMenu();
+
+        clearTab.setText("Clear Period");
+        clearRow.setText("Clear Grade");
     }
     public void setupRecentMenu(){
         openRecentMenu.getItems().clear();
@@ -453,11 +457,11 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void clearTab(ActionEvent event){
-
+        service.clearTab();
     }
     @FXML
     public void clearRow(ActionEvent event){
-
+        service.clearRow();
     }
     @FXML
     public void viewWeekDays(ActionEvent event){
@@ -471,6 +475,8 @@ public class DemoController implements Initializable {
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
+        clearTab.setText("Clear Period");
+        clearRow.setText("Clear Grade");
         service = new WeekDayViewService(paneTimeTable, tableAssign);
         service.refresh();
     }
@@ -486,6 +492,8 @@ public class DemoController implements Initializable {
 
         menuGrades.setSelected(true);
         menuGrades.setDisable(true);
+        clearTab.setText("Clear Period");
+        clearRow.setText("Clear Day");
         service = new GradeViewService(paneTimeTable, tableAssign);
         service.refresh();
     }
@@ -501,6 +509,8 @@ public class DemoController implements Initializable {
 
         menuEducators.setSelected(true);
         menuEducators.setDisable(true);
+        clearTab.setText("Clear Period");
+        clearRow.setText("Clear Day");
         service = new EducatorViewService(paneTimeTable, tableAssign);
         service.refresh();
     }

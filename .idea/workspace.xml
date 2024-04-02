@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="implemented the clearTable function">
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated undo and redo functionality">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ClearSlotsCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/CommandManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/CommandManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
@@ -328,7 +328,14 @@
       <option name="project" value="LOCAL" />
       <updated>1712061485932</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="updated undo and redo functionality">
+      <created>1712063497795</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1712063497795</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -343,7 +350,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented the design of the sessions dialog" />
     <MESSAGE value="added skeleton methonds in subjectDialogController" />
     <MESSAGE value="implemented the methods in subjectDialogController" />
     <MESSAGE value="implemented the methods in EducatorDialogController" />
@@ -368,6 +374,7 @@
     <MESSAGE value="implemented the export function in the EducatorViewService and GradeViewService" />
     <MESSAGE value="updated the export function in the EducatorViewService, GradeViewService and WeekDayViewService" />
     <MESSAGE value="implemented the clearTable function" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented the clearTable function" />
+    <MESSAGE value="updated undo and redo functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated undo and redo functionality" />
   </component>
 </project>
