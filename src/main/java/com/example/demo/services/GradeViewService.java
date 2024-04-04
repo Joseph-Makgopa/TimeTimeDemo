@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
@@ -32,8 +33,8 @@ import java.util.*;
 public class GradeViewService extends DemoService{
     private Map<Grade, ObservableList<Rank<WeekDay>>> gradeTable = new HashMap<>();
 
-    public GradeViewService(TabPane pane, TableView<Assignable> tableAssign){
-        super(pane, tableAssign);
+    public GradeViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
+        super(pane, tableAssign, controller);
     }
     public ObservableList<Rank<WeekDay>> filter(Filter filter, Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {
@@ -112,7 +113,7 @@ public class GradeViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, this);
+            Command command = new ClearSlotsCommand(trash, demoController);
             command.execute();
             CommandManager.getInstance().addCommand(command);
         }
@@ -135,7 +136,7 @@ public class GradeViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, this);
+                Command command = new ClearSlotsCommand(trash, demoController);
                 command.execute();
                 CommandManager.getInstance().addCommand(command);
             }
@@ -197,6 +198,7 @@ public class GradeViewService extends DemoService{
 
                 return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
             });
+            column.setCellFactory(value -> new HighlightingTableCell<>());
         }
 
         table.setItems(gradeTable.get(grade));
@@ -237,7 +239,7 @@ public class GradeViewService extends DemoService{
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
 
-                PositionCommand command = new PositionCommand(this, selected, triplet);
+                PositionCommand command = new PositionCommand(demoController, selected, triplet);
                 CommandManager.getInstance().addCommand(command);
                 command.execute();
 

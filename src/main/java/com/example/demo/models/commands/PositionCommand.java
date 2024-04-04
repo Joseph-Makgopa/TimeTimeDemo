@@ -1,5 +1,6 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Grade;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
@@ -15,14 +16,14 @@ public class PositionCommand implements Command{
     private Assignable freshAssignable;
     private Assignable freshPairAssignable;
     private Triplet<WeekDay, Grade, Integer> triplet;
-    private DemoService service;
-    public PositionCommand(DemoService service, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
+    private DemoController demoController;
+    public PositionCommand(DemoController demoController, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
         this.oldAssignable = null;
         this.oldPairAssignable = null;
         this.freshAssignable = assignable;
         this.freshPairAssignable = assignable.getPair();
         this.triplet = triplet;
-        this.service = service;
+        this.demoController = demoController;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class PositionCommand implements Command{
             freshPairAssignable.setRemain(freshPairAssignable.getRemain() - 1);
         }
 
-        service.refresh();
+        demoController.getService().refresh();
         State.getInstance().saveRequired = true;
     }
 
@@ -89,6 +90,6 @@ public class PositionCommand implements Command{
 
         State.getInstance().saveRequired = true;
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 }

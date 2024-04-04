@@ -68,7 +68,7 @@ public class DemoController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         filter = new Filter();
-        service = new WeekDayViewService(paneTimeTable, tableAssign);
+        service = new WeekDayViewService(paneTimeTable, tableAssign, this);
 
         columnGrade.setCellValueFactory(entry ->{
             String result = State.getInstance().sessions.get(entry.getValue().getId().getFirst()).getGrade().toString();
@@ -188,6 +188,9 @@ public class DemoController implements Initializable {
 
         clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
+    }
+    public DemoService getService(){
+        return service;
     }
     public void setupRecentMenu(){
         openRecentMenu.getItems().clear();
@@ -309,7 +312,7 @@ public class DemoController implements Initializable {
         }
 
         if(checkFriday.isSelected()){
-            days.put(WeekDay.FRIDAY, spinnerWednesdayPeriods.getValue());
+            days.put(WeekDay.FRIDAY, spinnerFridayPeriods.getValue());
         }
 
         if(checkSaturday.isSelected()){
@@ -419,27 +422,25 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void showSubjectDialog(ActionEvent event){
-        toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml", service);
+        toolbarService.showDataDialog("Subjects", "subject-dialog-view.fxml", this);
         updateTableAssign();
-        updateSubjectFilterOptions();
-        service.refresh();
+        updateFilterOptions();
     }
     @FXML
     public void showGradeDialog(ActionEvent event){
-        toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml", service);
+        toolbarService.showDataDialog("Grades", "grade-dialog-view.fxml", this);
         updateTableAssign();
-        updateGradeFilterOptions();
-        service.refresh();
+        updateFilterOptions();
     }
     @FXML
     public void showEducatorDialog(ActionEvent event){
-        toolbarService.showDataDialog("Educators", "educator-dialog-view.fxml", service);
+        toolbarService.showDataDialog("Educators", "educator-dialog-view.fxml", this);
         updateTableAssign();
-        updateEducatorFilterOptions();
+        updateFilterOptions();
     }
     @FXML
     public void showSessionDialog(ActionEvent event){
-        toolbarService.showDataDialog("Sessions", "session-dialog-view.fxml", service);
+        toolbarService.showDataDialog("Sessions", "session-dialog-view.fxml", this);
         updateTableAssign();
     }
     @FXML
@@ -452,7 +453,7 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void clearTable(ActionEvent event){
-        Command command = new ClearTimeTableCommand(service);
+        Command command = new ClearTimeTableCommand(this);
         command.execute();
         CommandManager.getInstance().addCommand(command);
     }
@@ -493,7 +494,7 @@ public class DemoController implements Initializable {
         menuWeekDays.setDisable(true);
         clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
-        service = new WeekDayViewService(paneTimeTable, tableAssign);
+        service = new WeekDayViewService(paneTimeTable, tableAssign, this);
         service.refresh();
     }
     @FXML
@@ -510,7 +511,7 @@ public class DemoController implements Initializable {
         menuGrades.setDisable(true);
         clearTab.setText("Clear Grade");
         clearRow.setText("Clear Day");
-        service = new GradeViewService(paneTimeTable, tableAssign);
+        service = new GradeViewService(paneTimeTable, tableAssign, this);
         service.refresh();
     }
     @FXML
@@ -527,7 +528,7 @@ public class DemoController implements Initializable {
         menuEducators.setDisable(true);
         clearTab.setText("Clear Educator");
         clearRow.setText("Clear Day");
-        service = new EducatorViewService(paneTimeTable, tableAssign);
+        service = new EducatorViewService(paneTimeTable, tableAssign, this);
         service.refresh();
     }
     @FXML

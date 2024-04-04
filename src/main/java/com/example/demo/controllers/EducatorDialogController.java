@@ -61,7 +61,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new UpdateEducatorsCommand(service, commandList);
+        Command command = new UpdateEducatorsCommand(demoController, commandList);
         command.execute();
         CommandManager.getInstance().addCommand(command);
 

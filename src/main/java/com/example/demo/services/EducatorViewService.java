@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.*;
@@ -28,8 +29,8 @@ import java.util.*;
 
 public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
-    public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign){
-        super(pane, tableAssign);
+    public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
+        super(pane, tableAssign, controller);
     }
     public ObservableList<Rank<WeekDay>> filter(Filter filter, Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
@@ -110,7 +111,7 @@ public class EducatorViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, this);
+            Command command = new ClearSlotsCommand(trash, demoController);
             command.execute();
             CommandManager.getInstance().addCommand(command);
         }
@@ -135,7 +136,7 @@ public class EducatorViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, this);
+                Command command = new ClearSlotsCommand(trash, demoController);
                 command.execute();
                 CommandManager.getInstance().addCommand(command);
             }
@@ -228,6 +229,7 @@ public class EducatorViewService extends DemoService{
 
                 return new SimpleObjectProperty(session.getGrade().getNumber() + session.getGrade().getDivision().toString() + " " + session.getSubject());
             });
+            column.setCellFactory(value -> new HighlightingTableCell<>());
         }
 
         table.setItems(educatorTable.get(educator));
@@ -288,7 +290,7 @@ public class EducatorViewService extends DemoService{
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
 
-                PositionCommand command = new PositionCommand(this, selected, triplet);
+                PositionCommand command = new PositionCommand(demoController, selected, triplet);
                 commandList.add(command);
 
                 break;
@@ -303,7 +305,7 @@ public class EducatorViewService extends DemoService{
                     ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
                     Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(daySchedule.getHeader(), session.getGrade(), period);
 
-                    PositionCommand command = new PositionCommand(this, selected, triplet);
+                    PositionCommand command = new PositionCommand(demoController, selected, triplet);
                     commandList.add(command);
 
                     break;

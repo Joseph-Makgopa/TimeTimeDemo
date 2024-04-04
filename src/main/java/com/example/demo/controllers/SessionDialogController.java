@@ -320,7 +320,7 @@ public class SessionDialogController extends BaseDataDialogController implements
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new SetAssignablesCommand(service, commandList);
+        Command command = new SetAssignablesCommand(demoController, commandList);
         command.execute();
         CommandManager.getInstance().addCommand(command);
 

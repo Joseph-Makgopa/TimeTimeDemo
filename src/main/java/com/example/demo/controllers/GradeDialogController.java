@@ -84,7 +84,7 @@ public class GradeDialogController extends BaseDataDialogController implements I
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new UpdateGradesCommand(service, commandList);
+        Command command = new UpdateGradesCommand(demoController, commandList);
         command.execute();
         CommandManager.getInstance().addCommand(command);
 

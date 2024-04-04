@@ -1,5 +1,6 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.Grade;
 import com.example.demo.models.State;
@@ -12,10 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClearTimeTableCommand implements Command{
-    private DemoService service;
+    private DemoController demoController;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    public ClearTimeTableCommand(DemoService service){
-        this.service = service;
+    public ClearTimeTableCommand(DemoController demoController){
+        this.demoController = demoController;
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
     }
     @Override
@@ -29,7 +30,7 @@ public class ClearTimeTableCommand implements Command{
         });
 
         State.getInstance().timetable.clear();
-        service.refresh();
+        demoController.getService().refresh();
     }
 
     @Override
@@ -45,6 +46,6 @@ public class ClearTimeTableCommand implements Command{
             }
         });
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 }

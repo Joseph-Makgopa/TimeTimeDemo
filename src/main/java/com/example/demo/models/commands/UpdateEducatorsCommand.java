@@ -1,5 +1,6 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Grade;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
@@ -16,14 +17,14 @@ public class UpdateEducatorsCommand implements Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    private DemoService service;
+    private DemoController demoController;
     private CommandList commands;
-    public UpdateEducatorsCommand(DemoService service, CommandList commands){
+    public UpdateEducatorsCommand(DemoController demoController, CommandList commands){
         oldSessions = new HashMap<>(State.getInstance().sessions);
         oldAssignables = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
 
-        this.service = service;
+        this.demoController = demoController;
         this.commands = commands;
     }
     @Override
@@ -51,7 +52,7 @@ public class UpdateEducatorsCommand implements Command{
             }
         });
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 
     @Override
@@ -67,6 +68,6 @@ public class UpdateEducatorsCommand implements Command{
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.Grade;
 import com.example.demo.models.State;
@@ -13,10 +14,10 @@ import java.util.Map;
 
 public class ClearSlotsCommand implements Command{
     private LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash;
-    DemoService service;
-    public ClearSlotsCommand(LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash, DemoService service){
+    DemoController demoController;
+    public ClearSlotsCommand(LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash, DemoController demoController){
         this.trash = trash;
-        this.service = service;
+        this.demoController = demoController;
     }
     @Override
     public void execute() {
@@ -29,7 +30,7 @@ public class ClearSlotsCommand implements Command{
             }
         }
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 
     @Override
@@ -43,6 +44,6 @@ public class ClearSlotsCommand implements Command{
             }
         }
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 }

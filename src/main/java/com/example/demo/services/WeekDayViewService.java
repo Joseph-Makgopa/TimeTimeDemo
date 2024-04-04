@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
@@ -16,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.print.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -31,8 +33,8 @@ import java.util.*;
 
 public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
-    public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign){
-        super(pane, tableAssign);
+    public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
+        super(pane, tableAssign, demoController);
     }
     public void clearTab(){
         Tab tab = pane.getSelectionModel().getSelectedItem();
@@ -48,7 +50,7 @@ public class WeekDayViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, this);
+            Command command = new ClearSlotsCommand(trash, demoController);
             command.execute();
             CommandManager.getInstance().addCommand(command);
         }
@@ -70,7 +72,7 @@ public class WeekDayViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, this);
+                Command command = new ClearSlotsCommand(trash, demoController);
                 command.execute();
                 CommandManager.getInstance().addCommand(command);
             }
@@ -163,6 +165,7 @@ public class WeekDayViewService extends DemoService{
 
                 return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
             });
+            column.setCellFactory(value -> new HighlightingTableCell<>());
         }
 
         table.setItems(weeklyTable.get(day));
@@ -271,7 +274,7 @@ public class WeekDayViewService extends DemoService{
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
 
-                PositionCommand command = new PositionCommand(this, selected, triplet);
+                PositionCommand command = new PositionCommand(demoController, selected, triplet);
                 CommandManager.getInstance().addCommand(command);
                 command.execute();
 
@@ -382,3 +385,4 @@ public class WeekDayViewService extends DemoService{
         }
     }
 }
+

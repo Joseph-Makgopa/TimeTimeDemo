@@ -72,7 +72,7 @@ public class SubjectDialogController extends BaseDataDialogController implements
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new UpdateSubjectsCommand(service, commandList);
+        Command command = new UpdateSubjectsCommand(demoController, commandList);
         command.execute();
         CommandManager.getInstance().addCommand(command);
 

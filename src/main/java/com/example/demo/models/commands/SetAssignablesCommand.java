@@ -1,5 +1,6 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Grade;
 import com.example.demo.models.State;
 import com.example.demo.models.Assignable;
@@ -15,13 +16,13 @@ import java.util.Map;
 public class SetAssignablesCommand implements Command{
     private Map<Pair<Integer, Integer>, Assignable> oldAssignable;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    private DemoService service;
+    private DemoController demoController;
     private CommandList commands;
-    public SetAssignablesCommand(DemoService service, CommandList commands){
+    public SetAssignablesCommand(DemoController demoController, CommandList commands){
         oldAssignable = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
 
-        this.service = service;
+        this.demoController = demoController;
         this.commands = commands;
     }
     @Override
@@ -36,14 +37,6 @@ public class SetAssignablesCommand implements Command{
             State.getInstance().assignables.putIfAbsent(assignable.getId(), assignable);
         });
 
-        State.getInstance().timetable.clear();
-
-        State.getInstance().timetable.forEach((triplet, reference) -> {
-            if(State.getInstance().assignables.containsKey(reference)){
-                State.getInstance().timetable.put(triplet, reference);
-            }
-        });
-
         Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
 
         while(iterator.hasNext()){
@@ -54,7 +47,7 @@ public class SetAssignablesCommand implements Command{
             }
         }
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 
     @Override
@@ -67,6 +60,6 @@ public class SetAssignablesCommand implements Command{
         State.getInstance().assignables.putAll(oldAssignable);
         State.getInstance().timetable.putAll(oldTimeTable);
 
-        service.refresh();
+        demoController.getService().refresh();
     }
 }

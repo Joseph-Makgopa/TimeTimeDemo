@@ -11,10 +11,10 @@ import javafx.stage.Stage;
 
 public class BaseDataDialogController {
     protected CommandList commandList = new CommandList();
-    protected DemoService service;
+    protected DemoController demoController;
 
-    public void setService(DemoService service) {
-        this.service = service;
+    public void setController(DemoController demoController) {
+        this.demoController = demoController;
     }
 
     @FXML

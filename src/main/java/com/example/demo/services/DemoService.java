@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.utilities.Filter;
@@ -24,9 +25,11 @@ public abstract class DemoService {
     private Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability;
     protected TabPane pane;
     protected TableView<Assignable> tableAssign;
-    public DemoService(TabPane pane, TableView<Assignable> tableAssign){
+    protected DemoController demoController;
+    public DemoService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
         this.pane = pane;
         this.tableAssign = tableAssign;
+        this.demoController = demoController;
     }
     public void refresh(){
         Tab focusTab = pane.getSelectionModel().getSelectedItem();
@@ -47,6 +50,8 @@ public abstract class DemoService {
             }
         }
 
+        tableAssign.getItems().clear();
+        tableAssign.getItems().addAll(State.getInstance().assignables.values());
         tableAssign.refresh();
     }
     public abstract void clearTab();
