@@ -6,13 +6,13 @@ import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
-import com.example.demo.models.commands.PositionCommand;
-import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.print.*;
@@ -35,10 +35,11 @@ public class GradeViewService extends DemoService{
 
     public GradeViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
         super(pane, tableAssign, controller);
+        ClickableTableCell.lastSelectedCell = null;
     }
-    public ObservableList<Rank<WeekDay>> filter(Filter filter, Grade grade){
+    public ObservableList<Rank<WeekDay>> filter(Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {
-            if(filter.subject != null){
+            if(filterOptions.subject != null){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
@@ -47,12 +48,12 @@ public class GradeViewService extends DemoService{
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
                         Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
-                        if(session.getSubject().equals(filter.subject)){
+                        if(session.getSubject().equals(filterOptions.subject)){
                             found = true;
                         }else if(assignable.isShare()){
                             session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
-                            if(session.getSubject().equals(filter.subject)){
+                            if(session.getSubject().equals(filterOptions.subject)){
                                 found = true;
                             }
                         }
@@ -63,7 +64,7 @@ public class GradeViewService extends DemoService{
                     return false;
             }
 
-            if(filter.educator != null){
+            if(filterOptions.educator != null){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
@@ -72,7 +73,7 @@ public class GradeViewService extends DemoService{
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
                         Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
-                        if(filter.educator.equals(session.getEducator()))
+                        if(filterOptions.educator.equals(session.getEducator()))
                             found = true;
                     }
                 }
@@ -81,22 +82,21 @@ public class GradeViewService extends DemoService{
                     return false;
             }
 
+            if(filterOptions.day != null && !gradeSchedule.getHeader().equals(filterOptions.day)){
+                return false;
+            }
+
             return true;
         }).toList());
     }
-    public void updateFilter(Filter filter, TabPane pane){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
-
-        if(tab == null){
-            Notification.show("Filter error","You did not select the grade.", Alert.AlertType.ERROR);
-            return;
+    public void filter(){
+        for(Tab tab: pane.getTabs()){
+            String[] split = tab.getText().split(" ");
+            Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+            TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+            table.setItems(filter(grade));
+            table.refresh();
         }
-
-        String[] split = tab.getText().split(" ");
-        Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(1));
-        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
-        table.setItems(filter(filter, grade));
-        table.refresh();
     }
     public void clearTab(){
         Tab tab = pane.getSelectionModel().getSelectedItem();
@@ -198,10 +198,28 @@ public class GradeViewService extends DemoService{
 
                 return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
             });
-            column.setCellFactory(value -> new HighlightingTableCell<>());
+            column.setCellFactory(value -> new ClickableTableCell<>());
         }
 
         table.setItems(gradeTable.get(grade));
+    }
+
+    @Override
+    public void refresh() {
+        Integer index = pane.getSelectionModel().getSelectedIndex();
+
+        populateTable();
+        setupTable();
+
+        if(index > 0 && index < pane.getTabs().size()){
+            pane.getSelectionModel().select(index);
+
+            String[] split = pane.getTabs().get(index).getText().split(" ");
+            Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+            tableAssign.refresh();
+        }
     }
 
     @Override
@@ -230,25 +248,25 @@ public class GradeViewService extends DemoService{
         });
     }
 
-    public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
-        Grade grade = State.getInstance().sessions.get(selected.getId().getFirst()).getGrade();
-        ObservableList<Rank<WeekDay>> daySchedules = gradeTable.get(grade);
-
-        for(Rank<WeekDay> daySchedule: daySchedules){
-            if(daySchedule.getHeader().equals(day)){
-                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
-                Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
-
-                PositionCommand command = new PositionCommand(demoController, selected, triplet);
-                CommandManager.getInstance().addCommand(command);
-                command.execute();
-
-                break;
-            }
-        }
+    public void position(){
+//        Grade grade = State.getInstance().sessions.get(selected.getId().getFirst()).getGrade();
+//        ObservableList<Rank<WeekDay>> daySchedules = gradeTable.get(grade);
+//
+//        for(Rank<WeekDay> daySchedule: daySchedules){
+//            if(daySchedule.getHeader().equals(day)){
+//                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
+//                Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
+//
+//                PositionCommand command = new PositionCommand(demoController, selected, triplet);
+//                CommandManager.getInstance().addCommand(command);
+//                command.execute();
+//
+//                break;
+//            }
+//        }
     }
 
-    public void print(TabPane pane,Stage stage){
+    public void print(Stage stage){
         Tab tab = pane.getSelectionModel().getSelectedItem();
 
         if(tab == null){

@@ -303,7 +303,7 @@
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font></Label>
-                                    <ComboBox fx:id="comboEducator1" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
+                                    <ComboBox fx:id="comboDay" onAction="#updateFilter" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <Separator layoutX="10.0" layoutY="269.0" prefHeight="15.0" prefWidth="200.0" />
@@ -340,22 +340,9 @@
                                     </TableView>
                                  </children>
                               </AnchorPane>
-                              <HBox prefHeight="50.0" prefWidth="258.0" style="-fx-alignment: center;">
-                                 <children>
-                                    <Label prefHeight="35.0" prefWidth="155.0" text="Day" />
-                                    <ComboBox fx:id="comboDay" prefHeight="25.0" prefWidth="100.0" />
-                                 </children>
-                              </HBox>
-                              <HBox layoutX="10.0" layoutY="343.0" prefHeight="50.0" prefWidth="258.0" style="-fx-alignment: center;">
-                                 <children>
-                                    <Label prefHeight="35.0" prefWidth="155.0" text="Period" />
-                                    <Spinner fx:id="spinnerPeriod" prefHeight="25.0" prefWidth="100.0" />
-                                 </children>
-                              </HBox>
                               <AnchorPane prefHeight="66.0" prefWidth="258.0">
                                  <children>
                                     <Button layoutX="91.0" layoutY="30.0" mnemonicParsing="false" onAction="#arrange" prefHeight="30.0" prefWidth="75.0" text="Arrange" />
-                                    <Button layoutY="30.0" mnemonicParsing="false" onAction="#random" prefHeight="30.0" prefWidth="75.0" text="Random" />
                                     <Button layoutX="183.0" layoutY="30.0" mnemonicParsing="false" onAction="#position" prefHeight="30.0" prefWidth="75.0" text="Position" />
                                  </children>
                               </AnchorPane>

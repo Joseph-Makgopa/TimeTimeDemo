@@ -6,8 +6,6 @@ import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
-import com.example.demo.models.commands.PositionCommand;
-import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
@@ -17,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.print.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -35,6 +32,7 @@ public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
     public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
         super(pane, tableAssign, demoController);
+        ClickableTableCell.lastSelectedCell = null;
     }
     public void clearTab(){
         Tab tab = pane.getSelectionModel().getSelectedItem();
@@ -136,7 +134,6 @@ public class WeekDayViewService extends DemoService{
 
         pane.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
     }
-
     public void setupDayTable(WeekDay day, TableView<Rank<Grade>> table){
         /**
          * setup the columns for a table and add the referenced ObservableList
@@ -165,12 +162,11 @@ public class WeekDayViewService extends DemoService{
 
                 return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
             });
-            column.setCellFactory(value -> new HighlightingTableCell<>());
+            column.setCellFactory(value -> new ClickableTableCell<>());
         }
 
         table.setItems(weeklyTable.get(day));
     }
-
     public void populateTable(){
         /**
          * Add data to the ObservableList that is referenced by the tableview
@@ -195,17 +191,17 @@ public class WeekDayViewService extends DemoService{
             weeklyTable.put(day, gradeSchedules);
         });
     }
-    public ObservableList<Rank<Grade>> filter(Filter filter, WeekDay day){
+    public ObservableList<Rank<Grade>> filter(WeekDay day){
         return FXCollections.observableArrayList(weeklyTable.get(day).stream().filter(gradeSchedule -> {
-            if(filter.number != null && !gradeSchedule.getHeader().getNumber().equals(filter.number)){
+            if(filterOptions.number != null && !gradeSchedule.getHeader().getNumber().equals(filterOptions.number)){
                 return false;
             }
 
-            if(filter.division != null && !gradeSchedule.getHeader().getDivision().equals(filter.division)){
+            if(filterOptions.division != null && !gradeSchedule.getHeader().getDivision().equals(filterOptions.division)){
                 return false;
             }
 
-            if(filter.subject != null){
+            if(filterOptions.subject != null){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
@@ -214,12 +210,12 @@ public class WeekDayViewService extends DemoService{
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
                         Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
-                        if(session.getSubject().equals(filter.subject)){
+                        if(session.getSubject().equals(filterOptions.subject)){
                             found = true;
                         }else if(assignable.isShare()){
                             session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
-                            if(session.getSubject().equals(filter.subject)){
+                            if(session.getSubject().equals(filterOptions.subject)){
                                 found = true;
                             }
                         }
@@ -230,7 +226,7 @@ public class WeekDayViewService extends DemoService{
                     return false;
             }
 
-            if(filter.educator != null){
+            if(filterOptions.educator != null){
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
                 Boolean found = false;
 
@@ -239,7 +235,7 @@ public class WeekDayViewService extends DemoService{
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
                         Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
-                        if(filter.educator.equals(session.getEducator()))
+                        if(filterOptions.educator.equals(session.getEducator()))
                             found = true;
                     }
                 }
@@ -251,39 +247,31 @@ public class WeekDayViewService extends DemoService{
             return true;
         }).toList());
     }
-    public void updateFilter(Filter filter, TabPane pane){
-
-        Tab tab = pane.getSelectionModel().getSelectedItem();
-
-        if(tab == null){
-            Notification.show("Filter error","You did not select the day.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
-        TableView<Rank<Grade>> table = (TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
-        table.setItems(filter(filter, day));
-        table.refresh();
-    }
-
-    public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
-        ObservableList<Rank<Grade>> gradeSchedules = weeklyTable.get(day);
-
-        for(Rank<Grade> gradeSchedule: gradeSchedules){
-            if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getId().getFirst()).getGrade())){
-                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
-                Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
-
-                PositionCommand command = new PositionCommand(demoController, selected, triplet);
-                CommandManager.getInstance().addCommand(command);
-                command.execute();
-
-                break;
-            }
+    public void filter(){
+        for(Tab tab: pane.getTabs()){
+            TableView<Rank<Grade>> table = (TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+            WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
+            table.setItems(filter(day));
+            table.refresh();
         }
     }
-
-    public void print(TabPane pane, Stage stage){
+    public void position(){
+//        ObservableList<Rank<Grade>> gradeSchedules = weeklyTable.get(day);
+//
+//        for(Rank<Grade> gradeSchedule: gradeSchedules){
+//            if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getId().getFirst()).getGrade())){
+//                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
+//                Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
+//
+//                PositionCommand command = new PositionCommand(demoController, selected, triplet);
+//                CommandManager.getInstance().addCommand(command);
+//                command.execute();
+//
+//                break;
+//            }
+//        }
+    }
+    public void print(Stage stage){
         Tab tab = pane.getSelectionModel().getSelectedItem();
 
         if(tab == null){

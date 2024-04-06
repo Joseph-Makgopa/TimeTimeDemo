@@ -26,29 +26,24 @@ public abstract class DemoService {
     protected TabPane pane;
     protected TableView<Assignable> tableAssign;
     protected DemoController demoController;
+    protected Filter filterOptions;
     public DemoService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
         this.pane = pane;
         this.tableAssign = tableAssign;
         this.demoController = demoController;
+        this.filterOptions = new Filter();
+    }
+    public void setFilterOptions(Filter filterOptions){
+        this.filterOptions = filterOptions;
     }
     public void refresh(){
-        Tab focusTab = pane.getSelectionModel().getSelectedItem();
-        String focus = "";
-
-        if(focusTab != null){
-            focus = focusTab.getText();
-        }
+        Integer index = pane.getSelectionModel().getSelectedIndex();
 
         populateTable();
         setupTable();
 
-        for(Tab tab: pane.getTabs()){
-            ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh();
-
-            if(tab.getText().equals(focus)){
-                pane.getSelectionModel().select(tab);
-            }
-        }
+        if(index > 0 && index < pane.getTabs().size())
+            pane.getSelectionModel().select(index);
 
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
@@ -83,10 +78,10 @@ public abstract class DemoService {
     }
     public abstract void setupTable();
     public abstract void populateTable();
-    public abstract void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period);
-    public abstract void print(TabPane pane, Stage stage);
+    public abstract void position();
+    public abstract void print(Stage stage);
     public abstract void export(File file);
-    public abstract void updateFilter(Filter filter, TabPane pane);
+    public abstract void filter();
     protected void setTeacherLessonCount(){
         teacherLessonCount = new HashMap<>();
         Integer count;

@@ -4,7 +4,6 @@ import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.*;
-import com.example.demo.utilities.Filter;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
@@ -31,68 +30,106 @@ public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
     public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
         super(pane, tableAssign, controller);
+        ClickableTableCell.lastSelectedCell = null;
     }
-    public ObservableList<Rank<WeekDay>> filter(Filter filter, Educator educator){
+    @Override
+    public void refresh() {
+        Integer index = pane.getSelectionModel().getSelectedIndex();
+
+        populateTable();
+        setupTable();
+
+        if(index > 0 && index < pane.getTabs().size()) {
+            pane.getSelectionModel().select(index);
+
+            Integer post = Integer.parseInt(pane.getTabs().get(index).getText().split(",")[0]);
+            Educator educator = State.getInstance().educators.get(post);
+
+            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+            tableAssign.refresh();
+        }
+    }
+    public ObservableList<Rank<WeekDay>> filter(Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
-            if(filter.subject != null){
+            if(filterOptions.subject != null){
                 ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
-                Boolean foundSubject = false;
-                Boolean foundNumber = false;
-                Boolean foundDivision = false;
+                Boolean found = false;
 
-                if(filter.number == null){
-                    foundNumber = true;
-                }
-
-                if(filter.division == null){
-                    foundDivision = true;
-                }
-
-                for(int count = 0; count < periods.size() && !foundSubject && !foundNumber && !foundDivision; count++){
+                for(int count = 0; count < periods.size() && !found; count++){
                     if(periods.get(count) != null){
                         Assignable assignable = State.getInstance().assignables.get(periods.get(count));
                         Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
 
-                        if(session.getSubject().equals(filter.subject)){
-                            foundSubject = true;
+                        if(session.getSubject().equals(filterOptions.subject)){
+                            found = true;
                         }else if(assignable.isShare()){
                             session = State.getInstance().sessions.get(assignable.getId().getSecond());
 
-                            if(session.getSubject().equals(filter.subject)){
-                                foundSubject = true;
+                            if(session.getSubject().equals(filterOptions.subject)){
+                                found = true;
                             }
-                        }
-
-                        if(session.getGrade().getNumber().equals(filter.number)){
-                            foundNumber = true;
-                        }
-
-                        if(session.getGrade().getDivision().equals(filter.division)){
-                            foundDivision = true;
                         }
                     }
                 }
 
-                if(!foundSubject || !foundNumber || !foundDivision)
+                if(!found)
                     return false;
             }
+
+            if(filterOptions.number != null){
+                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
+                Boolean found = false;
+
+                for(int count = 0; count < periods.size() && !found; count++){
+                    if(periods.get(count) != null){
+                        Assignable assignable = State.getInstance().assignables.get(periods.get(count));
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
+
+                        if(session.getGrade().getNumber().equals(filterOptions.number)){
+                            found = true;
+                        }
+                    }
+                }
+
+                if(!found)
+                    return false;
+            }
+
+            if(filterOptions.division != null){
+                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
+                Boolean found = false;
+
+                for(int count = 0; count < periods.size() && !found; count++){
+                    if(periods.get(count) != null){
+                        Assignable assignable = State.getInstance().assignables.get(periods.get(count));
+                        Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
+
+                        if(session.getGrade().getDivision().equals(filterOptions.division)){
+                            found = true;
+                        }
+                    }
+                }
+
+                if(!found)
+                    return false;
+            }
+
+            if(filterOptions.day != null && !daySchedule.getHeader().equals(filterOptions.day)){
+                return false;
+            }
+
 
             return true;
         }).toList());
     }
-    public void updateFilter(Filter filter, TabPane pane){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+    public void filter(){
+        for(Tab tab: pane.getTabs()){
+            Integer post = Integer.parseInt(tab.getText().split(",")[0]);
 
-        if(tab == null){
-            Notification.show("Filter error","You did not select the grade.", Alert.AlertType.ERROR);
-            return;
+            TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
+            table.setItems(filter(State.getInstance().educators.get(post)));
+            table.refresh();
         }
-
-        Integer index = pane.getSelectionModel().getSelectedIndex();
-
-        TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
-        table.setItems(filter(filter, State.getInstance().educators.get(index)));
-        table.refresh();
     }
     public void clearTab(){
         Tab tab = pane.getSelectionModel().getSelectedItem();
@@ -183,7 +220,6 @@ public class EducatorViewService extends DemoService{
             pane.getTabs().add(tab);
         });
     }
-
     public void setupEducatorTable(Educator educator, TableView<Rank<WeekDay>> table){
         TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
@@ -229,12 +265,11 @@ public class EducatorViewService extends DemoService{
 
                 return new SimpleObjectProperty(session.getGrade().getNumber() + session.getGrade().getDivision().toString() + " " + session.getSubject());
             });
-            column.setCellFactory(value -> new HighlightingTableCell<>());
+            column.setCellFactory(value -> new ClickableTableCell<>(true));
         }
 
         table.setItems(educatorTable.get(educator));
     }
-
     @Override
     public void populateTable() {
         educatorTable.clear();
@@ -278,7 +313,28 @@ public class EducatorViewService extends DemoService{
             educatorTable.put(educator, daySchedules);
         });
     }
-    public void position(TabPane paneTimeTable, Assignable selected, WeekDay day, Integer period){
+    public void position(){
+        Assignable selected = tableAssign.getSelectionModel().getSelectedItem();
+
+        if(selected == null){
+            Notification.show("Position Error","Lesson has not been selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Position Error", "Time table slot has not been selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Integer period  = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Rank<WeekDay> row = (Rank<WeekDay>) ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedItem();
+        WeekDay day = row.getHeader();
+
+        if(period >= State.getInstance().days.get(day)){
+            Notification.show("Position Error", "Week day '"+day+"' only has " + State.getInstance().days.get(day) + " periods.", Alert.AlertType.ERROR);
+            return;
+        }
+
         Session session = State.getInstance().sessions.get(selected.getId().getFirst());
         Session sessionOther = State.getInstance().sessions.get(selected.getId().getSecond());
         CommandList commandList = new CommandList();
@@ -318,7 +374,7 @@ public class EducatorViewService extends DemoService{
             CommandManager.getInstance().addCommand(commandList);
             commandList.execute();
 
-            for(Tab tab: paneTimeTable.getTabs()){
+            for(Tab tab: pane.getTabs()){
                 if(tab.getText().equals(session.getEducator().toString())){
                     ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh();
                     break;
@@ -326,8 +382,7 @@ public class EducatorViewService extends DemoService{
             }
         }
     }
-
-    public void print(TabPane pane,Stage stage){
+    public void print(Stage stage){
         Tab tab = pane.getSelectionModel().getSelectedItem();
 
         if(tab == null){
@@ -364,7 +419,6 @@ public class EducatorViewService extends DemoService{
 
         }
     }
-
     @Override
     public void export(File file) {
         Workbook workbook = new XSSFWorkbook();

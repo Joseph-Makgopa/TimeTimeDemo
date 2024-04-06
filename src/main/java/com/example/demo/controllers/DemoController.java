@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -41,7 +42,7 @@ public class DemoController implements Initializable {
     @FXML
     private CheckBox checkMonday, checkTuesday, checkWednesday, checkThursday, checkFriday, checkSaturday, checkSunday;
     @FXML
-    private Spinner<Integer> spinnerMondayPeriods, spinnerTuesdayPeriods, spinnerWednesdayPeriods, spinnerThursdayPeriods, spinnerFridayPeriods, spinnerSaturdayPeriods, spinnerSundayPeriods, spinnerBreak, spinnerPeriod;
+    private Spinner<Integer> spinnerMondayPeriods, spinnerTuesdayPeriods, spinnerWednesdayPeriods, spinnerThursdayPeriods, spinnerFridayPeriods, spinnerSaturdayPeriods, spinnerSundayPeriods, spinnerBreak;
     @FXML
     private ComboBox<Integer> comboNumber;
     @FXML
@@ -67,8 +68,30 @@ public class DemoController implements Initializable {
     private Accordion rightPanel;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        paneTimeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            ClickableTableCell.lastSelectedCell = null;
+
+            if(service instanceof GradeViewService){
+                if(newTab != null && oldTab != newTab){
+                    String[] split = newTab.getText().split(" ");
+                    Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+                    tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+                }
+            }else if(service instanceof EducatorViewService){
+                if(newTab != null && oldTab != newTab){
+                    Integer post = Integer.parseInt(newTab.getText().split(",")[0]);
+                    Educator educator = State.getInstance().educators.get(post);
+
+                    tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+                }
+            }
+        });
+
         filter = new Filter();
         service = new WeekDayViewService(paneTimeTable, tableAssign, this);
+
+        updateFilterOptions();
 
         columnGrade.setCellValueFactory(entry ->{
             String result = State.getInstance().sessions.get(entry.getValue().getId().getFirst()).getGrade().toString();
@@ -88,7 +111,6 @@ public class DemoController implements Initializable {
         SpinnerValueFactory<Integer> spinnerSaturdayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
         SpinnerValueFactory<Integer> spinnerSundayPeriodsFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
         SpinnerValueFactory<Integer> spinnerBreakFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
-        SpinnerValueFactory<Integer> spinnerPeriodFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,10);
 
         spinnerMondayPeriodsFactory.setValue(1);
         spinnerMondayPeriods.setValueFactory(spinnerMondayPeriodsFactory);
@@ -113,10 +135,6 @@ public class DemoController implements Initializable {
 
         spinnerBreakFactory.setValue(1);
         spinnerBreak.setValueFactory(spinnerBreakFactory);
-
-        spinnerPeriodFactory.setValue(1);
-        spinnerPeriod.setValueFactory(spinnerPeriodFactory);
-
 
         service.refresh();
 
@@ -213,7 +231,6 @@ public class DemoController implements Initializable {
                     applyStructure(event);
                     updateTableAssign();
                     updateFilterOptions();
-                    comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
                     State.getInstance().saveRequired = false;
 
                     recent.remove(path);
@@ -229,6 +246,9 @@ public class DemoController implements Initializable {
         comboNumber.getItems().clear();
         comboDivision.getItems().clear();
 
+        comboNumber.getItems().add(null);
+        comboDivision.getItems().add(null);
+
         State.getInstance().grades.forEach(grade ->{
             if(!comboNumber.getItems().contains(grade.getNumber()))
                 comboNumber.getItems().add(grade.getNumber());
@@ -239,6 +259,7 @@ public class DemoController implements Initializable {
     }
     public void updateSubjectFilterOptions(){
         comboSubject.getItems().clear();
+        comboSubject.getItems().add(null);
 
         State.getInstance().subjects.forEach(subject ->{
             if(!comboSubject.getItems().contains(subject))
@@ -247,6 +268,7 @@ public class DemoController implements Initializable {
     }
     public void updateEducatorFilterOptions(){
         comboEducator.getItems().clear();
+        comboEducator.getItems().add(null);
 
         State.getInstance().educators.forEach((post, educator) ->{
             if(!comboEducator.getItems().contains(educator))
@@ -258,9 +280,26 @@ public class DemoController implements Initializable {
         updateEducatorFilterOptions();
         updateGradeFilterOptions();
         updateDayFilterOptions();
+
+        if(service instanceof WeekDayViewService){
+            comboDay.getItems().clear();
+            comboDay.getItems().add(null);
+        }else if(service instanceof GradeViewService){
+            comboNumber.getItems().clear();
+            comboDivision.getItems().clear();
+
+            comboNumber.getItems().add(null);
+            comboDivision.getItems().add(null);
+        }else if(service instanceof EducatorViewService){
+            comboEducator.getItems().clear();
+            comboEducator.getItems().add(null);
+        }
     }
     public void updateDayFilterOptions(){
+        comboDay.getItems().clear();
+        comboDay.getItems().add(null);
 
+        comboDay.getItems().addAll(State.getInstance().days.keySet());
     }
     @FXML
     public void clearFilter(ActionEvent event){
@@ -268,13 +307,17 @@ public class DemoController implements Initializable {
         comboSubject.setValue(null);
         comboNumber.setValue(null);
         comboDivision.setValue(null);
+        comboDay.setValue(null);
+
         filter.clear();
-        service.populateTable();
+        service.setFilterOptions(filter);
+        service.filter();
     }
     @FXML
     public void updateFilter(ActionEvent event){
-        filter.set(comboNumber.getValue(), comboDivision.getValue(), comboSubject.getValue(), comboEducator.getValue());
-        service.updateFilter(filter, paneTimeTable);
+        filter.set(comboNumber.getValue(), comboDivision.getValue(), comboSubject.getValue(), comboEducator.getValue(), comboDay.getValue());
+        service.setFilterOptions(filter);
+        service.filter();
     }
     @FXML
     public void search(KeyEvent event){
@@ -378,39 +421,12 @@ public class DemoController implements Initializable {
         }
     }
     @FXML
-    void random(ActionEvent event){
-
-    }
-    @FXML
     void arrange(ActionEvent event){
 
     }
     @FXML
     void position(ActionEvent event){
-        WeekDay day = comboDay.getValue();
-        Assignable selected = tableAssign.getSelectionModel().getSelectedItem();
-
-        if(day == null){
-            Notification.show("Assignment error","You did not select the day.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        if(selected == null){
-            Notification.show("Assignment error","You did not select a lesson.", Alert.AlertType.ERROR);
-            return;
-        }else if (selected.getRemain() == 0){
-            Notification.show("Assignment error","This lesson has been assigned.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        Integer period = spinnerPeriod.getValue() - 1;
-
-        if(period < 0 || period >= State.getInstance().days.get(day)){
-            Notification.show("Assignment error","Enter the correct value for period. Must be between 0 and " + (State.getInstance().days.get(day) + 1), Alert.AlertType.ERROR);
-            return;
-        }
-
-        service.position(paneTimeTable, selected, day, period);
+        service.position();
         tableAssign.refresh();
     }
     public Stage getStage() {
@@ -492,10 +508,14 @@ public class DemoController implements Initializable {
 
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
+
         clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
+
         service = new WeekDayViewService(paneTimeTable, tableAssign, this);
         service.refresh();
+
+        updateFilterOptions();
     }
     @FXML
     public void viewGrades(ActionEvent event){
@@ -509,10 +529,14 @@ public class DemoController implements Initializable {
 
         menuGrades.setSelected(true);
         menuGrades.setDisable(true);
+
         clearTab.setText("Clear Grade");
         clearRow.setText("Clear Day");
+
         service = new GradeViewService(paneTimeTable, tableAssign, this);
         service.refresh();
+
+        updateFilterOptions();
     }
     @FXML
     public void viewEducators(ActionEvent event){
@@ -526,10 +550,14 @@ public class DemoController implements Initializable {
 
         menuEducators.setSelected(true);
         menuEducators.setDisable(true);
+
         clearTab.setText("Clear Educator");
         clearRow.setText("Clear Day");
+
         service = new EducatorViewService(paneTimeTable, tableAssign, this);
         service.refresh();
+
+        updateFilterOptions();
     }
     @FXML
     public void newFile(ActionEvent event){
@@ -548,7 +576,6 @@ public class DemoController implements Initializable {
         applyStructure(event);
         updateTableAssign();
         updateFilterOptions();
-        comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
         State.getInstance().saveRequired = false;
     }
     public void populateStructure(){
@@ -613,7 +640,6 @@ public class DemoController implements Initializable {
             applyStructure(event);
             updateTableAssign();
             updateFilterOptions();
-            comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
             State.getInstance().saveRequired = false;
 
             LinkedList<String> recent = State.getRecent();
@@ -661,7 +687,7 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void print(ActionEvent event){
-        service.print(paneTimeTable, stage);
+        service.print(stage);
     }
     @FXML
     public void export(ActionEvent event){
