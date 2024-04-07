@@ -49,6 +49,7 @@ public abstract class DemoService {
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
         tableAssign.refresh();
+        ClickableTableCell.lastSelectedCell = null;
     }
     public abstract void clearTab();
     public abstract void clearRow();

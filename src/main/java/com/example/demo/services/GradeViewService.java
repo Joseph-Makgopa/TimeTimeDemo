@@ -6,9 +6,11 @@ import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
+import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.TripletManager;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -210,7 +212,7 @@ public class GradeViewService extends DemoService{
         populateTable();
         setupTable();
 
-        if(index > 0 && index < pane.getTabs().size()){
+        if(index >= 0 && index < pane.getTabs().size()){
             pane.getSelectionModel().select(index);
 
             String[] split = pane.getTabs().get(index).getText().split(" ");
@@ -219,6 +221,7 @@ public class GradeViewService extends DemoService{
             tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
             tableAssign.refresh();
         }
+        ClickableTableCell.lastSelectedCell = null;
     }
 
     @Override
@@ -248,21 +251,64 @@ public class GradeViewService extends DemoService{
     }
 
     public void position(){
-//        Grade grade = State.getInstance().sessions.get(selected.getId().getFirst()).getGrade();
-//        ObservableList<Rank<WeekDay>> daySchedules = gradeTable.get(grade);
-//
-//        for(Rank<WeekDay> daySchedule: daySchedules){
-//            if(daySchedule.getHeader().equals(day)){
-//                ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
-//                Triplet<WeekDay, Grade, Integer> triplet = new Triplet(daySchedule.getHeader(), grade, period);
-//
-//                PositionCommand command = new PositionCommand(demoController, selected, triplet);
-//                CommandManager.getInstance().addCommand(command);
-//                command.execute();
-//
-//                break;
-//            }
-//        }
+        Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+        if(assignable == null){
+            Notification.show("Position error.", "Lesson not selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Position error.", "Table cell not selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if(pane.getSelectionModel().getSelectedItem() == null){
+            return;
+        }
+
+        if(assignable.getRemain() == 0){
+            return;
+        }
+
+
+        Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Integer itemIndex = ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedIndex();
+        Rank<WeekDay> item = (Rank<WeekDay>)ClickableTableCell.lastSelectedCell.getTableView().getItems().get(itemIndex);
+        WeekDay day = item.getHeader();
+        String[] split = pane.getSelectionModel().getSelectedItem().getText().split(" ");
+        Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+        Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, grade, period);
+
+        if(State.getInstance().timetable.get(triplet) != null){
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Replace the contents of the cell ?", ButtonType.YES, ButtonType.NO);
+
+            ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
+
+            if(ButtonType.NO.equals(result))
+                return;
+        }
+
+        Assignable pair = assignable.getPair();
+
+        if(pair != null){
+            Triplet<WeekDay, Grade, Integer> pairTriplet = TripletManager.get(triplet.getFirst(), pair.getGrade(), triplet.getThird());
+
+            if(State.getInstance().timetable.get(pairTriplet) != null){
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "This lesson has a pair which occupies a cell with contents. Replace the contents of the cell ?", ButtonType.YES, ButtonType.NO);
+
+                ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
+
+                if(ButtonType.NO.equals(result))
+                    return;
+            }
+
+        }
+
+        Command command = new PositionCommand(demoController, assignable, triplet);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
     }
 
     public void print(Stage stage){

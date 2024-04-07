@@ -38,7 +38,7 @@ public class EducatorViewService extends DemoService{
         populateTable();
         setupTable();
 
-        if(index > 0 && index < pane.getTabs().size()) {
+        if(index >= 0 && index < pane.getTabs().size()) {
             pane.getSelectionModel().select(index);
 
             Integer post = Integer.parseInt(pane.getTabs().get(index).getText().split(",")[0]);
@@ -47,6 +47,7 @@ public class EducatorViewService extends DemoService{
             tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
             tableAssign.refresh();
         }
+        ClickableTableCell.lastSelectedCell = null;
     }
     public ObservableList<Rank<WeekDay>> filter(Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
