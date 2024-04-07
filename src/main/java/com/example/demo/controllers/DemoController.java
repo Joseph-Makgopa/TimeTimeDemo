@@ -427,7 +427,6 @@ public class DemoController implements Initializable {
     @FXML
     void position(ActionEvent event){
         service.position();
-        tableAssign.refresh();
     }
     public Stage getStage() {
         return stage;

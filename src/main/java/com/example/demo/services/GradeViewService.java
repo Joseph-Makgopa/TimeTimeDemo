@@ -35,7 +35,6 @@ public class GradeViewService extends DemoService{
 
     public GradeViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
         super(pane, tableAssign, controller);
-        ClickableTableCell.lastSelectedCell = null;
     }
     public ObservableList<Rank<WeekDay>> filter(Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {

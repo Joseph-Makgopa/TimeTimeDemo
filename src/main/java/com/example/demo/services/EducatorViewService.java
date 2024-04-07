@@ -30,7 +30,6 @@ public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
     public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
         super(pane, tableAssign, controller);
-        ClickableTableCell.lastSelectedCell = null;
     }
     @Override
     public void refresh() {

@@ -32,6 +32,7 @@ public abstract class DemoService {
         this.tableAssign = tableAssign;
         this.demoController = demoController;
         this.filterOptions = new Filter();
+        ClickableTableCell.lastSelectedCell = null;
     }
     public void setFilterOptions(Filter filterOptions){
         this.filterOptions = filterOptions;

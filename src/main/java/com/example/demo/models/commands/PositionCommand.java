@@ -9,6 +9,9 @@ import com.example.demo.models.Assignable;
 import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.TripletManager;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 public class PositionCommand implements Command{
     private Assignable oldAssignable;
@@ -17,6 +20,7 @@ public class PositionCommand implements Command{
     private Assignable freshPairAssignable;
     private Triplet<WeekDay, Grade, Integer> triplet;
     private DemoController demoController;
+    private Boolean initialExecution;
     public PositionCommand(DemoController demoController, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
         this.oldAssignable = null;
         this.oldPairAssignable = null;
@@ -24,33 +28,24 @@ public class PositionCommand implements Command{
         this.freshPairAssignable = assignable.getPair();
         this.triplet = triplet;
         this.demoController = demoController;
+        this.initialExecution = true;
     }
 
     @Override
     public void execute() {
         if(State.getInstance().timetable.get(triplet) != null){
             oldAssignable = State.getInstance().assignables.get(State.getInstance().timetable.get(triplet));
-
-            if(oldAssignable.getId().equals(freshAssignable.getId()))
-                return;
-
             oldAssignable.setRemain(oldAssignable.getRemain() + 1);
         }
 
         State.getInstance().timetable.put(triplet, freshAssignable.getId());
         freshAssignable.setRemain(freshAssignable.getRemain() - 1);
 
-        if(freshAssignable.isPair()){
-            Triplet<WeekDay, Grade, Integer> pairTriplet = triplet.clone();
-            Pair<Session, Session> session = freshPairAssignable.getSessions();
-            pairTriplet.setSecond(session.getFirst().getGrade());
+        if(freshPairAssignable != null){
+            Triplet<WeekDay, Grade, Integer> pairTriplet = TripletManager.get(triplet.getFirst(), freshPairAssignable.getGrade(), triplet.getThird());
 
             if(State.getInstance().timetable.get(pairTriplet) != null){
                 oldPairAssignable = State.getInstance().assignables.get(State.getInstance().timetable.get(pairTriplet));
-
-                if(oldPairAssignable.getId().equals(freshPairAssignable))
-                    return;
-
                 oldPairAssignable.setRemain(oldPairAssignable.getRemain() + 1);
             }
 

@@ -6,9 +6,11 @@ import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
+import com.example.demo.models.commands.PositionCommand;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.TripletManager;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -32,7 +34,6 @@ public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
     public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
         super(pane, tableAssign, demoController);
-        ClickableTableCell.lastSelectedCell = null;
     }
     public void clearTab(){
         Tab tab = pane.getSelectionModel().getSelectedItem();
@@ -256,20 +257,66 @@ public class WeekDayViewService extends DemoService{
         }
     }
     public void position(){
-//        ObservableList<Rank<Grade>> gradeSchedules = weeklyTable.get(day);
-//
-//        for(Rank<Grade> gradeSchedule: gradeSchedules){
-//            if(gradeSchedule.getHeader().equals(State.getInstance().sessions.get(selected.getId().getFirst()).getGrade())){
-//                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
-//                Triplet<WeekDay, Grade, Integer> triplet = new Triplet<>(day, gradeSchedule.getHeader(), period);
-//
-//                PositionCommand command = new PositionCommand(demoController, selected, triplet);
-//                CommandManager.getInstance().addCommand(command);
-//                command.execute();
-//
-//                break;
-//            }
-//        }
+        Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+        if(assignable == null){
+            Notification.show("Position error.", "Lesson not selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Position error.", "Table cell not selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if(pane.getSelectionModel().getSelectedItem() == null){
+            return;
+        }
+
+        if(assignable.getRemain() == 0){
+            return;
+        }
+
+        WeekDay day = WeekDay.valueOf(pane.getSelectionModel().getSelectedItem().getText().toUpperCase());
+        Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Integer itemIndex = ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedIndex();
+        Rank<Grade> item = (Rank<Grade>)ClickableTableCell.lastSelectedCell.getTableView().getItems().get(itemIndex);
+
+        if(!assignable.getGrade().equals(item.getHeader())){
+            Notification.show("Position error.", "Cell grade must be equal to lesson grade.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, item.getHeader(), period);
+
+        if(State.getInstance().timetable.get(triplet) != null){
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Replace the contents of the cell ?", ButtonType.YES, ButtonType.NO);
+
+            ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
+
+            if(ButtonType.NO.equals(result))
+                return;
+        }
+
+        Assignable pair = assignable.getPair();
+
+        if(pair != null){
+            Triplet<WeekDay, Grade, Integer> pairTriplet = TripletManager.get(triplet.getFirst(), pair.getGrade(), triplet.getThird());
+
+            if(State.getInstance().timetable.get(pairTriplet) != null){
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "This lesson has a pair which occupies a cell with contents. Replace the contents of the cell ?", ButtonType.YES, ButtonType.NO);
+
+                ButtonType result = confirm.showAndWait().orElse(ButtonType.NO);
+
+                if(ButtonType.NO.equals(result))
+                    return;
+            }
+
+        }
+
+        Command command = new PositionCommand(demoController, assignable, triplet);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
     }
     public void print(Stage stage){
         Tab tab = pane.getSelectionModel().getSelectedItem();
