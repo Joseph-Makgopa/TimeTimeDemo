@@ -1,16 +1,11 @@
 package com.example.demo.controllers;
 
+import com.example.demo.comparators.AssignableComparator;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
-import com.example.demo.models.commands.ClearTimeTableCommand;
-import com.example.demo.models.commands.Command;
-import com.example.demo.models.commands.CommandManager;
-import com.example.demo.models.commands.UpdateStructureCommand;
+import com.example.demo.models.commands.*;
 import com.example.demo.services.*;
-import com.example.demo.utilities.Filter;
-import com.example.demo.utilities.Notification;
-import com.example.demo.utilities.Pair;
-import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.*;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -66,10 +61,12 @@ public class DemoController implements Initializable {
     private DemoService service;
     private ToolBarService toolbarService = new ToolBarService();
     private Accordion rightPanel;
+    private ContextMenu contextMenu = new ContextMenu();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         paneTimeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             ClickableTableCell.lastSelectedCell = null;
+            setupTableAssignContextMenu();
 
             if(service instanceof GradeViewService){
                 if(newTab != null && oldTab != newTab){
@@ -77,6 +74,7 @@ public class DemoController implements Initializable {
                     Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
 
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+                    tableAssign.getItems().sort(new AssignableComparator());
                 }
             }else if(service instanceof EducatorViewService){
                 if(newTab != null && oldTab != newTab){
@@ -84,6 +82,7 @@ public class DemoController implements Initializable {
                     Educator educator = State.getInstance().educators.get(post);
 
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+                    tableAssign.getItems().sort(new AssignableComparator());
                 }
             }
         });
@@ -141,65 +140,7 @@ public class DemoController implements Initializable {
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
 
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem clearMenuItem = new MenuItem("Clear");
-        MenuItem arrangeOneMenuItem = new MenuItem("Arrange one");
-        MenuItem arrangeAllMenuItem = new MenuItem("Arrange All");
-
-        clearMenuItem.setOnAction(event -> {
-            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
-
-            if(assignable != null) {
-                for(Triplet<WeekDay, Grade, Integer> triplet: State.getInstance().timetable.keySet()){
-                    Pair<Integer, Integer> reference  = State.getInstance().timetable.get(triplet);
-
-                    if(assignable.getId().equals(reference)){
-                        assignable.setRemain(assignable.getRemain() + 1);
-                        State.getInstance().timetable.remove(triplet);
-
-                        Assignable pair = assignable.getPair();
-
-                        if(pair != null){
-                            Pair<Session, Session> session = pair.getSessions();
-                            triplet = new Triplet<>(triplet.getFirst(), session.getFirst().getGrade(), triplet.getThird());
-
-                            pair.setRemain(pair.getRemain() + 1);
-                            State.getInstance().timetable.remove(triplet);
-                        }
-                    }
-                }
-            }
-
-            tableAssign.refresh();
-            service.refresh();
-        });
-
-        arrangeOneMenuItem.setOnAction(event -> {
-
-        });
-
-        arrangeAllMenuItem.setOnAction(event -> {
-
-        });
-
-        contextMenu.getItems().addAll(clearMenuItem, arrangeOneMenuItem, arrangeAllMenuItem);
-
-        tableAssign.setRowFactory(tableView -> {
-            final TableRow<Assignable> row = new TableRow<>();
-
-//            row.setOnMouseClicked(event -> {
-//                if (event.getClickCount() == 2 && !row.isEmpty()) {
-//                    // Perform action on double click (if needed)
-//                    System.out.println("Double click on: " + row.getItem());
-//                }
-//            });
-
-            row.setOnContextMenuRequested(event -> {
-                contextMenu.show(row, event.getScreenX(), event.getScreenY());
-            });
-
-            return row;
-        });
+        setupTableAssignContextMenu();
 
         fileMenu.getItems().add(2, openRecentMenu);
         setupRecentMenu();
@@ -241,6 +182,80 @@ public class DemoController implements Initializable {
 
             openRecentMenu.getItems().add(item);
         }
+    }
+    public ContextMenu getContextMenu(){
+        return contextMenu;
+    }
+    public void setupTableAssignContextMenu(){
+        MenuItem clearMenuItem = new MenuItem("Reset");
+        clearMenuItem.setId("Reset");
+
+        MenuItem arrangeOneMenuItem = new MenuItem("Arrange Current");
+        arrangeOneMenuItem.setId("ArrangeCurrent");
+
+        MenuItem arrangeAllMenuItem = new MenuItem("Arrange Remaining");
+        arrangeAllMenuItem.setId("ArrangeRemaining");
+
+        clearMenuItem.setOnAction(event -> {
+            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+            if(assignable != null) {
+                Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
+                LinkedList<Triplet<WeekDay, Grade, Integer>> pairs = new LinkedList<>();
+
+                while(iterator.hasNext()){
+                    Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry = iterator.next();
+
+                    if(assignable.getId().equals(entry.getValue())){
+                        assignable.setRemain(assignable.getRemain() + 1);
+                        iterator.remove();
+
+                        Assignable pair = assignable.getPair();
+
+                        if(pair != null){
+                            pairs.add(TripletManager.get(entry.getKey().getFirst(), pair.getGrade(), entry.getKey().getThird()));
+                            pair.setRemain(pair.getRemain() + 1);
+                        }
+                    }
+                }
+
+                for(Triplet<WeekDay, Grade, Integer> pair: pairs)
+                    State.getInstance().timetable.remove(pair);
+            }
+
+            tableAssign.refresh();
+            service.refresh();
+        });
+
+        arrangeOneMenuItem.setOnAction(event -> {
+            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+            if(assignable != null) {
+                LinkedList<Assignable> selection = new LinkedList<>();
+                selection.add(assignable);
+
+                service.arrange(selection);
+            }
+        });
+
+        arrangeAllMenuItem.setOnAction(event -> {
+            service.arrange();
+        });
+
+        contextMenu.getItems().clear();
+        contextMenu.getItems().addAll(clearMenuItem, arrangeOneMenuItem, arrangeAllMenuItem);
+
+        tableAssign.setContextMenu(contextMenu);
+
+//        tableAssign.setRowFactory(tableView -> {
+//            final TableRow<Assignable> row = new TableRow<>();
+//
+//            row.setOnContextMenuRequested(event -> {
+//                contextMenu.show(row, event.getScreenX(), event.getScreenY());
+//            });
+//
+//            return row;
+//        });
     }
     public void updateGradeFilterOptions(){
         comboNumber.getItems().clear();
@@ -327,6 +342,7 @@ public class DemoController implements Initializable {
     public void updateTableAssign(){
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
+        tableAssign.getItems().sort(new AssignableComparator());
         tableAssign.refresh();
     }
     @FXML
@@ -422,7 +438,9 @@ public class DemoController implements Initializable {
     }
     @FXML
     void arrange(ActionEvent event){
-
+        Command command = new ArrangeCommand(this);
+        command.execute();
+        CommandManager.getInstance().addCommand(command);
     }
     @FXML
     void position(ActionEvent event){

@@ -38,8 +38,7 @@ public class ClickableTableCell<S, T> extends javafx.scene.control.cell.TextFiel
         });
     }
 
-    public ClickableTableCell(Boolean educatorCell) {
-        this.educatorCell = educatorCell;
+    public ClickableTableCell(DemoService service) {
         setOnMouseClicked(event -> {
                 if (!isEmpty()) {
                     if (getTableView() != null && getTableRow() != null && getTableView().getSelectionModel() != null) {
@@ -51,12 +50,15 @@ public class ClickableTableCell<S, T> extends javafx.scene.control.cell.TextFiel
 
                         if (lastSelectedCell == this) {
                             lastSelectedCell = null;
+                            service.highlightOptions(this, null);
                             event.consume();
                             return;
                         }
 
+                        service.highlightOptions(lastSelectedCell, this);
                         lastSelectedCell = this;
                         setStyle("-fx-background-color: white;-fx-text-fill: black;");
+
                         event.consume();
                     }
                 }

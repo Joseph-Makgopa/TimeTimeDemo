@@ -1,5 +1,8 @@
 package com.example.demo.services;
 
+import com.example.demo.comparators.AssignableComparator;
+import com.example.demo.comparators.EducatorBasedComparator;
+import com.example.demo.comparators.LessonComparator;
 import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
@@ -19,10 +22,6 @@ import java.io.File;
 import java.util.*;
 
 public abstract class DemoService {
-    private Map<Educator, Integer> teacherLessonCount;
-    private Map<Assignable, Integer> lessonAssignments;
-    private LessonSlotOptions lessonSlotOptions;
-    private Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability;
     protected TabPane pane;
     protected TableView<Assignable> tableAssign;
     protected DemoController demoController;
@@ -48,6 +47,7 @@ public abstract class DemoService {
 
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
+        tableAssign.getItems().sort(new AssignableComparator());
         tableAssign.refresh();
         ClickableTableCell.lastSelectedCell = null;
     }
@@ -78,231 +78,245 @@ public abstract class DemoService {
 
         return result;
     }
+    public void highlightOptions(ClickableTableCell<?,?> oldCell, ClickableTableCell<?,?> newCell){
+
+    }
     public abstract void setupTable();
     public abstract void populateTable();
     public abstract void position();
     public abstract void print(Stage stage);
     public abstract void export(File file);
     public abstract void filter();
-    protected void setTeacherLessonCount(){
-        teacherLessonCount = new HashMap<>();
-        Integer count;
+    protected void prepare(LinkedList<Assignable> options, Queue<Assignable> lessons, Map<Educator, Integer> educatorLessonCount, Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions){
+        lessons.clear();
+        educatorLessonCount.clear();
+        slotOptions.clear();
+
+        for(Assignable assignable: options) {
+            if(assignable.getRemain() > 0)
+                lessons.add(assignable);
+        }
 
         for(Educator educator: State.getInstance().educators.values()){
-            teacherLessonCount.put(educator, 0);
+            educatorLessonCount.put(educator, 0);
         }
 
-        for(Session session: State.getInstance().sessions.values()){
-            count = teacherLessonCount.get(session.getEducator());
+        for(Assignable assignable: lessons){
+            Pair<Educator, Educator> educators = assignable.getEducators();
+            Integer count = educatorLessonCount.get(educators.getFirst());
 
-            teacherLessonCount.put(session.getEducator(), count + session.getAmount());
-        }
-    }
-    protected void setLessonSlotOptions(){
-        lessonSlotOptions = new LessonSlotOptions();
-        Map<Grade, ArrayList<Triplet<WeekDay, Grade, Integer>>> options = new HashMap<>();
-        ArrayList<Triplet<WeekDay, Grade, Integer>> list;
+            educatorLessonCount.put(educators.getFirst(), count + assignable.getRemain());
 
-        for(Grade grade: State.getInstance().grades){
-            list = new ArrayList<>();
-
-            for(WeekDay day: State.getInstance().days.keySet()){
-                for(int period = 0; period < State.getInstance().days.get(day); period++){
-                    list.add(TripletManager.get(day, grade, period));
-                }
+            if(educators.getSecond() != null){
+                count = educatorLessonCount.get(educators.getSecond());
+                educatorLessonCount.put(educators.getSecond(), count + assignable.getRemain());
             }
-
-            options.put(grade, list);
         }
-
-        for(Assignable assignable: State.getInstance().assignables.values()){
-            lessonSlotOptions.putFast(new SlotOptions(assignable,(ArrayList<Triplet<WeekDay, Grade, Integer>>) options.get(State.getInstance().sessions.get(assignable.getId().getFirst()).getGrade()).clone()));
-        }
-    }
-    protected void setLessonAssignments(){
-        lessonAssignments = new HashMap<>();
-
-        State.getInstance().assignables.forEach((id, assignable) -> {
-            lessonAssignments.put(assignable, 0);
-        });
-    }
-    protected void setSlotAvailability(LessonSlotOptions lessonSlotOptions){
-        Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability = new HashMap<>();
 
         for(WeekDay day: State.getInstance().days.keySet()){
             for(Grade grade: State.getInstance().grades){
+                LinkedList<Assignable> temp = new LinkedList<>(lessons.stream().filter(assignable -> assignable.getGrade().equals(grade)).toList());
+
                 for(int period = 0; period < State.getInstance().days.get(day); period++){
                     Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, grade, period);
-                    int count = 0;
 
-                    for(SlotOptions slotOptions: lessonSlotOptions){
-                        if(slotOptions.hasOption(triplet)){
-                            count++;
-                        }
-                    }
-
-                    slotAvailability.put(triplet, count);
+                    slotOptions.put(triplet, (LinkedList<Assignable>) temp.clone());
                 }
             }
         }
-    }
-    protected ArrayList<Comparator<SlotOptions>> getComparators(){
-        ArrayList<Comparator<SlotOptions>> result = new ArrayList<>();
 
-        result.add(new OptionsCountComparator());
-        result.add(new EducatorBasedComparator(teacherLessonCount));
-        result.add(new AssignmentBasedComparator(lessonAssignments));
+        Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>>> iterator = slotOptions.entrySet().iterator();
 
-        return result;
-    }
-    public void arrange(){
-        setTeacherLessonCount();
-        setLessonSlotOptions();
-        setSlotAvailability(lessonSlotOptions);
+        while(iterator.hasNext()){
+            Map.Entry<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> entry = iterator.next();
+            Triplet<WeekDay, Grade, Integer> triplet = entry.getKey();
 
-        ArrayList<Comparator<SlotOptions>> comparators = getComparators();
+            if(State.getInstance().timetable.get(triplet) != null){
+                Assignable assignable = State.getInstance().assignables.get(State.getInstance().timetable.get(triplet));
+                iterator.remove();
 
-        State.getInstance().timetable.clear();
-        for(Assignable assignable: State.getInstance().assignables.values()){
-            assignable.reset();
+                Integer breakAfter = State.getInstance().breakAfter - 1;
+
+                for(int period = 0; period < State.getInstance().days.get(triplet.getFirst()); period++){
+                    if(period == (triplet.getThird() - 1) && triplet.getThird() != (breakAfter + 1))
+                        continue;
+
+                    if(period == triplet.getThird())
+                        continue;
+
+                    if(period == (triplet.getThird() + 1) && triplet.getThird() != breakAfter)
+                        continue;
+
+                    LinkedList<Assignable> values =  slotOptions.get(TripletManager.get(triplet.getFirst(), triplet.getSecond(), period));
+
+                    if(values != null){
+                        values.remove(assignable);
+                    }
+                }
+
+                for(Grade grade: State.getInstance().grades){
+                    if(assignable.getGrade().equals(grade))
+                        continue;
+
+                    LinkedList<Assignable> values = slotOptions.get(TripletManager.get(triplet.getFirst(), grade, triplet.getThird()));
+
+                    if(values != null){
+                        Iterator<Assignable> valuesIterator =  values.iterator();
+                        Pair<Educator, Educator> educators = assignable.getEducators();
+
+                        while(valuesIterator.hasNext()){
+                            Assignable value = valuesIterator.next();
+
+                            if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond()))
+                                valuesIterator.remove();
+                        }
+                    }
+                }
+            }else if(entry.getValue().isEmpty()){
+                iterator.remove();
+            }
         }
 
-        while(!lessonSlotOptions.isEmpty()){
-            LinkedList<SlotOptions> slotOptions = lessonSlotOptions.popLimits(), copy;
+    }
+    protected void position(Assignable lesson, Triplet<WeekDay, Grade, Integer> slot, Queue<Assignable> lessons, Map<Educator, Integer> educatorLessonCount, Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions, Boolean pair){
+        State.getInstance().timetable.put(slot, lesson.getId());
 
-            if(slotOptions.isEmpty()){
-                slotOptions = lessonSlotOptions.pop();
+        Pair<Educator, Educator> educators = lesson.getEducators();
+        educatorLessonCount.put(educators.getFirst(), educatorLessonCount.get(educators.getFirst()) - 1);
+
+        if(educators.getSecond() != null){
+            educatorLessonCount.put(educators.getSecond(), educatorLessonCount.get(educators.getSecond()) - 1);
+        }
+
+        lesson.setRemain(lesson.getRemain() - 1);
+        slotOptions.remove(slot);
+
+        if(lesson.getRemain() == 0){
+            slotOptions.forEach((triplet, options) -> {
+                options.remove(lesson);
+            });
+        }else{
+            lessons.add(lesson);
+
+            int breakAfter = State.getInstance().breakAfter - 1;
+
+            for(int period = 0; period < State.getInstance().days.get(slot.getFirst()); period++){
+                if(period == (slot.getThird() - 1) && slot.getThird() != (breakAfter + 1))
+                    continue;
+
+                if(period == slot.getThird())
+                    continue;
+
+                if(period == (slot.getThird() + 1) && slot.getThird() != breakAfter)
+                    continue;
+
+                LinkedList<Assignable> values =  slotOptions.get(TripletManager.get(slot.getFirst(), slot.getSecond(), period));
+
+                if(values != null){
+                    values.remove(lesson);
+                }
             }
 
-            copy = (LinkedList<SlotOptions>) slotOptions.clone();
+            for(Grade grade: State.getInstance().grades){
+                if(lesson.getGrade().equals(grade))
+                    continue;
 
-            for(Comparator<SlotOptions> comparator: comparators){
-                slotOptions = arrangeFilter(slotOptions, comparator);
+                LinkedList<Assignable> values = slotOptions.get(TripletManager.get(slot.getFirst(), grade, slot.getThird()));
 
-                if(slotOptions.size() <= 1)
-                    break;
+                if(values != null){
+                    Iterator<Assignable> valuesIterator =  values.iterator();
+                    educators = lesson.getEducators();
+
+                    while(valuesIterator.hasNext()){
+                        Assignable value = valuesIterator.next();
+
+                        if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond()))
+                            valuesIterator.remove();
+                    }
+                }
+            }
+        }
+
+        Assignable pairAssignable = lesson.getPair();
+        if(pairAssignable != null && !pair){
+            position(pairAssignable, TripletManager.get(slot.getFirst(), pairAssignable.getGrade(), slot.getThird()), lessons, educatorLessonCount, slotOptions, true);
+        }
+    }
+    public void arrange(LinkedList<Assignable> options){
+        Map<Educator, Integer> educatorLessonCount = new HashMap<>();
+        Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions = new HashMap<>();
+
+        LessonComparator lessonComparator = new LessonComparator();
+        EducatorBasedComparator educatorBasedComparator = new EducatorBasedComparator(educatorLessonCount);
+        Queue<Assignable> lessonsOne = new PriorityQueue<>(lessonComparator);
+        Queue<Assignable> lessonsTwo = new PriorityQueue<>(educatorBasedComparator);
+
+        prepare(options, lessonsOne, educatorLessonCount, slotOptions);
+
+        while(!slotOptions.isEmpty() && !lessonsOne.isEmpty()){
+            lessonsTwo.clear();
+            lessonsTwo.add(lessonsOne.poll());
+
+            while(!lessonsOne.isEmpty() && lessonComparator.compare(lessonsOne.peek(), lessonsTwo.peek()) == 0)
+                lessonsTwo.add(lessonsOne.poll());
+
+            LinkedList<Assignable> lessonsThree = new LinkedList<>();
+            lessonsThree.add(lessonsTwo.poll());
+
+            while(!lessonsTwo.isEmpty() && educatorBasedComparator.compare(lessonsThree.getFirst(), lessonsTwo.peek()) == 0)
+                lessonsThree.add(lessonsTwo.poll());
+
+            lessonsOne.addAll(lessonsTwo);
+
+            Assignable lessonChoice = null;
+            Triplet<WeekDay, Grade, Integer> slotChoice = null, slotTemp;
+
+            Iterator<Assignable> iterator = lessonsThree.iterator();
+
+            while(iterator.hasNext()){
+                Assignable assignable = iterator.next();
+                slotTemp = null;
+
+                for(Triplet<WeekDay, Grade, Integer> slot: slotOptions.keySet()){
+                    LinkedList<Assignable> choices = slotOptions.get(slot);
+
+                    if(choices.contains(assignable)){
+                        if(slotTemp == null){
+                            slotTemp = slot;
+                        }else if(choices.size() < slotOptions.get(slotTemp).size()){
+                            slotTemp = slot;
+                        }
+                    }
+                }
+
+                if(slotTemp == null){
+                    iterator.remove();
+                    continue;
+                }
+
+                if(slotChoice == null) {
+                    lessonChoice = assignable;
+                    slotChoice = slotTemp;
+                }else if(slotOptions.get(slotTemp).size() < slotOptions.get(slotChoice).size()){
+                    lessonChoice = assignable;
+                    slotChoice = slotTemp;
+                }
             }
 
-            Pair<SlotOptions, Triplet<WeekDay, Grade, Integer>> selection = selectSlot(slotOptions);
+            if(lessonChoice != null){
+                lessonsThree.remove(lessonChoice);
 
-            if(selection != null){
-                if(selection.getFirst().getAssignable().getRemain() == 0)
-                    copy.remove(selection.getFirst());
+                for(Assignable assignable: lessonsThree){
+                    lessonsOne.add(assignable);
+                }
 
-                lessonSlotOptions.putList(copy);
+                position(lessonChoice, slotChoice, lessonsOne, educatorLessonCount, slotOptions, false);
             }
         }
 
         refresh();
     }
-    protected LinkedList<SlotOptions> arrangeFilter(LinkedList<SlotOptions> list, Comparator<SlotOptions> comparator){
-        if(!list.isEmpty()){
-            list.sort(comparator);
-            LinkedList<SlotOptions> filter = new LinkedList<>();
-
-            filter.add(list.removeFirst());
-
-            while(comparator.compare(filter.getFirst(), list.getFirst()) == 0){
-                filter.add(list.removeFirst());
-            }
-
-            return filter;
-        }
-
-        return list;
-    }
-
-    public Pair<SlotOptions, Triplet<WeekDay, Grade, Integer>> selectSlot(LinkedList<SlotOptions> subset){
-        if(!subset.isEmpty()){
-            Comparator<Triplet<WeekDay, Grade, Integer>> slotAvailabilityComparator = new SlotAvailabilityComparator(slotAvailability);
-            Pair<SlotOptions, Triplet<WeekDay, Grade, Integer>> result = null;
-            ArrayList<Triplet<WeekDay, Grade, Integer>> options;
-
-            for(SlotOptions slotOption: subset){
-                options = slotOption.getOptions();
-                options.sort(slotAvailabilityComparator);
-
-                for(Triplet<WeekDay, Grade, Integer> option: options){
-                    Assignable assignable = slotOption.getAssignable();
-                    Assignable pair = assignable.getPair();
-                    Triplet<WeekDay, Grade, Integer> pairOption = TripletManager.get(option.getFirst(), pair.getSessions().getFirst().getGrade(), option.getThird());
-
-                    if(State.getInstance().timetable.get(option) == null){
-                        if(pair == null){
-                            State.getInstance().timetable.put(option, assignable.getId());
-                            assignable.decrement();
-                            int start = option.getThird().intValue() + (State.getInstance().breakAfter == option.getThird().intValue() ? 1 : 2);
-
-                            for(; start < State.getInstance().days.get(option.getFirst()); start++){
-                                slotOption.removeOption(TripletManager.get(option.getFirst(), option.getSecond(), option.getThird()));
-                            }
-
-                            return new Pair<>(slotOption, option);
-                        }else if(State.getInstance().timetable.get(pairOption) == null){
-                            State.getInstance().timetable.put(option, assignable.getId());
-                            State.getInstance().timetable.put(pairOption, pair.getId());
-
-                            assignable.decrement();
-                            pair.decrement();
-
-                            int start = option.getThird().intValue() + (State.getInstance().breakAfter == option.getThird().intValue() ? 1 : 2);
-
-                            for(; start < State.getInstance().days.get(option.getFirst()); start++){
-                                slotOption.removeOption(TripletManager.get(option.getFirst(), option.getSecond(), option.getThird()));
-                                lessonSlotOptions.get(pair).removeOption(pairOption);
-                            }
-
-                            return new Pair<>(slotOption, option);
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-}
-
-class OptionsCountComparator implements Comparator<SlotOptions>{
-    @Override
-    public int compare(SlotOptions o1, SlotOptions o2) {
-        return Integer.compare(o1.optionCount(), o2.optionCount());
-    }
-}
-
-class EducatorBasedComparator implements Comparator<SlotOptions>{
-
-    private Map<Educator, Integer> teacherLessonCount;
-    public EducatorBasedComparator(Map<Educator, Integer> teacherLessonCount){
-        this.teacherLessonCount = teacherLessonCount;
-    }
-    @Override
-    public int compare(SlotOptions o1, SlotOptions o2) {
-        Educator educatorOne = o1.getAssignable().getSessions().getFirst().getEducator();
-        Educator educatorTwo = o2.getAssignable().getSessions().getFirst().getEducator();
-
-        return teacherLessonCount.get(educatorOne).compareTo(teacherLessonCount.get(educatorTwo)) * -1;
-    }
-}
-
-class AssignmentBasedComparator implements Comparator<SlotOptions>{
-    private Map<Assignable, Integer> lessonAssignments;
-    public AssignmentBasedComparator(Map<Assignable, Integer> lessonAssignments){
-        this.lessonAssignments = lessonAssignments;
-    }
-    @Override
-    public int compare(SlotOptions o1, SlotOptions o2) {
-        return lessonAssignments.get(o1.getAssignable()).compareTo(lessonAssignments.get(o2.getAssignable()));
-    }
-}
-
-class SlotAvailabilityComparator implements Comparator<Triplet<WeekDay, Grade, Integer>>{
-    private Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability;
-    public SlotAvailabilityComparator(Map<Triplet<WeekDay, Grade, Integer>, Integer> slotAvailability){
-        this.slotAvailability = slotAvailability;
-    }
-    @Override
-    public int compare(Triplet<WeekDay, Grade, Integer> o1, Triplet<WeekDay, Grade, Integer> o2) {
-        return slotAvailability.get(o1).compareTo(slotAvailability.get(o2));
+    public void arrange(){
+        arrange(new LinkedList<>(State.getInstance().assignables.values()));
     }
 }
