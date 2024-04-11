@@ -200,31 +200,10 @@ public class DemoController implements Initializable {
             Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
 
             if(assignable != null) {
-                Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
-                LinkedList<Triplet<WeekDay, Grade, Integer>> pairs = new LinkedList<>();
-
-                while(iterator.hasNext()){
-                    Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry = iterator.next();
-
-                    if(assignable.getId().equals(entry.getValue())){
-                        assignable.setRemain(assignable.getRemain() + 1);
-                        iterator.remove();
-
-                        Assignable pair = assignable.getPair();
-
-                        if(pair != null){
-                            pairs.add(TripletManager.get(entry.getKey().getFirst(), pair.getGrade(), entry.getKey().getThird()));
-                            pair.setRemain(pair.getRemain() + 1);
-                        }
-                    }
-                }
-
-                for(Triplet<WeekDay, Grade, Integer> pair: pairs)
-                    State.getInstance().timetable.remove(pair);
+                Command command = new ResetLessonCommand(assignable, this);
+                command.execute();
+                CommandManager.getInstance().addCommand(command);
             }
-
-            tableAssign.refresh();
-            service.refresh();
         });
 
         arrangeOneMenuItem.setOnAction(event -> {
@@ -239,7 +218,9 @@ public class DemoController implements Initializable {
         });
 
         arrangeAllMenuItem.setOnAction(event -> {
-            service.arrange();
+            Command command = new ArrangeCommand(this);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
         });
 
         contextMenu.getItems().clear();

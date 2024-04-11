@@ -4,21 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the functionality of the position function in GradeViewService">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/comparators/AssignableComparator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/comparators/EducatorBasedComparator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/comparators/LessonComparator.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="adding the ArrangeCommand class">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ResetLessonCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/GradeSchedule.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/LessonSlotOptions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/SlotOptions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/View.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/WeekDaySchedule.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ClickableTableCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/ClickableTableCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/WeekDayViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ArrangeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ArrangeCommand.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,13 +72,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1706185400456</updated>
-    </task>
-    <task id="LOCAL-00001" summary="initials project with initial classes">
-      <created>1706428273433</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1706428273433</updated>
     </task>
     <task id="LOCAL-00002" summary="Added Command interface and initial models">
       <created>1706435032462</created>
@@ -419,7 +402,21 @@
       <option name="project" value="LOCAL" />
       <updated>1712501121766</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="updated the functionality of the arrange function">
+      <created>1712782159682</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1712782159682</updated>
+    </task>
+    <task id="LOCAL-00050" summary="adding the ArrangeCommand class">
+      <created>1712782264087</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1712782264088</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -434,8 +431,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated the toolbar menu options" />
-    <MESSAGE value="implemented the getEducator, getGrade and hasEducator function in Assignable class" />
     <MESSAGE value="implemented the save and open function in the State class" />
     <MESSAGE value="updated the newFile function in the DemoController" />
     <MESSAGE value="updated the openFile function in DemoController" />
@@ -459,6 +454,8 @@
     <MESSAGE value="updated refresh functionality and added functionality to show only needed assignables" />
     <MESSAGE value="updated the functionality of the position function in WeekDayViewService" />
     <MESSAGE value="updated the functionality of the position function in GradeViewService" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the functionality of the position function in GradeViewService" />
+    <MESSAGE value="updated the functionality of the arrange function" />
+    <MESSAGE value="adding the ArrangeCommand class" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding the ArrangeCommand class" />
   </component>
 </project>

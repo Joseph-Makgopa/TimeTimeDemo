@@ -49,6 +49,9 @@ public class ArrangeCommand implements Command{
             for(Assignable assignable: freshAssignable)
                 State.getInstance().assignables.put(assignable.getId(), assignable.clone());
         }
+
+        State.getInstance().saveRequired = true;
+        demoController.getService().refresh();
     }
 
     @Override
@@ -59,5 +62,8 @@ public class ArrangeCommand implements Command{
         State.getInstance().assignables.clear();
         for(Assignable assignable: oldAssignable)
             State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
+        State.getInstance().saveRequired = true;
+        demoController.getService().refresh();
     }
 }
