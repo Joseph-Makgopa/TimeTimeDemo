@@ -32,28 +32,29 @@ import java.util.*;
 
 public class EducatorViewService extends DemoService{
     private Map<Educator, ObservableList<Rank<WeekDay>>> educatorTable = new HashMap<>();
-    public EducatorViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
-        super(pane, tableAssign, controller);
+    public EducatorViewService(DemoController controller){
+        super(controller);
     }
     @Override
     public void refresh() {
-        Integer index = pane.getSelectionModel().getSelectedIndex();
+        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
 
         populateTable();
         setupTable();
 
-        if(index >= 0 && index < pane.getTabs().size()) {
-            pane.getSelectionModel().select(index);
+        if(index >= 0 && index < demoController.getPane().getTabs().size()) {
+            demoController.getPane().getSelectionModel().select(index);
 
-            Integer post = Integer.parseInt(pane.getTabs().get(index).getText().split(",")[0]);
+            Integer post = Integer.parseInt(demoController.getPane().getTabs().get(index).getText().split(",")[0]);
             Educator educator = State.getInstance().educators.get(post);
 
-            Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
-            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
-            tableAssign.refresh();
+            Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
+            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+            demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+            demoController.getTableAssign().refresh();
 
             if(selection != null)
-                tableAssign.getSelectionModel().select(selection);
+                demoController.getTableAssign().getSelectionModel().select(selection);
         }
         ClickableTableCell.lastSelectedCell = null;
     }
@@ -131,7 +132,7 @@ public class EducatorViewService extends DemoService{
         }).toList());
     }
     public void filter(){
-        for(Tab tab: pane.getTabs()){
+        for(Tab tab: demoController.getPane().getTabs()){
             Integer post = Integer.parseInt(tab.getText().split(",")[0]);
 
             TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
@@ -140,7 +141,7 @@ public class EducatorViewService extends DemoService{
         }
     }
     public void clearTab(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             Integer post = Integer.parseInt(tab.getText().split(",")[0]);
@@ -162,7 +163,7 @@ public class EducatorViewService extends DemoService{
         }
     }
     public void clearRow(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             Rank<WeekDay> row = ((TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
@@ -190,7 +191,7 @@ public class EducatorViewService extends DemoService{
     @Override
     public void highlightOptions(ClickableTableCell<?,?> oldCell, ClickableTableCell<?,?> newCell){
         if(newCell == null){
-            Tab tab = pane.getSelectionModel().getSelectedItem();
+            Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
             if(tab == null)
                 return;
@@ -198,8 +199,8 @@ public class EducatorViewService extends DemoService{
             Integer post = Integer.parseInt(tab.getText().split(",")[0]);
             Educator educator = State.getInstance().educators.get(post);
 
-            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
-            tableAssign.getItems().sort(new AssignableComparator());
+            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+            demoController.getTableAssign().getItems().sort(new AssignableComparator());
 
             demoController.setupTableAssignContextMenu();
         }else{
@@ -230,7 +231,7 @@ public class EducatorViewService extends DemoService{
                         }
                     }
 
-                    Tab tab = pane.getSelectionModel().getSelectedItem();
+                    Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
                     if (tab == null)
                         return;
@@ -238,11 +239,11 @@ public class EducatorViewService extends DemoService{
                     Integer post = Integer.parseInt(tab.getText().split(",")[0]);
                     Educator educator = State.getInstance().educators.get(post);
 
-                    tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator) && availableGrade.contains(value.getGrade())).toList()));
+                    demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator) && availableGrade.contains(value.getGrade())).toList()));
                 } else {
                     lessonFilterMenuItem.setText("Show Available Lessons");
 
-                    Tab tab = pane.getSelectionModel().getSelectedItem();
+                    Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
                     if (tab == null)
                         return;
@@ -250,13 +251,13 @@ public class EducatorViewService extends DemoService{
                     Integer post = Integer.parseInt(tab.getText().split(",")[0]);
                     Educator educator = State.getInstance().educators.get(post);
 
-                    tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+                    demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
                 }
             });
             demoController.getContextMenu().getItems().add(2, lessonFilterMenuItem);
 
         }else{
-            Tab tab = pane.getSelectionModel().getSelectedItem();
+            Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
             if(tab == null)
                 return;
@@ -264,14 +265,14 @@ public class EducatorViewService extends DemoService{
             Integer post = Integer.parseInt(tab.getText().split(",")[0]);
             Educator educator = State.getInstance().educators.get(post);
 
-            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
 
             demoController.setupTableAssignContextMenu();
         }
     }
     @Override
     public void setupTable() {
-        pane.getTabs().clear();
+        demoController.getPane().getTabs().clear();
 
         State.getInstance().educators.forEach((post, educator) -> {
             TableView<Rank<WeekDay>> daySchedule = new TableView<>();
@@ -307,7 +308,7 @@ public class EducatorViewService extends DemoService{
                 daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
 
             setupEducatorTable(educator, daySchedule);
-            pane.getTabs().add(tab);
+            demoController.getPane().getTabs().add(tab);
         });
     }
     public void setupEducatorTable(Educator educator, TableView<Rank<WeekDay>> table){
@@ -404,7 +405,7 @@ public class EducatorViewService extends DemoService{
         });
     }
     public void position(){
-        Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+        Assignable assignable = demoController.getTableAssign().getSelectionModel().getSelectedItem();
 
         if(assignable == null){
             Notification.show("Position error.", "Lesson not selected.", Alert.AlertType.ERROR);
@@ -416,7 +417,7 @@ public class EducatorViewService extends DemoService{
             return;
         }
 
-        if(pane.getSelectionModel().getSelectedItem() == null){
+        if(demoController.getPane().getSelectionModel().getSelectedItem() == null){
             return;
         }
 
@@ -463,7 +464,7 @@ public class EducatorViewService extends DemoService{
         CommandManager.getInstance().addCommand(command);
     }
     public void print(Stage stage){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab == null){
             Notification.show("Print error","You did not select the day.", Alert.AlertType.ERROR);

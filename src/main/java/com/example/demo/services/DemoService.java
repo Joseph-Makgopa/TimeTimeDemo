@@ -22,13 +22,9 @@ import java.io.File;
 import java.util.*;
 
 public abstract class DemoService {
-    protected TabPane pane;
-    protected TableView<Assignable> tableAssign;
     protected DemoController demoController;
     protected Filter filterOptions;
-    public DemoService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
-        this.pane = pane;
-        this.tableAssign = tableAssign;
+    public DemoService(DemoController demoController){
         this.demoController = demoController;
         this.filterOptions = new Filter();
         ClickableTableCell.lastSelectedCell = null;
@@ -37,22 +33,23 @@ public abstract class DemoService {
         this.filterOptions = filterOptions;
     }
     public void refresh(){
-        Integer index = pane.getSelectionModel().getSelectedIndex();
+        Integer index = demoController.getTableAssign().getSelectionModel().getSelectedIndex();
 
         populateTable();
         setupTable();
 
-        if(index > 0 && index < pane.getTabs().size())
-            pane.getSelectionModel().select(index);
+        if(index > 0 && index < demoController.getPane().getTabs().size())
+            demoController.getPane().getSelectionModel().select(index);
 
-        Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
-        tableAssign.getItems().clear();
-        tableAssign.getItems().addAll(State.getInstance().assignables.values());
-        tableAssign.getItems().sort(new AssignableComparator());
-        tableAssign.refresh();
+        Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
+        demoController.getTableAssign().getItems().clear();
+        demoController.getTableAssign().getItems().addAll(State.getInstance().assignables.values());
+        demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+        demoController.getTableAssign().getItems().sort(new AssignableComparator());
+        demoController.getTableAssign().refresh();
 
         if(selection != null)
-            tableAssign.getSelectionModel().select(selection);
+            demoController.getTableAssign().getSelectionModel().select(selection);
 
         ClickableTableCell.lastSelectedCell = null;
     }
@@ -75,13 +72,36 @@ public abstract class DemoService {
                 return;
             }
 
-            if(State.getInstance().sessions.get(entry.getId().getFirst()).getGrade().toString().contains(text)){
+            if(entry.getGrade().toString().contains(text)){
                 result.add(entry);
-                return;
             }
         });
 
         return result;
+    }
+    public ObservableList<Assignable> search(String text, Collection<Assignable> collection){
+        if(text == null || text.isEmpty())
+            return FXCollections.observableArrayList(collection);
+
+        LinkedList<Assignable> result = new LinkedList<>();
+
+        collection.forEach(entry -> {
+            if(entry.getDetails().toUpperCase().contains(text)){
+                result.add(entry);
+                return;
+            }
+
+            if(entry.getRemain().toString().contains(text)){
+                result.add(entry);
+                return;
+            }
+
+            if(entry.getGrade().toString().contains(text)){
+                result.add(entry);
+            }
+        });
+
+        return FXCollections.observableArrayList(result);
     }
     public void highlightOptions(ClickableTableCell<?,?> oldCell, ClickableTableCell<?,?> newCell){
 

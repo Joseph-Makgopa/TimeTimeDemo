@@ -33,11 +33,11 @@ import java.util.*;
 
 public class WeekDayViewService extends DemoService{
     private Map<WeekDay, ObservableList<Rank<Grade>>> weeklyTable = new HashMap<>();
-    public WeekDayViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController demoController){
-        super(pane, tableAssign, demoController);
+    public WeekDayViewService(DemoController demoController){
+        super(demoController);
     }
     public void clearTab(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
@@ -56,7 +56,7 @@ public class WeekDayViewService extends DemoService{
         }
     }
     public void clearRow(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             Rank<Grade> row = ((TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
@@ -79,7 +79,7 @@ public class WeekDayViewService extends DemoService{
         }
     }
     public void setupTable(){
-        pane.getTabs().clear();
+        demoController.getPane().getTabs().clear();
         Tab[] tabs = new Tab[7];
 
         State.getInstance().days.forEach((day, periods) ->{
@@ -134,7 +134,7 @@ public class WeekDayViewService extends DemoService{
             }
         });
 
-        pane.getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
+        demoController.getPane().getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
     }
     public void setupDayTable(WeekDay day, TableView<Rank<Grade>> table){
         /**
@@ -250,7 +250,7 @@ public class WeekDayViewService extends DemoService{
         }).toList());
     }
     public void filter(){
-        for(Tab tab: pane.getTabs()){
+        for(Tab tab: demoController.getPane().getTabs()){
             TableView<Rank<Grade>> table = (TableView<Rank<Grade>>)((AnchorPane)tab.getContent()).getChildren().get(0);
             WeekDay day = WeekDay.valueOf(tab.getText().toUpperCase());
             table.setItems(filter(day));
@@ -258,7 +258,7 @@ public class WeekDayViewService extends DemoService{
         }
     }
     public void position(){
-        Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+        Assignable assignable = demoController.getTableAssign().getSelectionModel().getSelectedItem();
 
         if(assignable == null){
             Notification.show("Position error.", "Lesson not selected.", Alert.AlertType.ERROR);
@@ -270,7 +270,7 @@ public class WeekDayViewService extends DemoService{
             return;
         }
 
-        if(pane.getSelectionModel().getSelectedItem() == null){
+        if(demoController.getPane().getSelectionModel().getSelectedItem() == null){
             return;
         }
 
@@ -278,7 +278,7 @@ public class WeekDayViewService extends DemoService{
             return;
         }
 
-        WeekDay day = WeekDay.valueOf(pane.getSelectionModel().getSelectedItem().getText().toUpperCase());
+        WeekDay day = WeekDay.valueOf(demoController.getPane().getSelectionModel().getSelectedItem().getText().toUpperCase());
         Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
         Integer itemIndex = ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedIndex();
         Rank<Grade> item = (Rank<Grade>)ClickableTableCell.lastSelectedCell.getTableView().getItems().get(itemIndex);
@@ -320,7 +320,7 @@ public class WeekDayViewService extends DemoService{
         CommandManager.getInstance().addCommand(command);
     }
     public void print(Stage stage){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab == null){
             Notification.show("Print error","You did not select the day.", Alert.AlertType.ERROR);

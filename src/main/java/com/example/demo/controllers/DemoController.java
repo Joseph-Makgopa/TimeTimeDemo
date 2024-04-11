@@ -72,6 +72,7 @@ public class DemoController implements Initializable {
                     Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
 
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+                    tableAssign.setItems(service.search(txtSearch.getText().toUpperCase(), tableAssign.getItems()));
                     tableAssign.getItems().sort(new AssignableComparator());
                 }
             }else if(service instanceof EducatorViewService){
@@ -80,6 +81,7 @@ public class DemoController implements Initializable {
                     Educator educator = State.getInstance().educators.get(post);
 
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+                    tableAssign.setItems(service.search(txtSearch.getText().toUpperCase(), tableAssign.getItems()));
                     tableAssign.getItems().sort(new AssignableComparator());
                 }
             }
@@ -126,7 +128,7 @@ public class DemoController implements Initializable {
         });
 
         filter = new Filter();
-        service = new WeekDayViewService(paneTimeTable, tableAssign, this);
+        service = new WeekDayViewService(this);
 
         updateFilterOptions();
 
@@ -189,6 +191,15 @@ public class DemoController implements Initializable {
     public DemoService getService(){
         return service;
     }
+    public TabPane getPane(){
+        return paneTimeTable;
+    }
+    public TextField getTxtSearch(){
+        return txtSearch;
+    }
+    public TableView<Assignable> getTableAssign(){
+        return tableAssign;
+    }
     public void setupRecentMenu(){
         openRecentMenu.getItems().clear();
 
@@ -228,7 +239,7 @@ public class DemoController implements Initializable {
         MenuItem arrangeMenuItem = new MenuItem("Arrange");
         arrangeMenuItem.setId("Arrange");
         arrangeMenuItem.setOnAction(event -> {
-            Command command = new ArrangeCommand(this);
+            Command command = new ArrangeCommand(new LinkedList<>(tableAssign.getItems()), this);
             command.execute();
             CommandManager.getInstance().addCommand(command);
         });
@@ -325,7 +336,32 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void search(KeyEvent event){
-        tableAssign.setItems(service.search(txtSearch.getText().toUpperCase()));
+        if(service instanceof GradeViewService){
+            Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+
+            if(tab != null){
+                String[] split = tab.getText().split(" ");
+                Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+
+                tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+                tableAssign.setItems(service.search(txtSearch.getText().toUpperCase(), tableAssign.getItems()));
+                tableAssign.getItems().sort(new AssignableComparator());
+            }
+        }else if(service instanceof EducatorViewService){
+            Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+
+            if(tab != null){
+                Integer post = Integer.parseInt(tab.getText().split(",")[0]);
+                Educator educator = State.getInstance().educators.get(post);
+
+                tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
+                tableAssign.setItems(service.search(txtSearch.getText().toUpperCase(), tableAssign.getItems()));
+                tableAssign.getItems().sort(new AssignableComparator());
+            }
+        }else {
+            tableAssign.setItems(service.search(txtSearch.getText().toUpperCase()));
+            tableAssign.getItems().sort(new AssignableComparator());
+        }
         event.consume();
     }
     public void updateTableAssign(){
@@ -426,12 +462,6 @@ public class DemoController implements Initializable {
         }
     }
     @FXML
-    void arrange(ActionEvent event){
-        Command command = new ArrangeCommand(this);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
-    }
-    @FXML
     void position(ActionEvent event){
         service.position();
     }
@@ -518,7 +548,7 @@ public class DemoController implements Initializable {
         clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
 
-        service = new WeekDayViewService(paneTimeTable, tableAssign, this);
+        service = new WeekDayViewService( this);
         service.refresh();
 
         updateFilterOptions();
@@ -539,7 +569,7 @@ public class DemoController implements Initializable {
         clearTab.setText("Clear Grade");
         clearRow.setText("Clear Day");
 
-        service = new GradeViewService(paneTimeTable, tableAssign, this);
+        service = new GradeViewService( this);
         service.refresh();
 
         updateFilterOptions();
@@ -560,7 +590,7 @@ public class DemoController implements Initializable {
         clearTab.setText("Clear Educator");
         clearRow.setText("Clear Day");
 
-        service = new EducatorViewService(paneTimeTable, tableAssign, this);
+        service = new EducatorViewService(this);
         service.refresh();
 
         updateFilterOptions();

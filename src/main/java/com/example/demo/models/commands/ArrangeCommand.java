@@ -5,7 +5,6 @@ import com.example.demo.models.Assignable;
 import com.example.demo.models.Grade;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
-import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -17,12 +16,12 @@ public class ArrangeCommand implements Command{
     private DemoController demoController;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
-    public ArrangeCommand(DemoController demoController){
+    public ArrangeCommand(LinkedList<Assignable> lessons, DemoController demoController){
         this.demoController = demoController;
         this.oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldAssignable = new LinkedList<>();
 
-        for(Assignable assignable: State.getInstance().assignables.values()){
+        for(Assignable assignable: lessons){
             oldAssignable.add(assignable.clone());
         }
 
@@ -34,12 +33,17 @@ public class ArrangeCommand implements Command{
     @Override
     public void execute() {
         if(freshTimeTable == null){
-            demoController.getService().arrange();
+            LinkedList<Assignable> copy = new LinkedList<>();
+            for(Assignable assignable: oldAssignable)
+                copy.add(assignable.clone());
+
+            demoController.getService().arrange(copy);
 
             freshTimeTable = new HashMap<>(State.getInstance().timetable);
             freshAssignable = new LinkedList<>();
-            for(Assignable assignable: State.getInstance().assignables.values()){
+            for(Assignable assignable: copy){
                 freshAssignable.add(assignable.clone());
+                State.getInstance().assignables.put(assignable.getId(), assignable.clone());
             }
         }else{
             State.getInstance().timetable.clear();

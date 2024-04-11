@@ -35,8 +35,8 @@ import java.util.*;
 public class GradeViewService extends DemoService{
     private Map<Grade, ObservableList<Rank<WeekDay>>> gradeTable = new HashMap<>();
 
-    public GradeViewService(TabPane pane, TableView<Assignable> tableAssign, DemoController controller){
-        super(pane, tableAssign, controller);
+    public GradeViewService(DemoController controller){
+        super(controller);
     }
     public ObservableList<Rank<WeekDay>> filter(Grade grade){
         return FXCollections.observableArrayList(gradeTable.get(grade).stream().filter(gradeSchedule -> {
@@ -91,7 +91,7 @@ public class GradeViewService extends DemoService{
         }).toList());
     }
     public void filter(){
-        for(Tab tab: pane.getTabs()){
+        for(Tab tab: demoController.getPane().getTabs()){
             String[] split = tab.getText().split(" ");
             Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
             TableView<Rank<WeekDay>> table = (TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0);
@@ -100,7 +100,7 @@ public class GradeViewService extends DemoService{
         }
     }
     public void clearTab(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             String[] split = tab.getText().split(" ");
@@ -120,7 +120,7 @@ public class GradeViewService extends DemoService{
         }
     }
     public void clearRow(){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab != null){
             Rank<WeekDay> row = ((TableView<Rank<WeekDay>>)((AnchorPane)tab.getContent()).getChildren().get(0)).getSelectionModel().getSelectedItem();
@@ -145,7 +145,7 @@ public class GradeViewService extends DemoService{
     }
     @Override
     public void setupTable() {
-        pane.getTabs().clear();
+        demoController.getPane().getTabs().clear();
 
         State.getInstance().grades.forEach(grade -> {
             TableView<Rank<WeekDay>> daySchedule = new TableView<>();
@@ -165,7 +165,7 @@ public class GradeViewService extends DemoService{
                 daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
 
             setupGradeTable(grade, daySchedule);
-            pane.getTabs().add(tab);
+            demoController.getPane().getTabs().add(tab);
         });
     }
 
@@ -207,23 +207,24 @@ public class GradeViewService extends DemoService{
 
     @Override
     public void refresh() {
-        Integer index = pane.getSelectionModel().getSelectedIndex();
+        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
 
         populateTable();
         setupTable();
 
-        if(index >= 0 && index < pane.getTabs().size()){
-            pane.getSelectionModel().select(index);
+        if(index >= 0 && index < demoController.getPane().getTabs().size()){
+            demoController.getPane().getSelectionModel().select(index);
 
-            String[] split = pane.getTabs().get(index).getText().split(" ");
+            String[] split = demoController.getPane().getTabs().get(index).getText().split(" ");
             Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
 
-            Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
-            tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
-            tableAssign.refresh();
+            Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
+            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
+            demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+            demoController.getTableAssign().refresh();
 
             if(selection != null)
-                tableAssign.getSelectionModel().select(selection);
+                demoController.getTableAssign().getSelectionModel().select(selection);
         }
 
         ClickableTableCell.lastSelectedCell = null;
@@ -256,7 +257,7 @@ public class GradeViewService extends DemoService{
     }
 
     public void position(){
-        Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+        Assignable assignable = demoController.getTableAssign().getSelectionModel().getSelectedItem();
 
         if(assignable == null){
             Notification.show("Position error.", "Lesson not selected.", Alert.AlertType.ERROR);
@@ -268,7 +269,7 @@ public class GradeViewService extends DemoService{
             return;
         }
 
-        if(pane.getSelectionModel().getSelectedItem() == null){
+        if(demoController.getPane().getSelectionModel().getSelectedItem() == null){
             return;
         }
 
@@ -281,7 +282,7 @@ public class GradeViewService extends DemoService{
         Integer itemIndex = ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedIndex();
         Rank<WeekDay> item = (Rank<WeekDay>)ClickableTableCell.lastSelectedCell.getTableView().getItems().get(itemIndex);
         WeekDay day = item.getHeader();
-        String[] split = pane.getSelectionModel().getSelectedItem().getText().split(" ");
+        String[] split = demoController.getPane().getSelectionModel().getSelectedItem().getText().split(" ");
         Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
 
         Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, grade, period);
@@ -317,7 +318,7 @@ public class GradeViewService extends DemoService{
     }
 
     public void print(Stage stage){
-        Tab tab = pane.getSelectionModel().getSelectedItem();
+        Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
         if(tab == null){
             Notification.show("Print error","You did not select the day.", Alert.AlertType.ERROR);
