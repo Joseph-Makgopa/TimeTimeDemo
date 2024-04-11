@@ -9,12 +9,10 @@ import com.example.demo.utilities.*;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -84,6 +82,46 @@ public class DemoController implements Initializable {
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
                     tableAssign.getItems().sort(new AssignableComparator());
                 }
+            }
+        });
+
+        tableAssign.getSelectionModel().selectedItemProperty().addListener((observable, oldSelection, newSelection)-> {
+            if(newSelection != null){
+                setupTableAssignContextMenu();
+
+                MenuItem positionMenuItem = new MenuItem("Position");
+                positionMenuItem.setId("Position");
+                positionMenuItem.setOnAction(event -> {
+                    service.position();
+                });
+
+                MenuItem resetMenuItem = new MenuItem("Reset Selection");
+                resetMenuItem.setId("ResetSelection");
+                resetMenuItem.setOnAction(event -> {
+                    Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+                    if(assignable != null) {
+                        Command command = new ResetSelectionCommand(assignable, this);
+                        command.execute();
+                        CommandManager.getInstance().addCommand(command);
+                    }
+                });
+
+                MenuItem arrangeCurrentMenuItem = new MenuItem("Arrange Selection");
+                arrangeCurrentMenuItem.setId("ArrangeSelection");
+                arrangeCurrentMenuItem.setOnAction(event -> {
+                    Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
+
+                    if(assignable != null) {
+                        Command command = new ArrangeSelectionCommand(this, assignable);
+                        command.execute();
+                        CommandManager.getInstance().addCommand(command);
+                    }
+                });
+
+                contextMenu.getItems().add(0, arrangeCurrentMenuItem);
+                contextMenu.getItems().add(0, resetMenuItem);
+                contextMenu.getItems().add(0, positionMenuItem);
             }
         });
 
@@ -187,56 +225,26 @@ public class DemoController implements Initializable {
         return contextMenu;
     }
     public void setupTableAssignContextMenu(){
-        MenuItem clearMenuItem = new MenuItem("Reset");
-        clearMenuItem.setId("Reset");
-
-        MenuItem arrangeOneMenuItem = new MenuItem("Arrange Current");
-        arrangeOneMenuItem.setId("ArrangeCurrent");
-
-        MenuItem arrangeAllMenuItem = new MenuItem("Arrange Remaining");
-        arrangeAllMenuItem.setId("ArrangeRemaining");
-
-        clearMenuItem.setOnAction(event -> {
-            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
-
-            if(assignable != null) {
-                Command command = new ResetLessonCommand(assignable, this);
-                command.execute();
-                CommandManager.getInstance().addCommand(command);
-            }
-        });
-
-        arrangeOneMenuItem.setOnAction(event -> {
-            Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
-
-            if(assignable != null) {
-                LinkedList<Assignable> selection = new LinkedList<>();
-                selection.add(assignable);
-
-                service.arrange(selection);
-            }
-        });
-
-        arrangeAllMenuItem.setOnAction(event -> {
+        MenuItem arrangeMenuItem = new MenuItem("Arrange");
+        arrangeMenuItem.setId("Arrange");
+        arrangeMenuItem.setOnAction(event -> {
             Command command = new ArrangeCommand(this);
             command.execute();
             CommandManager.getInstance().addCommand(command);
         });
 
+        MenuItem resetMenuItem = new MenuItem("Reset");
+        resetMenuItem.setId("Reset");
+        resetMenuItem.setOnAction(event -> {
+            Command command = new ResetCommand(new LinkedList<>(tableAssign.getItems()), this);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
+        });
+
         contextMenu.getItems().clear();
-        contextMenu.getItems().addAll(clearMenuItem, arrangeOneMenuItem, arrangeAllMenuItem);
+        contextMenu.getItems().addAll(arrangeMenuItem, resetMenuItem);
 
         tableAssign.setContextMenu(contextMenu);
-
-//        tableAssign.setRowFactory(tableView -> {
-//            final TableRow<Assignable> row = new TableRow<>();
-//
-//            row.setOnContextMenuRequested(event -> {
-//                contextMenu.show(row, event.getScreenX(), event.getScreenY());
-//            });
-//
-//            return row;
-//        });
     }
     public void updateGradeFilterOptions(){
         comboNumber.getItems().clear();

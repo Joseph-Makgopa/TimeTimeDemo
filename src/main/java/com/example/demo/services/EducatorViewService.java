@@ -13,6 +13,8 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.print.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -46,8 +48,12 @@ public class EducatorViewService extends DemoService{
             Integer post = Integer.parseInt(pane.getTabs().get(index).getText().split(",")[0]);
             Educator educator = State.getInstance().educators.get(post);
 
+            Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
             tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
             tableAssign.refresh();
+
+            if(selection != null)
+                tableAssign.getSelectionModel().select(selection);
         }
         ClickableTableCell.lastSelectedCell = null;
     }
@@ -423,7 +429,6 @@ public class EducatorViewService extends DemoService{
         Integer itemIndex = ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedIndex();
         Rank<WeekDay> item = (Rank<WeekDay>)ClickableTableCell.lastSelectedCell.getTableView().getItems().get(itemIndex);
         WeekDay day = item.getHeader();
-        String[] split = pane.getSelectionModel().getSelectedItem().getText().split(" ");
         Grade grade = assignable.getGrade();
 
         Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, grade, period);

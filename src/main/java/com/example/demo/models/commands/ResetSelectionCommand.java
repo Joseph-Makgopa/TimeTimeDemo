@@ -14,11 +14,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class ResetLessonCommand implements Command{
+public class ResetSelectionCommand implements Command{
     private Assignable assignable, oldAssignable, freshAssignable;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private DemoController demoController;
-    public ResetLessonCommand(Assignable lesson, DemoController demoController){
+    public ResetSelectionCommand(Assignable lesson, DemoController demoController){
         this.demoController = demoController;
         this.assignable = lesson;
         oldAssignable = lesson.clone();
@@ -60,6 +60,7 @@ public class ResetLessonCommand implements Command{
         }
 
         demoController.getService().refresh();
+        State.getInstance().saveRequired = true;
     }
 
     @Override
@@ -69,5 +70,6 @@ public class ResetLessonCommand implements Command{
         State.getInstance().timetable.putAll(oldTimeTable);
 
         demoController.getService().refresh();
+        State.getInstance().saveRequired = true;
     }
 }

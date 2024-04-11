@@ -45,10 +45,15 @@ public abstract class DemoService {
         if(index > 0 && index < pane.getTabs().size())
             pane.getSelectionModel().select(index);
 
+        Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
         tableAssign.getItems().clear();
         tableAssign.getItems().addAll(State.getInstance().assignables.values());
         tableAssign.getItems().sort(new AssignableComparator());
         tableAssign.refresh();
+
+        if(selection != null)
+            tableAssign.getSelectionModel().select(selection);
+
         ClickableTableCell.lastSelectedCell = null;
     }
     public abstract void clearTab();

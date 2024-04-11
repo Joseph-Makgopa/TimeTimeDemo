@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="adding the ArrangeCommand class">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ResetLessonCommand.java" afterDir="false" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="added ResetCommand file">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ArrangeSelectionCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ResetCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ArrangeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ArrangeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ResetLessonCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ResetSelectionCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/DemoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/EducatorViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/services/GradeViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,13 +77,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1706185400456</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Added Command interface and initial models">
-      <created>1706435032462</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1706435032462</updated>
     </task>
     <task id="LOCAL-00003" summary="Implemented the educator class">
       <created>1706435921601</created>
@@ -416,7 +414,14 @@
       <option name="project" value="LOCAL" />
       <updated>1712782264088</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Added ResetLessonCommand functionality">
+      <created>1712831283673</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1712831283673</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -431,8 +436,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented the save and open function in the State class" />
-    <MESSAGE value="updated the newFile function in the DemoController" />
     <MESSAGE value="updated the openFile function in DemoController" />
     <MESSAGE value="updated the saveAsFile method" />
     <MESSAGE value="added the getRecent and saveRecent methods in State class" />
@@ -456,6 +459,8 @@
     <MESSAGE value="updated the functionality of the position function in GradeViewService" />
     <MESSAGE value="updated the functionality of the arrange function" />
     <MESSAGE value="adding the ArrangeCommand class" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding the ArrangeCommand class" />
+    <MESSAGE value="Added ResetLessonCommand functionality" />
+    <MESSAGE value="added ResetCommand file" />
+    <option name="LAST_COMMIT_MESSAGE" value="added ResetCommand file" />
   </component>
 </project>

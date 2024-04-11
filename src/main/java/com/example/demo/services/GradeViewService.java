@@ -218,9 +218,14 @@ public class GradeViewService extends DemoService{
             String[] split = pane.getTabs().get(index).getText().split(" ");
             Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
 
+            Assignable selection = tableAssign.getSelectionModel().getSelectedItem();
             tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.getGrade().equals(grade)).toList()));
             tableAssign.refresh();
+
+            if(selection != null)
+                tableAssign.getSelectionModel().select(selection);
         }
+
         ClickableTableCell.lastSelectedCell = null;
     }
 
