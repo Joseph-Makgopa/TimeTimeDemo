@@ -9,15 +9,13 @@ import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import com.example.demo.utilities.TripletManager;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ResetCommand implements Command{
     private Map<Pair<Integer, Integer>, Assignable> lessons;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private DemoController demoController;
     public ResetCommand(LinkedList<Assignable> lessons, DemoController demoController){
         setLessons(lessons);
@@ -31,6 +29,9 @@ public class ResetCommand implements Command{
             oldAssignable.add(assignable.clone());
         }
         freshAssignable = null;
+
+        oldClashes = new HashSet<>(State.getInstance().clashes);
+        freshClashes = null;
     }
 
     void setLessons(LinkedList<Assignable> lessons){
@@ -72,12 +73,18 @@ public class ResetCommand implements Command{
             }
 
             freshTimeTable = new HashMap<>(State.getInstance().timetable);
+
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
         }else{
             State.getInstance().timetable.clear();
             State.getInstance().timetable.putAll(freshTimeTable);
 
             for(Assignable assignable: freshAssignable)
                 State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
         }
 
         demoController.getService().refresh();
@@ -91,6 +98,9 @@ public class ResetCommand implements Command{
 
         for(Assignable assignable: oldAssignable)
             State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
 
         demoController.getService().refresh();
         State.getInstance().saveRequired = true;

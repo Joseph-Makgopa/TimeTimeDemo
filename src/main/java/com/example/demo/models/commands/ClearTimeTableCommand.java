@@ -10,14 +10,18 @@ import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ClearTimeTableCommand implements Command{
     private DemoController demoController;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
     public ClearTimeTableCommand(DemoController demoController){
         this.demoController = demoController;
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
+        oldClashes = new HashSet<>(State.getInstance().clashes);
     }
     @Override
     public void execute() {
@@ -30,6 +34,7 @@ public class ClearTimeTableCommand implements Command{
         });
 
         State.getInstance().timetable.clear();
+        State.getInstance().clashes.clear();
         demoController.getService().refresh();
     }
 
@@ -46,6 +51,8 @@ public class ClearTimeTableCommand implements Command{
             }
         });
 
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
         demoController.getService().refresh();
     }
 }

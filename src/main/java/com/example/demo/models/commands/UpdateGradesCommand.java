@@ -10,14 +10,13 @@ import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class UpdateGradesCommand implements Command {
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private DemoController demoController;
     private CommandList commands;
     public UpdateGradesCommand(DemoController demoController, CommandList commands){
@@ -29,6 +28,9 @@ public class UpdateGradesCommand implements Command {
 
         oldTimeTable = new HashMap<>();
         oldTimeTable.putAll(State.getInstance().timetable);
+
+        oldClashes = new HashSet<>(State.getInstance().clashes);
+        freshClashes = null;
 
         this.demoController = demoController;
         this.commands = commands;
@@ -59,6 +61,15 @@ public class UpdateGradesCommand implements Command {
             }
         });
 
+        if(freshClashes == null){
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
+        }else{
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
+        }
+
+        State.getInstance().saveRequired = true;
         demoController.getService().refresh();
     }
 
@@ -76,6 +87,10 @@ public class UpdateGradesCommand implements Command {
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
+
+        State.getInstance().saveRequired = true;
         demoController.getService().refresh();
     }
 }

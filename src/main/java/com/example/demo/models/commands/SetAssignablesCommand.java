@@ -9,18 +9,19 @@ import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class SetAssignablesCommand implements Command{
     private Map<Pair<Integer, Integer>, Assignable> oldAssignable;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private DemoController demoController;
     private CommandList commands;
     public SetAssignablesCommand(DemoController demoController, CommandList commands){
         oldAssignable = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
+        oldClashes = new HashSet<>(State.getInstance().clashes);
+        freshClashes = null;
 
         this.demoController = demoController;
         this.commands = commands;
@@ -47,6 +48,15 @@ public class SetAssignablesCommand implements Command{
             }
         }
 
+        if(freshClashes == null){
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
+        }else{
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
+        }
+
+        State.getInstance().saveRequired = true;
         demoController.getService().refresh();
     }
 
@@ -60,6 +70,10 @@ public class SetAssignablesCommand implements Command{
         State.getInstance().assignables.putAll(oldAssignable);
         State.getInstance().timetable.putAll(oldTimeTable);
 
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
+
+        State.getInstance().saveRequired = true;
         demoController.getService().refresh();
     }
 }

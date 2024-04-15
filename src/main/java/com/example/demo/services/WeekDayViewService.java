@@ -160,7 +160,7 @@ public class WeekDayViewService extends DemoService{
 
                 return new SimpleObjectProperty(State.getInstance().assignables.get(id).getDetails());
             });
-            column.setCellFactory(value -> new ClickableTableCell<>());
+            column.setCellFactory(value -> new ClickableTableCell<>(day));
         }
 
         table.setItems(weeklyTable.get(day));

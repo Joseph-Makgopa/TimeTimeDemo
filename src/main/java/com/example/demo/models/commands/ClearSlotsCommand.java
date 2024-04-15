@@ -9,25 +9,62 @@ import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ClearSlotsCommand implements Command{
     private LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash;
+    private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
+    private LinkedList<Assignable> oldAssignables, freshAssignables;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     DemoController demoController;
     public ClearSlotsCommand(LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash, DemoController demoController){
         this.trash = trash;
         this.demoController = demoController;
+        oldTimeTable = new HashMap<>(State.getInstance().timetable);
+        freshTimeTable = null;
+
+        oldAssignables = new LinkedList<>();
+        for(Assignable assignable: State.getInstance().assignables.values()){
+            oldAssignables.add(assignable.clone());
+        }
+        freshAssignables = null;
+
+        oldClashes = new HashSet<>(State.getInstance().clashes);
+        freshClashes = null;
     }
     @Override
     public void execute() {
-        for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: trash){
-            if(entry.getValue() != null){
-                Assignable assignable = State.getInstance().assignables.get(entry.getValue());
+        if(freshTimeTable == null){
+            for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: trash){
+                if(entry.getValue() != null){
+                    Assignable assignable = State.getInstance().assignables.get(entry.getValue());
 
-                assignable.setRemain(assignable.getRemain() + 1);
-                State.getInstance().timetable.remove(entry.getKey());
+                    assignable.setRemain(assignable.getRemain() + 1);
+                    State.getInstance().timetable.remove(entry.getKey());
+                }
             }
+
+            freshTimeTable = new HashMap<>(State.getInstance().timetable);
+
+            freshAssignables = new LinkedList<>();
+            for(Assignable assignable: State.getInstance().assignables.values()){
+                freshAssignables.add(assignable.clone());
+            }
+
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
+
+        }else{
+            State.getInstance().timetable.clear();
+            State.getInstance().timetable.putAll(freshTimeTable);
+
+            State.getInstance().assignables.clear();
+            for(Assignable assignable: freshAssignables){
+                State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+            }
+
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
         }
 
         demoController.getService().refresh();
@@ -35,14 +72,16 @@ public class ClearSlotsCommand implements Command{
 
     @Override
     public void reverse() {
-        for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: trash){
-            if(entry.getValue() != null){
-                Assignable assignable = State.getInstance().assignables.get(entry.getValue());
+        State.getInstance().timetable.clear();
+        State.getInstance().timetable.putAll(oldTimeTable);
 
-                assignable.setRemain(assignable.getRemain() - 1);
-                State.getInstance().timetable.put(entry.getKey(), entry.getValue());
-            }
+        State.getInstance().assignables.clear();
+        for(Assignable assignable: oldAssignables){
+            State.getInstance().assignables.put(assignable.getId(), assignable.clone());
         }
+
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
 
         demoController.getService().refresh();
     }

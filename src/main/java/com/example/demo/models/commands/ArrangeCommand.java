@@ -8,18 +8,18 @@ import com.example.demo.models.WeekDay;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ArrangeCommand implements Command{
     private DemoController demoController;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     public ArrangeCommand(LinkedList<Assignable> lessons, DemoController demoController){
         this.demoController = demoController;
         this.oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldAssignable = new LinkedList<>();
+        oldClashes = new HashSet<>(State.getInstance().clashes);
 
         for(Assignable assignable: lessons){
             oldAssignable.add(assignable.clone());
@@ -27,6 +27,7 @@ public class ArrangeCommand implements Command{
 
         this.freshTimeTable = null;
         this.freshAssignable = null;
+        freshClashes = null;
     }
 
 
@@ -45,6 +46,8 @@ public class ArrangeCommand implements Command{
                 freshAssignable.add(assignable.clone());
                 State.getInstance().assignables.put(assignable.getId(), assignable.clone());
             }
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
         }else{
             State.getInstance().timetable.clear();
             State.getInstance().timetable.putAll(freshTimeTable);
@@ -52,6 +55,9 @@ public class ArrangeCommand implements Command{
             State.getInstance().assignables.clear();
             for(Assignable assignable: freshAssignable)
                 State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
         }
 
         State.getInstance().saveRequired = true;
@@ -66,6 +72,9 @@ public class ArrangeCommand implements Command{
         State.getInstance().assignables.clear();
         for(Assignable assignable: oldAssignable)
             State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
         demoController.getService().refresh();

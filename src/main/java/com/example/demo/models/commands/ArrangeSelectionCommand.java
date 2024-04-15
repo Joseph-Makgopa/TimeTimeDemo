@@ -8,13 +8,12 @@ import com.example.demo.models.WeekDay;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ArrangeSelectionCommand implements Command{
     private DemoController demoController;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private Assignable current, freshAssignable;
     public ArrangeSelectionCommand(DemoController demoController, Assignable current){
         this.demoController = demoController;
@@ -22,6 +21,10 @@ public class ArrangeSelectionCommand implements Command{
 
         this.freshTimeTable = null;
         this.freshAssignable = null;
+
+        this.oldClashes = new HashSet<>(State.getInstance().clashes);
+        this.freshClashes = null;
+
         this.current = current;
     }
     @Override
@@ -35,11 +38,17 @@ public class ArrangeSelectionCommand implements Command{
             freshTimeTable = new HashMap<>(State.getInstance().timetable);
             State.getInstance().assignables.put(copy.getId(), copy);
             freshAssignable = copy;
+
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
         }else{
             State.getInstance().timetable.clear();
             State.getInstance().timetable.putAll(freshTimeTable);
 
             State.getInstance().assignables.put(freshAssignable.getId(), freshAssignable.clone());
+
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
         }
 
         State.getInstance().saveRequired = true;

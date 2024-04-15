@@ -27,7 +27,7 @@ public abstract class DemoService {
     }
     public void refresh(){
         ClickableTableCell.instances.clear();
-        Integer index = demoController.getTableAssign().getSelectionModel().getSelectedIndex();
+        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
 
         populateTable();
         setupTable();

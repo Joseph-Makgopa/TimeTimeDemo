@@ -78,8 +78,8 @@ public class ClickableTableCell<S, T> extends javafx.scene.control.cell.TextFiel
             if (!isEmpty()) {
                 if (getTableView() != null && getTableRow() != null && getTableView().getSelectionModel() != null) {
                     if (lastSelectedCell != null) {
-                        if(isClash()){
-                            lastSelectedCell.setStyle("-fx-background-color: rgba(1, 0, 0, 0.5);-fx-text-fill: black;");
+                        if(lastSelectedCell.isClash()){
+                            lastSelectedCell.setStyle("-fx-background-color: rgba(255, 0, 0, 0.5);-fx-text-fill: black;");
                         }else
                             lastSelectedCell.setStyle("");
                     }
@@ -109,9 +109,18 @@ public class ClickableTableCell<S, T> extends javafx.scene.control.cell.TextFiel
             } else {
                 if(deadCell)
                     setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);-fx-text-fill: rgba(0, 0, 0, 0.5);");
-                else if(isClash())
-                    setStyle("-fx-background-color: rgba(1, 0, 0, 0.5);-fx-text-fill: black;");
-                else
+                else if(isClash()) {
+                    setStyle("-fx-background-color: rgba(255, 0, 0, 0.5);-fx-text-fill: black;");
+                }else
+                    setStyle("");
+            }
+        }else if(item != null && !((String)item).isEmpty()){
+            if (this == lastSelectedCell) {
+                setStyle("-fx-background-color: white;-fx-text-fill: black;");
+            } else {
+                if(isClash()) {
+                    setStyle("-fx-background-color: rgba(255, 0, 0, 0.5);-fx-text-fill: black;");
+                }else
                     setStyle("");
             }
         }
@@ -123,13 +132,11 @@ public class ClickableTableCell<S, T> extends javafx.scene.control.cell.TextFiel
         return deadCell;
     }
     public Boolean isClash(){
-        if(day != null){
-            if(getItem() != null){
-                Rank<Grade> rank = (Rank<Grade>) getTableView().getItems().get(getTableRow().getIndex());
-                Integer period = Integer.parseInt(getTableColumn().getText()) - 1;
+        if(day != null && getItem() != null){
+            Rank<Grade> rank = (Rank<Grade>) getTableView().getItems().get(getTableRow().getIndex());
+            Integer period = Integer.parseInt(getTableColumn().getText()) - 1;
 
-                return State.getInstance().clashes.contains(TripletManager.get(day, rank.getHeader(), period));
-            }
+            return State.getInstance().clashes.contains(TripletManager.get(day, rank.getHeader(), period));
         }
 
         return false;
