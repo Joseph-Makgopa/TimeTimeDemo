@@ -13,7 +13,12 @@ import com.example.demo.utilities.TripletManager;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PositionCommand implements Command{
+    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
+    private Set<Triplet<WeekDay, Grade, Integer>> freshClashes;
     private Assignable oldAssignable;
     private Assignable oldPairAssignable;
     private Assignable freshAssignable;
@@ -22,6 +27,8 @@ public class PositionCommand implements Command{
     private DemoController demoController;
     private Boolean initialExecution;
     public PositionCommand(DemoController demoController, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
+        this.oldClashes = new HashSet<>(State.getInstance().clashes);
+        this.freshClashes = null;
         this.oldAssignable = null;
         this.oldPairAssignable = null;
         this.freshAssignable = assignable;
@@ -51,6 +58,14 @@ public class PositionCommand implements Command{
 
             State.getInstance().timetable.put(pairTriplet, freshPairAssignable.getId());
             freshPairAssignable.setRemain(freshPairAssignable.getRemain() - 1);
+        }
+
+        if(freshClashes == null) {
+            State.getInstance().setClashes();
+            freshClashes = new HashSet<>(State.getInstance().clashes);
+        }else{
+            State.getInstance().clashes.clear();
+            State.getInstance().clashes.addAll(freshClashes);
         }
 
         demoController.getService().refresh();
@@ -83,8 +98,10 @@ public class PositionCommand implements Command{
             }
         }
 
-        State.getInstance().saveRequired = true;
+        State.getInstance().clashes.clear();
+        State.getInstance().clashes.addAll(oldClashes);
 
         demoController.getService().refresh();
+        State.getInstance().saveRequired = true;
     }
 }

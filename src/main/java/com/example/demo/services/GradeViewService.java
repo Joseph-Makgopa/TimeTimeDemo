@@ -7,14 +7,9 @@ import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
-import com.example.demo.utilities.Notification;
-import com.example.demo.utilities.Pair;
-import com.example.demo.utilities.Triplet;
-import com.example.demo.utilities.TripletManager;
+import com.example.demo.utilities.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.print.*;
@@ -207,6 +202,7 @@ public class GradeViewService extends DemoService{
 
     @Override
     public void refresh() {
+        ClickableTableCell.instances.clear();
         Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
 
         populateTable();

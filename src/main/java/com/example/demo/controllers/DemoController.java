@@ -13,7 +13,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -83,6 +87,9 @@ public class DemoController implements Initializable {
                     tableAssign.setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
                     tableAssign.setItems(service.search(txtSearch.getText().toUpperCase(), tableAssign.getItems()));
                     tableAssign.getItems().sort(new AssignableComparator());
+
+                    if(!tableAssign.getItems().isEmpty())
+                        tableAssign.getSelectionModel().select(0);
                 }
             }
         });
@@ -124,6 +131,40 @@ public class DemoController implements Initializable {
                 contextMenu.getItems().add(0, arrangeCurrentMenuItem);
                 contextMenu.getItems().add(0, resetMenuItem);
                 contextMenu.getItems().add(0, positionMenuItem);
+
+                if(service instanceof EducatorViewService){
+                    Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+
+                    if(tab != null) {
+                        Integer post = Integer.parseInt(tab.getText().split(",")[0]);
+                        Educator educator = State.getInstance().educators.get(post);
+                        LinkedList<ClickableTableCell> cells = ClickableTableCell.instances.get(educator);
+
+                        if(cells != null) {
+                            for (ClickableTableCell<?, ?> cell : cells) {
+                                if (cell.getItem() != null) {
+                                    String value = (String) cell.getItem();
+
+                                    if (value.isEmpty()) {
+                                        Rank<WeekDay> rank = (Rank<WeekDay>) cell.getTableView().getItems().get(cell.getTableRow().getIndex());
+                                        Integer period = Integer.parseInt(cell.getTableColumn().getText()) - 1;
+
+                                        if (State.getInstance().timetable.get(TripletManager.get(rank.getHeader(), newSelection.getGrade(), period)) != null) {
+                                            cell.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);-fx-text-fill: rgba(0, 0, 0, 0.5);");
+                                            cell.setDeadCell(true);
+                                        } else {
+                                            cell.setStyle("");
+                                            cell.setDeadCell(false);
+                                        }
+                                    } else {
+                                        cell.setStyle("");
+                                        cell.setDeadCell(false);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
 

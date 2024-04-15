@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import com.example.demo.comparators.AssignableComparator;
 import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
@@ -8,10 +7,7 @@ import com.example.demo.models.commands.ClearSlotsCommand;
 import com.example.demo.models.commands.Command;
 import com.example.demo.models.commands.CommandManager;
 import com.example.demo.models.commands.PositionCommand;
-import com.example.demo.utilities.Notification;
-import com.example.demo.utilities.Pair;
-import com.example.demo.utilities.Triplet;
-import com.example.demo.utilities.TripletManager;
+import com.example.demo.utilities.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -135,12 +131,12 @@ public class WeekDayViewService extends DemoService{
         });
 
         demoController.getPane().getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
+
     }
     public void setupDayTable(WeekDay day, TableView<Rank<Grade>> table){
         /**
          * setup the columns for a table and add the referenced ObservableList
          * **/
-
         TableColumn<Rank<Grade>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
 
@@ -150,8 +146,8 @@ public class WeekDayViewService extends DemoService{
 
         for(int count = 1; count < table.getColumns().size(); count++){
             column = table.getColumns().get(count);
-            column.prefWidthProperty().bind(width);
             column.setStyle("-fx-alignment: center");
+            column.prefWidthProperty().bind(width);
 
             final Integer index = count - 1;
 
@@ -183,7 +179,7 @@ public class WeekDayViewService extends DemoService{
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
 
                 for(int period = 0; period < periods.size(); period++){
-                    Triplet<WeekDay, Grade, Integer> index = new Triplet<>(day, grade, period);
+                    Triplet<WeekDay, Grade, Integer> index = TripletManager.get(day, grade, period);
                     periods.set(period, State.getInstance().timetable.get(index));
                 }
 

@@ -6,16 +6,9 @@ import com.example.demo.comparators.LessonComparator;
 import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
-import com.example.demo.utilities.Filter;
-import com.example.demo.utilities.Pair;
-import com.example.demo.utilities.Triplet;
-import com.example.demo.utilities.TripletManager;
+import com.example.demo.utilities.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -33,6 +26,7 @@ public abstract class DemoService {
         this.filterOptions = filterOptions;
     }
     public void refresh(){
+        ClickableTableCell.instances.clear();
         Integer index = demoController.getTableAssign().getSelectionModel().getSelectedIndex();
 
         populateTable();

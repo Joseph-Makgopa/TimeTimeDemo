@@ -5,16 +5,11 @@ import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
 import com.example.demo.models.commands.*;
-import com.example.demo.utilities.Notification;
-import com.example.demo.utilities.Pair;
-import com.example.demo.utilities.Triplet;
-import com.example.demo.utilities.TripletManager;
+import com.example.demo.utilities.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.print.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +32,7 @@ public class EducatorViewService extends DemoService{
     }
     @Override
     public void refresh() {
+        ClickableTableCell.instances.clear();
         Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
 
         populateTable();
@@ -356,7 +352,7 @@ public class EducatorViewService extends DemoService{
 
                 return new SimpleObjectProperty(session.getGrade().getNumber() + session.getGrade().getDivision().toString() + " " + session.getSubject());
             });
-            column.setCellFactory(value -> new ClickableTableCell<>(this));
+            column.setCellFactory(value -> new ClickableTableCell<>(educator));
         }
 
         table.setItems(educatorTable.get(educator));

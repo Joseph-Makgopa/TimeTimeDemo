@@ -3,13 +3,11 @@ package com.example.demo.models;
 import com.example.demo.utilities.Notification;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.TripletManager;
 import javafx.scene.control.Alert;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class State implements Serializable{
     public final Map<WeekDay, Integer> days;
@@ -19,6 +17,7 @@ public class State implements Serializable{
     public final Map<Integer, Session> sessions;
     public final Map<Pair<Integer, Integer>, Assignable> assignables;
     public final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> timetable;
+    public final Set<Triplet<WeekDay, Grade, Integer>> clashes;
     public static LinkedList<String> recent = null;
     public Integer breakAfter = 1;
     public Boolean saveRequired = false;
@@ -33,6 +32,7 @@ public class State implements Serializable{
         sessions = new HashMap<>();
         assignables = new HashMap<>();
         timetable = new HashMap<>();
+        clashes = new HashSet<>();
     }
     public static State getInstance(){
         if(instance == null){
@@ -80,10 +80,44 @@ public class State implements Serializable{
         sessions.clear();
         assignables.clear();
         timetable.clear();
+        clashes.clear();
         breakAfter = 1;
         saveRequired = false;
-        filename  = "Untitled";
+        filename = "Untitled";
         filepath = "";
+    }
+    public void setClashes(){
+        clashes.clear();
+        State.getInstance().days.forEach((day, periods) -> {
+            for(int count = 0; count < periods; count++){
+                Map<Educator, LinkedList<Triplet<WeekDay, Grade, Integer>>> occurrences = new HashMap<>();
+                final Integer period = count;
+
+                State.getInstance().grades.forEach(grade -> {
+                    Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, grade, period);
+                    Pair<Integer, Integer> id = State.getInstance().timetable.get(triplet);
+
+                    if(id != null){
+                        Assignable assignable = State.getInstance().assignables.get(id);
+                        Pair<Educator, Educator> educators = assignable.getEducators();
+
+                        LinkedList<Triplet<WeekDay, Grade, Integer>> triplets = occurrences.computeIfAbsent(educators.getFirst(), k -> new LinkedList<>());
+                        triplets.add(triplet);
+
+                        if(educators.getSecond() != null){
+                            triplets = occurrences.computeIfAbsent(educators.getSecond(), k -> new LinkedList<>());
+                            triplets.add(triplet);
+                        }
+                    }
+                });
+
+                occurrences.forEach((educator, triplets) -> {
+                    if(triplets.size() > 1){
+                        clashes.addAll(triplets);
+                    }
+                });
+            }
+        });
     }
     public Boolean open(File file){
         try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))){
@@ -97,6 +131,7 @@ public class State implements Serializable{
             sessions.putAll(state.sessions);
             assignables.putAll(state.assignables);
             timetable.putAll(state.timetable);
+            clashes.addAll(state.clashes);
 
             breakAfter = state.breakAfter;
             filename = file.getName();
