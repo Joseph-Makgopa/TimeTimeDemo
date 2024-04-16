@@ -64,7 +64,7 @@ public class ResetSelectionCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 
@@ -76,7 +76,7 @@ public class ResetSelectionCommand implements Command{
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 }

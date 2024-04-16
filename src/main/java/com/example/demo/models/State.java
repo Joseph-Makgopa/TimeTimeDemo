@@ -136,18 +136,20 @@ public class State implements Serializable{
             breakAfter = state.breakAfter;
             filename = file.getName();
             filepath = file.getPath();
+
+            Optional<Integer> max =  sessions.keySet().stream().max(Comparator.naturalOrder());
+
+            Session.counter = max.map(integer -> integer + 1).orElse(1);
+
             saveRequired = false;
 
             return true;
         }catch(FileNotFoundException error){
-            Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
-            error.printStackTrace();
+            Notification.show("File open error","File '" + file.getName() + "' not found.", Alert.AlertType.INFORMATION);
         }catch (IOException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
-            error.printStackTrace();
         }catch (ClassNotFoundException error){
             Notification.show("File open error","Failed to open file '" + file.getName() + "'.", Alert.AlertType.INFORMATION);
-            error.printStackTrace();
         }
 
         return false;

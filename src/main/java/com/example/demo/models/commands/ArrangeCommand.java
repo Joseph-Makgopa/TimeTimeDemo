@@ -61,7 +61,7 @@ public class ArrangeCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
 
     @Override
@@ -77,6 +77,6 @@ public class ArrangeCommand implements Command{
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
 }

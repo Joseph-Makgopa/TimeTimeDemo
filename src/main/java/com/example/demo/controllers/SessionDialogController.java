@@ -299,6 +299,9 @@ public class SessionDialogController extends BaseDataDialogController implements
         comboSplit.getItems().add(session.getId().toString());
         commandList.add(new AddSessionCommand(session));
         tableSessions.refresh();
+        tableSessions.getSelectionModel().select(session);
+        tableSessions.scrollTo(session);
+        comboGrade.requestFocus();
         btnOk.setDisable(false);
         txtSearch.clear();
         search(null);

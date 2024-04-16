@@ -52,7 +52,7 @@ public class ArrangeSelectionCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
     @Override
     public void reverse(){
@@ -62,6 +62,6 @@ public class ArrangeSelectionCommand implements Command{
         State.getInstance().assignables.put(current.getId(), current.clone());
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
 }

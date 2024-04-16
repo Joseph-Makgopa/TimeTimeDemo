@@ -47,12 +47,60 @@ public class EducatorViewService extends DemoService{
             Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
             demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
             demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+            demoController.getTableAssign().getItems().sort(new AssignableComparator());
             demoController.getTableAssign().refresh();
 
             if(selection != null)
                 demoController.getTableAssign().getSelectionModel().select(selection);
         }
         ClickableTableCell.lastSelectedCell = null;
+    }
+    @Override
+    public void refreshData(){
+        ClickableTableCell.instances.clear();
+
+        State.getInstance().educators.forEach((post, educator) -> {
+            ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
+
+            for(WeekDay day: WeekDay.values()){
+                Integer numPeriods = State.getInstance().days.get(day);
+
+                if(numPeriods != null){
+                    Rank<WeekDay> daySchedule = new Rank<>(day, numPeriods);
+                    ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
+
+                    for(int period = 0; period < periods.size(); period++){
+                        final Integer finalPeriod = period;
+
+                        State.getInstance().timetable.forEach((triplet, id) -> {
+                            if(triplet.getFirst().equals(day) && triplet.getThird().equals(finalPeriod)){
+                                Assignable assignable = State.getInstance().assignables.get(id);
+                                Session session = State.getInstance().sessions.get(assignable.getId().getFirst());
+
+                                if(!session.getEducator().equals(educator)){
+                                    if(assignable.getId().getFirst() != null){
+                                        session = State.getInstance().sessions.get(assignable.getId().getFirst());
+
+                                        if(session.getEducator().equals(educator)){
+                                            periods.set(finalPeriod, State.getInstance().timetable.get(new Triplet<>(day, session.getGrade(), finalPeriod)));
+                                        }
+                                    }
+                                }else{
+                                    periods.set(finalPeriod, State.getInstance().timetable.get(new Triplet<>(day, session.getGrade(), finalPeriod)));
+                                }
+                            }
+                        });
+                    }
+
+                    daySchedules.add(daySchedule);
+                }
+            }
+
+            educatorTable.get(educator).clear();
+            educatorTable.get(educator).addAll(daySchedules);
+        });
+
+        super.refreshData();
     }
     public ObservableList<Rank<WeekDay>> filter(Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
@@ -184,86 +232,37 @@ public class EducatorViewService extends DemoService{
             }
         }
     }
-    @Override
-    public void highlightOptions(ClickableTableCell<?,?> oldCell, ClickableTableCell<?,?> newCell){
-        if(newCell == null){
-            Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
+    public void clearCell(){
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Clear error", "Cell has not been selected.", Alert.AlertType.ERROR);
+            return;
+        }
 
-            if(tab == null)
-                return;
+        if(ClickableTableCell.lastSelectedCell.getItem() == null || ((String)ClickableTableCell.lastSelectedCell.getItem()).isEmpty()){
+            return;
+        }
 
-            Integer post = Integer.parseInt(tab.getText().split(",")[0]);
-            Educator educator = State.getInstance().educators.get(post);
+        String item = (String) ClickableTableCell.lastSelectedCell.getItem();
+        item = item.split(" ")[0];
+        Grade grade = new Grade(Integer.parseInt(item.substring(0, item.length() - 1)), item.charAt(item.length() - 1));
+        Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Integer rowIndex = ClickableTableCell.lastSelectedCell.getTableRow().getIndex();
+        Rank<WeekDay> rank = (Rank<WeekDay>) ClickableTableCell.lastSelectedCell.getTableView().getItems().get(rowIndex);
 
-            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
-            demoController.getTableAssign().getItems().sort(new AssignableComparator());
+        LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+        Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(rank.getHeader(), grade, period);
 
-            demoController.setupTableAssignContextMenu();
-        }else{
-            if(oldCell != null){
-
+        for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+            if(entry.getKey().equals(triplet)){
+                trash.add(entry);
+                break;
             }
         }
 
-        if(newCell != null) {
-            if(!demoController.getContextMenu().getItems().get(2).getId().equals("LessonFilter")) {
-                demoController.getContextMenu().getItems().remove(2);
-            }
-
-            MenuItem lessonFilterMenuItem = new MenuItem("Show Available Lessons");
-            lessonFilterMenuItem.setId("LessonFilter");
-
-            lessonFilterMenuItem.setOnAction(event -> {
-                if (lessonFilterMenuItem.getText().equals("Show Available Lessons")) {
-                    lessonFilterMenuItem.setText("Show All Lessons");
-
-                    Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
-                    Rank<WeekDay> item = (Rank<WeekDay>) ClickableTableCell.lastSelectedCell.getTableView().getSelectionModel().getSelectedItem();
-                    LinkedList<Grade> availableGrade = new LinkedList<>();
-
-                    for (Grade grade : State.getInstance().grades) {
-                        if (State.getInstance().timetable.get(TripletManager.get(item.getHeader(), grade, period)) == null) {
-                            availableGrade.add(grade);
-                        }
-                    }
-
-                    Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
-
-                    if (tab == null)
-                        return;
-
-                    Integer post = Integer.parseInt(tab.getText().split(",")[0]);
-                    Educator educator = State.getInstance().educators.get(post);
-
-                    demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator) && availableGrade.contains(value.getGrade())).toList()));
-                } else {
-                    lessonFilterMenuItem.setText("Show Available Lessons");
-
-                    Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
-
-                    if (tab == null)
-                        return;
-
-                    Integer post = Integer.parseInt(tab.getText().split(",")[0]);
-                    Educator educator = State.getInstance().educators.get(post);
-
-                    demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
-                }
-            });
-            demoController.getContextMenu().getItems().add(2, lessonFilterMenuItem);
-
-        }else{
-            Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
-
-            if(tab == null)
-                return;
-
-            Integer post = Integer.parseInt(tab.getText().split(",")[0]);
-            Educator educator = State.getInstance().educators.get(post);
-
-            demoController.getTableAssign().setItems(FXCollections.observableArrayList(State.getInstance().assignables.values().stream().filter(value -> value.hasEducator(educator)).toList()));
-
-            demoController.setupTableAssignContextMenu();
+        if(!trash.isEmpty()) {
+            Command command = new ClearSlotsCommand(trash, demoController);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
         }
     }
     @Override

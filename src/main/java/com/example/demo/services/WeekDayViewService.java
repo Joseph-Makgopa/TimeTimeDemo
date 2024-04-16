@@ -32,6 +32,31 @@ public class WeekDayViewService extends DemoService{
     public WeekDayViewService(DemoController demoController){
         super(demoController);
     }
+    @Override
+    public void refreshData(){
+        ClickableTableCell.instances.clear();
+
+        State.getInstance().days.forEach((day, numPeriods) -> {
+            ObservableList<Rank<Grade>> gradeSchedules = FXCollections.observableArrayList();
+
+            State.getInstance().grades.forEach(grade -> {
+                Rank<Grade> gradeSchedule = new Rank<>(grade, numPeriods);
+                ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
+
+                for(int period = 0; period < periods.size(); period++){
+                    Triplet<WeekDay, Grade, Integer> index = TripletManager.get(day, grade, period);
+                    periods.set(period, State.getInstance().timetable.get(index));
+                }
+
+                gradeSchedules.add(gradeSchedule);
+            });
+
+            weeklyTable.get(day).clear();
+            weeklyTable.get(day).addAll(gradeSchedules);
+        });
+
+        super.refreshData();
+    }
     public void clearTab(){
         Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
 
@@ -72,6 +97,33 @@ public class WeekDayViewService extends DemoService{
                 command.execute();
                 CommandManager.getInstance().addCommand(command);
             }
+        }
+    }
+    public void clearCell(){
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Clear error", "Cell has not been selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        WeekDay day = WeekDay.valueOf(demoController.getPane().getSelectionModel().getSelectedItem().getText().toUpperCase());
+        Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Integer rowIndex = ClickableTableCell.lastSelectedCell.getTableRow().getIndex();
+        Rank<Grade> rank = (Rank<Grade>) ClickableTableCell.lastSelectedCell.getTableView().getItems().get(rowIndex);
+
+        LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+        Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(day, rank.getHeader(), period);
+
+        for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+            if(entry.getKey().equals(triplet)){
+                trash.add(entry);
+                break;
+            }
+        }
+
+        if(!trash.isEmpty()) {
+            Command command = new ClearSlotsCommand(trash, demoController);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
         }
     }
     public void setupTable(){

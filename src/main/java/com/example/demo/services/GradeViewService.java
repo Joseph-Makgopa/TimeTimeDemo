@@ -138,6 +138,35 @@ public class GradeViewService extends DemoService{
             }
         }
     }
+    public void clearCell(){
+        if(ClickableTableCell.lastSelectedCell == null){
+            Notification.show("Clear error", "Cell has not been selected.", Alert.AlertType.ERROR);
+            return;
+        }
+
+
+        String[] split = demoController.getPane().getSelectionModel().getSelectedItem().getText().split(" ");
+        Grade grade = new Grade(Integer.parseInt(split[0]), split[1].charAt(0));
+        Integer period = Integer.parseInt(ClickableTableCell.lastSelectedCell.getTableColumn().getText()) - 1;
+        Integer rowIndex = ClickableTableCell.lastSelectedCell.getTableRow().getIndex();
+        Rank<WeekDay> rank = (Rank<WeekDay>) ClickableTableCell.lastSelectedCell.getTableView().getItems().get(rowIndex);
+
+        LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash = new LinkedList<>();
+        Triplet<WeekDay, Grade, Integer> triplet = TripletManager.get(rank.getHeader(), grade, period);
+
+        for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: State.getInstance().timetable.entrySet()){
+            if(entry.getKey().equals(triplet)){
+                trash.add(entry);
+                break;
+            }
+        }
+
+        if(!trash.isEmpty()) {
+            Command command = new ClearSlotsCommand(trash, demoController);
+            command.execute();
+            CommandManager.getInstance().addCommand(command);
+        }
+    }
     @Override
     public void setupTable() {
         demoController.getPane().getTabs().clear();
@@ -163,7 +192,6 @@ public class GradeViewService extends DemoService{
             demoController.getPane().getTabs().add(tab);
         });
     }
-
     public void setupGradeTable(Grade grade, TableView<Rank<WeekDay>> table){
         TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
         column.setCellValueFactory(entry -> new SimpleObjectProperty(entry.getValue().getHeader().toString()));
@@ -199,7 +227,6 @@ public class GradeViewService extends DemoService{
 
         table.setItems(gradeTable.get(grade));
     }
-
     @Override
     public void refresh() {
         ClickableTableCell.instances.clear();
@@ -225,6 +252,36 @@ public class GradeViewService extends DemoService{
 
         ClickableTableCell.lastSelectedCell = null;
     }
+    @Override
+    public void refreshData(){
+        ClickableTableCell.instances.clear();
+
+        State.getInstance().grades.forEach(grade -> {
+            ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
+
+            for(WeekDay day: WeekDay.values()){
+                Integer numPeriods = State.getInstance().days.get(day);
+
+                if(numPeriods != null){
+                    Rank<WeekDay> daySchedule = new Rank<>(day, numPeriods);
+                    ArrayList<Pair<Integer, Integer>> periods = daySchedule.getPeriods();
+
+                    for(int period = 0; period < periods.size(); period++){
+                        Triplet<WeekDay, Grade, Integer> index = new Triplet<>(day, grade, period);
+                        periods.set(period, State.getInstance().timetable.get(index));
+                    }
+
+                    daySchedules.add(daySchedule);
+                }
+            }
+
+            gradeTable.get(grade).clear();
+            gradeTable.get(grade).addAll(daySchedules);
+        });
+
+        super.refreshData();
+    }
+
 
     @Override
     public void populateTable() {

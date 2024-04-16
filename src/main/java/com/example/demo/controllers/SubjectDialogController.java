@@ -59,6 +59,8 @@ public class SubjectDialogController extends BaseDataDialogController implements
         }
 
         listSubject.getItems().add(name);
+        listSubject.getSelectionModel().select(name);
+        listSubject.scrollTo(name);
         commandList.add(new AddSubjectCommand(subject));
         txtName.clear();
         btnOk.setDisable(false);

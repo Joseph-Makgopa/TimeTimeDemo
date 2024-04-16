@@ -66,6 +66,7 @@ public class DemoController implements Initializable {
     private ContextMenu contextMenu = new ContextMenu();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         paneTimeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             ClickableTableCell.lastSelectedCell = null;
             setupTableAssignContextMenu();
@@ -448,14 +449,9 @@ public class DemoController implements Initializable {
             days.put(WeekDay.SUNDAY, spinnerSundayPeriods.getValue());
         }
 
-        Command command = new UpdateStructureCommand(days, spinnerBreak.getValue());
+        Command command = new UpdateStructureCommand(days, spinnerBreak.getValue(), comboDay, this);
         command.execute();
         CommandManager.getInstance().addCommand(command);
-        comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
-
-        service.populateTable();
-        service.setupTable();
-        State.getInstance().saveRequired = true;
     }
     @FXML
     public void revertStructure(ActionEvent event){
@@ -557,6 +553,10 @@ public class DemoController implements Initializable {
     @FXML
     public void cleanRow(ActionEvent event){
         service.clearRow();
+    }
+    @FXML
+    public void cleanCell(ActionEvent event){
+        service.clearCell();
     }
     @FXML
     public void toggleLeftPanel(ActionEvent event){

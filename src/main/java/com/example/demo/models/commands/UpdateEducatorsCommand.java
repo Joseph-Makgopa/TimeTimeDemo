@@ -7,6 +7,7 @@ import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.models.Assignable;
 import com.example.demo.services.DemoService;
+import com.example.demo.services.EducatorViewService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -66,7 +67,11 @@ public class UpdateEducatorsCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        if(demoController.getService() instanceof EducatorViewService) {
+            demoController.getService().refresh();
+        }else{
+            demoController.getService().refreshData();
+        }
     }
 
     @Override
@@ -86,6 +91,10 @@ public class UpdateEducatorsCommand implements Command{
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        if(demoController.getService() instanceof EducatorViewService) {
+            demoController.getService().refresh();
+        }else{
+            demoController.getService().refreshData();
+        }
     }
 }

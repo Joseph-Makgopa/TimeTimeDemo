@@ -74,6 +74,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#clearTable" text="Clear Table" />
                   <MenuItem fx:id="clearTab" mnemonicParsing="false" onAction="#cleanTab" text="Clear Tab" />
                   <MenuItem fx:id="clearRow" mnemonicParsing="false" onAction="#cleanRow" text="Clear Row" />
+                  <MenuItem fx:id="cleanCell" mnemonicParsing="false" onAction="#cleanCell" text="Clear Cell" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="View">

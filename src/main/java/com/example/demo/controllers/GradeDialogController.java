@@ -66,6 +66,8 @@ public class GradeDialogController extends BaseDataDialogController implements I
         }
 
         listGrades.getItems().add(grade);
+        listGrades.getSelectionModel().select(grade);
+        listGrades.scrollTo(grade);
         commandList.add(new AddGradeCommand(grade));
         btnOk.setDisable(false);
     }

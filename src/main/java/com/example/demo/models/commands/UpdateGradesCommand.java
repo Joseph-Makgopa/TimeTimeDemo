@@ -7,6 +7,7 @@ import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.models.Assignable;
 import com.example.demo.services.DemoService;
+import com.example.demo.services.GradeViewService;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -70,7 +71,11 @@ public class UpdateGradesCommand implements Command {
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        if(demoController.getService() instanceof GradeViewService) {
+            demoController.getService().refresh();
+        }else{
+            demoController.getService().refreshData();
+        }
     }
 
     @Override
@@ -91,6 +96,10 @@ public class UpdateGradesCommand implements Command {
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refresh();
+        if(demoController.getService() instanceof GradeViewService) {
+            demoController.getService().refresh();
+        }else{
+            demoController.getService().refreshData();
+        }
     }
 }

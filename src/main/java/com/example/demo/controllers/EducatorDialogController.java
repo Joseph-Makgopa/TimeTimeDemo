@@ -121,10 +121,15 @@ public class EducatorDialogController extends BaseDataDialogController implement
             }
         }
 
-        listEducators.add(educator);
-        commandList.add(new AddEducatorCommand(educator));
         txtInitials.clear();
         txtSurname.clear();
+        listEducators.add(educator);
+        tableEducators.refresh();
+        tableEducators.getSelectionModel().select(educator);
+        tableEducators.scrollTo(educator);
+        txtInitials.requestFocus();
+
+        commandList.add(new AddEducatorCommand(educator));
 
         try {
             Integer max = listEducators.stream().map(entry -> entry.getPost()).max(Comparator.naturalOrder()).get();

@@ -35,7 +35,7 @@ public class ClearTimeTableCommand implements Command{
 
         State.getInstance().timetable.clear();
         State.getInstance().clashes.clear();
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
 
     @Override
@@ -53,6 +53,6 @@ public class ClearTimeTableCommand implements Command{
 
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
-        demoController.getService().refresh();
+        demoController.getService().refreshData();
     }
 }

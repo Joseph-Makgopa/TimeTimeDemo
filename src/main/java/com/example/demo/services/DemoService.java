@@ -9,6 +9,8 @@ import com.example.demo.models.Assignable;
 import com.example.demo.utilities.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -47,8 +49,29 @@ public abstract class DemoService {
 
         ClickableTableCell.lastSelectedCell = null;
     }
+    public void refreshData(){
+        demoController.getPane().getTabs().forEach(tab -> ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh());
+
+        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
+
+        if(index > 0 && index < demoController.getPane().getTabs().size())
+            demoController.getPane().getSelectionModel().select(index);
+
+        Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
+        demoController.getTableAssign().getItems().clear();
+        demoController.getTableAssign().getItems().addAll(State.getInstance().assignables.values());
+        demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+        demoController.getTableAssign().getItems().sort(new AssignableComparator());
+        demoController.getTableAssign().refresh();
+
+        if(selection != null)
+            demoController.getTableAssign().getSelectionModel().select(selection);
+
+        ClickableTableCell.lastSelectedCell = null;
+    }
     public abstract void clearTab();
     public abstract void clearRow();
+    public abstract void clearCell();
     public ObservableList<Assignable> search(String text){
         if(text == null || text.isEmpty())
             return FXCollections.observableArrayList(State.getInstance().assignables.values());
@@ -96,9 +119,6 @@ public abstract class DemoService {
         });
 
         return FXCollections.observableArrayList(result);
-    }
-    public void highlightOptions(ClickableTableCell<?,?> oldCell, ClickableTableCell<?,?> newCell){
-
     }
     public abstract void setupTable();
     public abstract void populateTable();
@@ -333,7 +353,7 @@ public abstract class DemoService {
             }
         }
 
-        refresh();
+        refreshData();
     }
     public void arrange(){
         arrange(new LinkedList<>(State.getInstance().assignables.values()));
