@@ -11,15 +11,14 @@ import com.example.demo.utilities.TripletManager;
 
 import java.util.*;
 
-public class ResetCommand implements Command{
+public class ResetCommand extends Command{
     private Map<Pair<Integer, Integer>, Assignable> lessons;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private DemoController demoController;
     public ResetCommand(LinkedList<Assignable> lessons, DemoController demoController){
+        super(demoController);
         setLessons(lessons);
-        this.demoController = demoController;
 
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         freshTimeTable = null;
@@ -41,7 +40,7 @@ public class ResetCommand implements Command{
             this.lessons.put(assignable.getId(), assignable.clone());
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         if(freshTimeTable == null){
             Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
             LinkedList<Triplet<WeekDay, Grade, Integer>> pairs = new LinkedList<>();
@@ -87,12 +86,12 @@ public class ResetCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
@@ -102,7 +101,7 @@ public class ResetCommand implements Command{
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 }

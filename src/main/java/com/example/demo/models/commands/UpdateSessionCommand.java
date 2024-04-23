@@ -1,18 +1,20 @@
 package com.example.demo.models.commands;
 
+import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Educator;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
 
-public class UpdateSessionCommand implements  Command{
+public class UpdateSessionCommand extends Command{
     private Session old;
     private Session fresh;
-    public UpdateSessionCommand(Session old, Session fresh){
+    public UpdateSessionCommand(DemoController demoController, Session old, Session fresh){
+        super(demoController);
         this.old = old;
         this.fresh = fresh;
     }
     @Override
-    public void execute(){
+    public void executeCode(){
         State.getInstance().sessions.put(fresh.getId(), fresh);
         Session session;
 
@@ -37,7 +39,7 @@ public class UpdateSessionCommand implements  Command{
         }
     }
     @Override
-    public void reverse(){
+    public void reverseCode(){
         State.getInstance().sessions.put(old.getId(), old);
         Session session;
 

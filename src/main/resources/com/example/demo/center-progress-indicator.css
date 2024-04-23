@@ -1,0 +1,6 @@
+.centered-node {
+    -fx-translate-x: 200;
+    -fx-translate-y: 200;
+    -fx-alignment: center;
+    text-align: center;
+}

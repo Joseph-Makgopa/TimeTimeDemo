@@ -46,13 +46,10 @@ public class State implements Serializable{
                 recent = (LinkedList<String>) objectInputStream.readObject();
             }catch(FileNotFoundException error){
                 recent = new LinkedList<>();
-                error.printStackTrace();
             }catch (IOException error){
                 recent = new LinkedList<>();
-                error.printStackTrace();
             }catch (ClassNotFoundException error){
                 recent = new LinkedList<>();
-                error.printStackTrace();
             }
         }
 

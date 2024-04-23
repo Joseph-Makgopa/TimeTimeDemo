@@ -115,7 +115,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
 
             if(entry.getPost().equals(post)){
                 listEducators.set(count, educator);
-                commandList.add(new UpdateEducatorCommand(entry, educator));
+                commandList.add(new UpdateEducatorCommand(demoController, entry, educator));
                 btnOk.setDisable(false);
                 return;
             }
@@ -129,7 +129,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
         tableEducators.scrollTo(educator);
         txtInitials.requestFocus();
 
-        commandList.add(new AddEducatorCommand(educator));
+        commandList.add(new AddEducatorCommand(demoController, educator));
 
         try {
             Integer max = listEducators.stream().map(entry -> entry.getPost()).max(Comparator.naturalOrder()).get();
@@ -145,7 +145,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
         ObservableList<Educator> selection =  tableEducators.getSelectionModel().getSelectedItems();
 
         for(Educator educator: selection)
-            commandList.add(new RemoveEducatorCommand(educator));
+            commandList.add(new RemoveEducatorCommand(demoController, educator));
 
         listEducators.removeAll(selection);
         btnOk.setDisable(false);

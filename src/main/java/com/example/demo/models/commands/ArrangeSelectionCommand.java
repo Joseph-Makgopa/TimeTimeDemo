@@ -10,13 +10,12 @@ import com.example.demo.utilities.Triplet;
 
 import java.util.*;
 
-public class ArrangeSelectionCommand implements Command{
-    private DemoController demoController;
+public class ArrangeSelectionCommand extends Command{
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private Assignable current, freshAssignable;
     public ArrangeSelectionCommand(DemoController demoController, Assignable current){
-        this.demoController = demoController;
+        super(demoController);
         this.oldTimeTable = new HashMap<>(State.getInstance().timetable);
 
         this.freshTimeTable = null;
@@ -28,12 +27,12 @@ public class ArrangeSelectionCommand implements Command{
         this.current = current;
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         if(freshTimeTable == null){
             LinkedList<Assignable> list = new LinkedList<>();
             Assignable copy = current.clone();
             list.add(copy);
-            demoController.getService().arrange(list);
+            getDemoController().getService().arrange(list);
 
             freshTimeTable = new HashMap<>(State.getInstance().timetable);
             State.getInstance().assignables.put(copy.getId(), copy);
@@ -52,16 +51,16 @@ public class ArrangeSelectionCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
     @Override
-    public void reverse(){
+    public void reverseCode(){
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
         State.getInstance().assignables.put(current.getId(), current.clone());
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 }

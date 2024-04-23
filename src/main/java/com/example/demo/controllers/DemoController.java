@@ -13,10 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -58,6 +55,8 @@ public class DemoController implements Initializable {
     private MenuItem clearTab, clearRow;
     @FXML
     private BorderPane borderPane;
+    @FXML
+    private AnchorPane progressAnchor;
     private Boolean showPanel = true;
     private Menu openRecentMenu = new Menu("Open Recent");
     private DemoService service;
@@ -66,7 +65,6 @@ public class DemoController implements Initializable {
     private ContextMenu contextMenu = new ContextMenu();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         paneTimeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             ClickableTableCell.lastSelectedCell = null;
             setupTableAssignContextMenu();
@@ -235,6 +233,9 @@ public class DemoController implements Initializable {
     }
     public TabPane getPane(){
         return paneTimeTable;
+    }
+    public AnchorPane getProgressAnchor(){
+        return progressAnchor;
     }
     public TextField getTxtSearch(){
         return txtSearch;
@@ -498,14 +499,9 @@ public class DemoController implements Initializable {
             checkSunday.setSelected(true);
         }
     }
-    @FXML
-    void position(ActionEvent event){
-        service.position();
-    }
     public Stage getStage() {
         return stage;
     }
-
     public void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -728,6 +724,9 @@ public class DemoController implements Initializable {
                 recent.removeLast();
 
             setupRecentMenu();
+
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            borderPane.setCenter(progressIndicator);
         }
     }
     @FXML

@@ -68,7 +68,7 @@ public class GradeDialogController extends BaseDataDialogController implements I
         listGrades.getItems().add(grade);
         listGrades.getSelectionModel().select(grade);
         listGrades.scrollTo(grade);
-        commandList.add(new AddGradeCommand(grade));
+        commandList.add(new AddGradeCommand(demoController, grade));
         btnOk.setDisable(false);
     }
     @FXML
@@ -76,7 +76,7 @@ public class GradeDialogController extends BaseDataDialogController implements I
 
         try {
             Grade selection =  listGrades.getSelectionModel().getSelectedItem();
-            commandList.add(new RemoveGradeCommand(selection));
+            commandList.add(new RemoveGradeCommand(demoController, selection));
 
             listGrades.getItems().remove(selection);
             btnOk.setDisable(false);

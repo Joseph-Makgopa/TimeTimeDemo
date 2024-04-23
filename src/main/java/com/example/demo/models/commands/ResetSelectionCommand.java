@@ -11,13 +11,12 @@ import com.example.demo.utilities.TripletManager;
 
 import java.util.*;
 
-public class ResetSelectionCommand implements Command{
+public class ResetSelectionCommand extends Command{
     private Assignable assignable, oldAssignable, freshAssignable;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private DemoController demoController;
     public ResetSelectionCommand(Assignable lesson, DemoController demoController){
-        this.demoController = demoController;
+        super(demoController);
         this.assignable = lesson;
         oldAssignable = lesson.clone();
         freshAssignable = null;
@@ -27,7 +26,7 @@ public class ResetSelectionCommand implements Command{
         freshClashes = null;
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         if(freshAssignable == null) {
             Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
             LinkedList<Triplet<WeekDay, Grade, Integer>> pairs = new LinkedList<>();
@@ -64,19 +63,19 @@ public class ResetSelectionCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         State.getInstance().assignables.put(oldAssignable.getId(), oldAssignable.clone());
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 }

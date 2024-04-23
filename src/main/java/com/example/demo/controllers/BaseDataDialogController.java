@@ -10,10 +10,10 @@ import javafx.scene.Node;
 import javafx.stage.Stage;
 
 public class BaseDataDialogController {
-    protected CommandList commandList = new CommandList();
+    protected CommandList commandList;
     protected DemoController demoController;
-
     public void setController(DemoController demoController) {
+        commandList = new CommandList(demoController);
         this.demoController = demoController;
     }
 

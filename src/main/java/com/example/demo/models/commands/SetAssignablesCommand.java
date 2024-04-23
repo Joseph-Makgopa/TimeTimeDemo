@@ -11,24 +11,23 @@ import com.example.demo.utilities.Triplet;
 
 import java.util.*;
 
-public class SetAssignablesCommand implements Command{
+public class SetAssignablesCommand extends Command{
     private Map<Pair<Integer, Integer>, Assignable> oldAssignable;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private DemoController demoController;
     private CommandList commands;
     public SetAssignablesCommand(DemoController demoController, CommandList commands){
+        super(demoController);
         oldAssignable = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldClashes = new HashSet<>(State.getInstance().clashes);
         freshClashes = null;
 
-        this.demoController = demoController;
         this.commands = commands;
     }
     @Override
-    public void execute() {
-        commands.execute();
+    public void executeCode() {
+        commands.executeCode();
 
         State.getInstance().assignables.clear();
 
@@ -57,12 +56,12 @@ public class SetAssignablesCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 
     @Override
-    public void reverse() {
-        commands.reverse();
+    public void reverseCode() {
+        commands.reverseCode();
 
         State.getInstance().assignables.clear();
         State.getInstance().timetable.clear();
@@ -74,6 +73,6 @@ public class SetAssignablesCommand implements Command{
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 }

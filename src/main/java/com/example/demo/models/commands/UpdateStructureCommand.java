@@ -13,7 +13,7 @@ import javafx.scene.control.ComboBox;
 
 import java.util.*;
 
-public class UpdateStructureCommand implements Command{
+public class UpdateStructureCommand extends Command{
     private Map<WeekDay, Integer> oldDays;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
@@ -22,8 +22,8 @@ public class UpdateStructureCommand implements Command{
     private Map<WeekDay, Integer> freshDays;
     private Integer freshBreakAfter;
     private ComboBox<WeekDay> comboDay;
-    private DemoController demoController;
     public UpdateStructureCommand(Map<WeekDay, Integer> days, Integer breakAfter, ComboBox<WeekDay> comboDay, DemoController demoController){
+        super(demoController);
         oldDays = new HashMap<>(State.getInstance().days);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldAssignable = new LinkedList<>();
@@ -39,10 +39,9 @@ public class UpdateStructureCommand implements Command{
         freshBreakAfter = breakAfter;
 
         this.comboDay = comboDay;
-        this.demoController = demoController;
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         State.getInstance().days.clear();
         State.getInstance().days.putAll(freshDays);
         State.getInstance().breakAfter = freshBreakAfter;
@@ -85,16 +84,16 @@ public class UpdateStructureCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        if(demoController.getService() instanceof WeekDayViewService)
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof WeekDayViewService)
+            getDemoController().getService().refresh();
         else
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
 
         State.getInstance().saveRequired = true;
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         State.getInstance().days.clear();
         State.getInstance().days.putAll(oldDays);
 
@@ -111,10 +110,10 @@ public class UpdateStructureCommand implements Command{
         State.getInstance().breakAfter = oldBreakAfter;
         comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
 
-        if(demoController.getService() instanceof WeekDayViewService)
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof WeekDayViewService)
+            getDemoController().getService().refresh();
         else
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
 
         State.getInstance().saveRequired = true;
     }

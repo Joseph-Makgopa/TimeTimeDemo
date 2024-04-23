@@ -13,14 +13,14 @@ import com.example.demo.utilities.Triplet;
 
 import java.util.*;
 
-public class UpdateGradesCommand implements Command {
+public class UpdateGradesCommand extends Command {
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private DemoController demoController;
     private CommandList commands;
     public UpdateGradesCommand(DemoController demoController, CommandList commands){
+        super(demoController);
         oldSessions = new HashMap<>();
         oldSessions.putAll(State.getInstance().sessions);
 
@@ -33,12 +33,11 @@ public class UpdateGradesCommand implements Command {
         oldClashes = new HashSet<>(State.getInstance().clashes);
         freshClashes = null;
 
-        this.demoController = demoController;
         this.commands = commands;
     }
     @Override
-    public void execute() {
-        commands.execute();
+    public void executeCode() {
+        commands.executeCode();
         State.getInstance().grades.sort(Comparator.naturalOrder());
 
         State.getInstance().sessions.clear();
@@ -71,16 +70,16 @@ public class UpdateGradesCommand implements Command {
         }
 
         State.getInstance().saveRequired = true;
-        if(demoController.getService() instanceof GradeViewService) {
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof GradeViewService) {
+            getDemoController().getService().refresh();
         }else{
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
         }
     }
 
     @Override
-    public void reverse() {
-        commands.reverse();
+    public void reverseCode() {
+        commands.reverseCode();
         State.getInstance().grades.sort(Comparator.naturalOrder());
 
         State.getInstance().sessions.clear();
@@ -96,10 +95,10 @@ public class UpdateGradesCommand implements Command {
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        if(demoController.getService() instanceof GradeViewService) {
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof GradeViewService) {
+            getDemoController().getService().refresh();
         }else{
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
         }
     }
 }

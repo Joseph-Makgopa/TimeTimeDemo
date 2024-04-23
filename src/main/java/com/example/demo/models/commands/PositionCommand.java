@@ -16,7 +16,7 @@ import javafx.scene.control.ButtonType;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PositionCommand implements Command{
+public class PositionCommand extends Command{
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
     private Set<Triplet<WeekDay, Grade, Integer>> freshClashes;
     private Assignable oldAssignable;
@@ -24,9 +24,9 @@ public class PositionCommand implements Command{
     private Assignable freshAssignable;
     private Assignable freshPairAssignable;
     private Triplet<WeekDay, Grade, Integer> triplet;
-    private DemoController demoController;
     private Boolean initialExecution;
     public PositionCommand(DemoController demoController, Assignable assignable, Triplet<WeekDay, Grade, Integer> triplet){
+        super(demoController);
         this.oldClashes = new HashSet<>(State.getInstance().clashes);
         this.freshClashes = null;
         this.oldAssignable = null;
@@ -34,12 +34,11 @@ public class PositionCommand implements Command{
         this.freshAssignable = assignable;
         this.freshPairAssignable = assignable.getPair();
         this.triplet = triplet;
-        this.demoController = demoController;
         this.initialExecution = true;
     }
 
     @Override
-    public void execute() {
+    public void executeCode() {
         if(State.getInstance().timetable.get(triplet) != null){
             oldAssignable = State.getInstance().assignables.get(State.getInstance().timetable.get(triplet));
             oldAssignable.setRemain(oldAssignable.getRemain() + 1);
@@ -68,12 +67,12 @@ public class PositionCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         if(oldAssignable == null){
             State.getInstance().timetable.remove(triplet);
             freshAssignable.setRemain(freshAssignable.getRemain() + 1);
@@ -101,7 +100,7 @@ public class PositionCommand implements Command{
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
         State.getInstance().saveRequired = true;
     }
 }

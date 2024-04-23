@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.print.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.apache.poi.ss.usermodel.*;

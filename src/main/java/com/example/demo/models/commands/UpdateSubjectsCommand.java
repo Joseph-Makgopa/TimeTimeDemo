@@ -15,14 +15,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class UpdateSubjectsCommand implements Command{
+public class UpdateSubjectsCommand extends Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private CommandList commands;
-    private DemoController demoController;
     public UpdateSubjectsCommand(DemoController demoController, CommandList commands){
+        super(demoController);
         oldSessions = new HashMap<>(State.getInstance().sessions);
 
         oldAssignables = new HashMap<>(State.getInstance().assignables);
@@ -33,11 +33,10 @@ public class UpdateSubjectsCommand implements Command{
         freshClashes = null;
 
         this.commands = commands;
-        this.demoController = demoController;
     }
     @Override
-    public void execute() {
-        commands.execute();
+    public void executeCode() {
+        commands.executeCode();
 
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
@@ -69,12 +68,12 @@ public class UpdateSubjectsCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 
     @Override
-    public void reverse() {
-        commands.reverse();
+    public void reverseCode() {
+        commands.reverseCode();
 
         State.getInstance().sessions.clear();
         State.getInstance().sessions.putAll(oldSessions);
@@ -89,6 +88,6 @@ public class UpdateSubjectsCommand implements Command{
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 }

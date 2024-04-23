@@ -253,7 +253,7 @@ public class SessionDialogController extends BaseDataDialogController implements
 
                 session.setId(entry.getId());
                 listSessions.set(count, session);
-                commandList.add(new UpdateSessionCommand(entry, session));
+                commandList.add(new UpdateSessionCommand(demoController, entry, session));
                 btnOk.setDisable(false);
                 return;
             }
@@ -297,7 +297,7 @@ public class SessionDialogController extends BaseDataDialogController implements
         listSessions.add(session);
         comboPair.getItems().add(session.getId().toString());
         comboSplit.getItems().add(session.getId().toString());
-        commandList.add(new AddSessionCommand(session));
+        commandList.add(new AddSessionCommand(demoController, session));
         tableSessions.refresh();
         tableSessions.getSelectionModel().select(session);
         tableSessions.scrollTo(session);
@@ -311,7 +311,7 @@ public class SessionDialogController extends BaseDataDialogController implements
         ObservableList<Session> selection =  tableSessions.getSelectionModel().getSelectedItems();
 
         for(Session session: selection) {
-            commandList.add(new RemoveSessionCommand(session));
+            commandList.add(new RemoveSessionCommand(demoController, session));
             comboPair.getItems().remove(session.getId().toString());
             comboSplit.getItems().remove(session.getId().toString());
         }

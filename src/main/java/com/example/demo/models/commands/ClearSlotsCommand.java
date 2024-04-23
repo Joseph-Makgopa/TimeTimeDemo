@@ -11,15 +11,14 @@ import com.example.demo.utilities.Triplet;
 
 import java.util.*;
 
-public class ClearSlotsCommand implements Command{
+public class ClearSlotsCommand extends Command{
     private LinkedList<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignables, freshAssignables;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    DemoController demoController;
     public ClearSlotsCommand(LinkedList <Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> trash, DemoController demoController){
+        super(demoController);
         this.trash = trash;
-        this.demoController = demoController;
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         freshTimeTable = null;
 
@@ -33,7 +32,7 @@ public class ClearSlotsCommand implements Command{
         freshClashes = null;
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         if(freshTimeTable == null){
             for(Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry: trash){
                 if(entry.getValue() != null){
@@ -67,11 +66,11 @@ public class ClearSlotsCommand implements Command{
             State.getInstance().clashes.addAll(freshClashes);
         }
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
@@ -83,6 +82,6 @@ public class ClearSlotsCommand implements Command{
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 }

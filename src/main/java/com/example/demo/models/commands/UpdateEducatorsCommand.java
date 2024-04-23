@@ -16,26 +16,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class UpdateEducatorsCommand implements Command{
+public class UpdateEducatorsCommand extends Command{
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private DemoController demoController;
     private CommandList commands;
     public UpdateEducatorsCommand(DemoController demoController, CommandList commands){
+        super(demoController);
         oldSessions = new HashMap<>(State.getInstance().sessions);
         oldAssignables = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldClashes = new HashSet<>(State.getInstance().clashes);
         freshClashes = null;
 
-        this.demoController = demoController;
         this.commands = commands;
     }
     @Override
-    public void execute() {
-        commands.execute();
+    public void executeCode() {
+        commands.executeCode();
 
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
@@ -67,16 +66,16 @@ public class UpdateEducatorsCommand implements Command{
         }
 
         State.getInstance().saveRequired = true;
-        if(demoController.getService() instanceof EducatorViewService) {
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof EducatorViewService) {
+            getDemoController().getService().refresh();
         }else{
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
         }
     }
 
     @Override
-    public void reverse() {
-        commands.reverse();
+    public void reverseCode() {
+        commands.reverseCode();
 
         State.getInstance().sessions.clear();
         State.getInstance().sessions.putAll(oldSessions);
@@ -91,10 +90,10 @@ public class UpdateEducatorsCommand implements Command{
         State.getInstance().clashes.addAll(oldClashes);
 
         State.getInstance().saveRequired = true;
-        if(demoController.getService() instanceof EducatorViewService) {
-            demoController.getService().refresh();
+        if(getDemoController().getService() instanceof EducatorViewService) {
+            getDemoController().getService().refresh();
         }else{
-            demoController.getService().refreshData();
+            getDemoController().getService().refreshData();
         }
     }
 }

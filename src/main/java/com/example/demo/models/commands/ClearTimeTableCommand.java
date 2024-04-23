@@ -14,17 +14,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ClearTimeTableCommand implements Command{
-    private DemoController demoController;
+public class ClearTimeTableCommand extends Command{
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
     public ClearTimeTableCommand(DemoController demoController){
-        this.demoController = demoController;
+        super(demoController);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldClashes = new HashSet<>(State.getInstance().clashes);
     }
     @Override
-    public void execute() {
+    public void executeCode() {
         State.getInstance().timetable.forEach((triplet, reference) -> {
             if(reference != null){
                 Assignable assignable = State.getInstance().assignables.get(reference);
@@ -35,11 +34,11 @@ public class ClearTimeTableCommand implements Command{
 
         State.getInstance().timetable.clear();
         State.getInstance().clashes.clear();
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 
     @Override
-    public void reverse() {
+    public void reverseCode() {
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
@@ -53,6 +52,6 @@ public class ClearTimeTableCommand implements Command{
 
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
-        demoController.getService().refreshData();
+        getDemoController().getService().refreshData();
     }
 }
