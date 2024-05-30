@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="adding helper files and workspace files" />
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="Fixed errors" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,11 +13,19 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
+        <option value="FxmlFile" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -40,7 +48,10 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/practice/java/demo/src/main/resources/com/example/demo&quot;
+    &quot;last_opened_file_path&quot;: &quot;D:/software/jmetro/jmetro-8.6.11.jar&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -60,6 +71,350 @@
       <option name="presentableId" value="Default" />
       <updated>1706185400456</updated>
     </task>
+    <task id="LOCAL-00010" summary="implemented the design of the grade dialog">
+      <created>1706451607822</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1706451607822</updated>
+    </task>
+    <task id="LOCAL-00011" summary="implemented the design of the educator dialog">
+      <created>1706453416921</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1706453416921</updated>
+    </task>
+    <task id="LOCAL-00012" summary="implemented the design of the sessions dialog">
+      <created>1706466104009</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1706466104009</updated>
+    </task>
+    <task id="LOCAL-00013" summary="added skeleton methonds in subjectDialogController">
+      <created>1706466840260</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1706466840260</updated>
+    </task>
+    <task id="LOCAL-00014" summary="implemented the methods in subjectDialogController">
+      <created>1706621672225</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1706621672225</updated>
+    </task>
+    <task id="LOCAL-00015" summary="implemented the methods in EducatorDialogController">
+      <created>1706703083682</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1706703083682</updated>
+    </task>
+    <task id="LOCAL-00016" summary="implemented the methods in SessionsDialogController and the CommandManager">
+      <created>1706719309986</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1706719309986</updated>
+    </task>
+    <task id="LOCAL-00017" summary="implemented the design of the right side panel">
+      <created>1706880856290</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1706880856291</updated>
+    </task>
+    <task id="LOCAL-00018" summary="implemented the applyStructure and updateStructure methods in the demoController">
+      <created>1707225921539</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1707225921539</updated>
+    </task>
+    <task id="LOCAL-00019" summary="implemented the setupTable methods in the demoController">
+      <created>1707245667196</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1707245667196</updated>
+    </task>
+    <task id="LOCAL-00020" summary="added functionality to populate tableAssign">
+      <created>1707312414201</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1707312414201</updated>
+    </task>
+    <task id="LOCAL-00021" summary="implemented the filter functionality and the print functionality">
+      <created>1707651370173</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1707651370173</updated>
+    </task>
+    <task id="LOCAL-00022" summary="added the services package and its classes">
+      <created>1707652953667</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1707652953667</updated>
+    </task>
+    <task id="LOCAL-00023" summary="updated the position function in the services educator, weekday and grade view services">
+      <created>1708266812947</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1708266812947</updated>
+    </task>
+    <task id="LOCAL-00024" summary="added UpdateGradesCommand">
+      <created>1708596673386</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1708596673386</updated>
+    </task>
+    <task id="LOCAL-00025" summary="updated the toolbar menu options">
+      <created>1711969150808</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1711969150808</updated>
+    </task>
+    <task id="LOCAL-00026" summary="implemented the getEducator, getGrade and hasEducator function in Assignable class">
+      <created>1711970124596</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1711970124596</updated>
+    </task>
+    <task id="LOCAL-00027" summary="implemented the save and open function in the State class">
+      <created>1711971146458</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1711971146458</updated>
+    </task>
+    <task id="LOCAL-00028" summary="updated the newFile function in the DemoController">
+      <created>1711972926327</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1711972926327</updated>
+    </task>
+    <task id="LOCAL-00029" summary="updated the openFile function in DemoController">
+      <created>1711973201821</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1711973201821</updated>
+    </task>
+    <task id="LOCAL-00030" summary="updated the saveAsFile method">
+      <created>1711974007930</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1711974007930</updated>
+    </task>
+    <task id="LOCAL-00031" summary="added the getRecent and saveRecent methods in State class">
+      <created>1711975751640</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1711975751640</updated>
+    </task>
+    <task id="LOCAL-00032" summary="implemented open recent function in DemoController">
+      <created>1711996770068</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1711996770068</updated>
+    </task>
+    <task id="LOCAL-00033" summary="implemented the export function in the WeekDayViewService">
+      <created>1712001583995</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1712001583995</updated>
+    </task>
+    <task id="LOCAL-00034" summary="implemented the export function in the EducatorViewService and GradeViewService">
+      <created>1712001995243</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1712001995243</updated>
+    </task>
+    <task id="LOCAL-00035" summary="updated the export function in the EducatorViewService, GradeViewService and WeekDayViewService">
+      <created>1712003662204</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1712003662204</updated>
+    </task>
+    <task id="LOCAL-00036" summary="implemented the clearTable function">
+      <created>1712061485932</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1712061485932</updated>
+    </task>
+    <task id="LOCAL-00037" summary="updated undo and redo functionality">
+      <created>1712063497795</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1712063497795</updated>
+    </task>
+    <task id="LOCAL-00038" summary="implemented clearTab and clearRow functions in WeekDayViewService">
+      <created>1712067776053</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1712067776053</updated>
+    </task>
+    <task id="LOCAL-00039" summary="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService">
+      <created>1712069662175</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1712069662175</updated>
+    </task>
+    <task id="LOCAL-00040" summary="implemented the togglePanel menu button">
+      <created>1712075450580</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1712075450580</updated>
+    </task>
+    <task id="LOCAL-00041" summary="updated the UpdateSubjectsCommand">
+      <created>1712088980732</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1712088980732</updated>
+    </task>
+    <task id="LOCAL-00042" summary="updated the data functions">
+      <created>1712090755390</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1712090755390</updated>
+    </task>
+    <task id="LOCAL-00043" summary="updated the data update functions for all data groups">
+      <created>1712150403899</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1712150403899</updated>
+    </task>
+    <task id="LOCAL-00044" summary="added functionality to select cell on tableview">
+      <created>1712238979820</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1712238979820</updated>
+    </task>
+    <task id="LOCAL-00045" summary="updated refresh functionality and added functionality to show only needed assignables">
+      <created>1712424124917</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1712424124917</updated>
+    </task>
+    <task id="LOCAL-00046" summary="updated refresh functionality and added functionality to show only needed assignables">
+      <created>1712424159356</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1712424159356</updated>
+    </task>
+    <task id="LOCAL-00047" summary="updated the functionality of the position function in WeekDayViewService">
+      <created>1712499318590</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1712499318590</updated>
+    </task>
+    <task id="LOCAL-00048" summary="updated the functionality of the position function in GradeViewService">
+      <created>1712501121766</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1712501121766</updated>
+    </task>
+    <task id="LOCAL-00049" summary="updated the functionality of the arrange function">
+      <created>1712782159682</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1712782159682</updated>
+    </task>
+    <task id="LOCAL-00050" summary="adding the ArrangeCommand class">
+      <created>1712782264087</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1712782264088</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Added ResetLessonCommand functionality">
+      <created>1712831283673</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1712831283673</updated>
+    </task>
+    <task id="LOCAL-00052" summary="added functionality of reset lessons in tableAssign">
+      <created>1712857748458</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1712857748458</updated>
+    </task>
+    <task id="LOCAL-00053" summary="updated the search functionality for the assignable">
+      <created>1712864136707</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1712864136708</updated>
+    </task>
+    <task id="LOCAL-00054" summary="added clash detection functionality">
+      <created>1713178317509</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1713178317509</updated>
+    </task>
+    <task id="LOCAL-00055" summary="added functionality to update clashes">
+      <created>1713196659178</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1713196659178</updated>
+    </task>
+    <task id="LOCAL-00056" summary="updated the UpdateStructureCommand functionality">
+      <created>1713287705364</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1713287705365</updated>
+    </task>
+    <task id="LOCAL-00057" summary="added functionality to display progressbar when command is executed">
+      <created>1713881604683</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1713881604684</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Fixed errors">
+      <created>1717075166539</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1717075166540</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -72,5 +427,48 @@
         </entry>
       </map>
     </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="implemented clearTab and clearRow functions in WeekDayViewService" />
+    <MESSAGE value="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService" />
+    <MESSAGE value="implemented the togglePanel menu button" />
+    <MESSAGE value="updated the UpdateSubjectsCommand" />
+    <MESSAGE value="updated the data functions" />
+    <MESSAGE value="updated the data update functions for all data groups" />
+    <MESSAGE value="added functionality to select cell on tableview" />
+    <MESSAGE value="fixed filter functionality for updating across multiple tabs and clearing the filterOption for the option in focus" />
+    <MESSAGE value="fixed the filter logical errors" />
+    <MESSAGE value="updated refresh functionality and added functionality to show only needed assignables" />
+    <MESSAGE value="updated the functionality of the position function in WeekDayViewService" />
+    <MESSAGE value="updated the functionality of the position function in GradeViewService" />
+    <MESSAGE value="updated the functionality of the arrange function" />
+    <MESSAGE value="adding the ArrangeCommand class" />
+    <MESSAGE value="Added ResetLessonCommand functionality" />
+    <MESSAGE value="added ResetCommand file" />
+    <MESSAGE value="added functionality of reset lessons in tableAssign" />
+    <MESSAGE value="updated the search functionality for the assignable" />
+    <MESSAGE value="added functionality to highlight occupied cells in EducatorView" />
+    <MESSAGE value="added clash detection functionality" />
+    <MESSAGE value="added functionality to update clashes" />
+    <MESSAGE value="updated the UpdateStructureCommand functionality" />
+    <MESSAGE value="added functionality to display progressbar when command is executed" />
+    <MESSAGE value="added functionality to update progress bar when executed and fixed the arrange functionality" />
+    <MESSAGE value="Fixed errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed errors" />
   </component>
 </project>
