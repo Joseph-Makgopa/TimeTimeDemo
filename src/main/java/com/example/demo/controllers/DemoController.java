@@ -297,6 +297,7 @@ public class DemoController implements Initializable {
                     stage.setTitle(file.getName() + " - TimeTable");
                     service.viewRefresh(null);
                     setStatus();
+                    populateStructure();
                     updateFilterOptions();
                     State.getInstance().saveRequired = false;
 
@@ -489,7 +490,6 @@ public class DemoController implements Initializable {
     @FXML
     public void revertStructure(ActionEvent event){
         Integer period = State.getInstance().days.get(WeekDay.MONDAY);
-
         if(period != null) {
             spinnerMondayPeriods.getValueFactory().setValue(period);
             checkMonday.setSelected(true);
@@ -530,6 +530,8 @@ public class DemoController implements Initializable {
             spinnerSundayPeriods.getValueFactory().setValue(period);
             checkSunday.setSelected(true);
         }
+
+        spinnerBreak.getValueFactory().setValue(State.getInstance().breakAfter);
     }
     public Stage getStage() {
         return stage;
@@ -699,7 +701,7 @@ public class DemoController implements Initializable {
             stage.setTitle(file.getName() + " - TimeTable");
             service.viewRefresh(null);
             setStatus();
-
+            populateStructure();
             updateFilterOptions();
             State.getInstance().saveRequired = false;
 

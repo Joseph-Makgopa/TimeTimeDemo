@@ -23,6 +23,7 @@ public class UpdateStructureCommand implements Command{
     private Map<WeekDay, Integer> freshDays;
     private Integer freshBreakAfter;
     private ComboBox<WeekDay> comboDay;
+    private DemoController demoController;
     public UpdateStructureCommand(Map<WeekDay, Integer> days, Integer breakAfter, ComboBox<WeekDay> comboDay, DemoController demoController){
         oldDays = new HashMap<>(State.getInstance().days);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
@@ -39,6 +40,7 @@ public class UpdateStructureCommand implements Command{
         freshBreakAfter = breakAfter;
 
         this.comboDay = comboDay;
+        this.demoController = demoController;
     }
     @Override
     public String executeDescription() {
@@ -51,7 +53,7 @@ public class UpdateStructureCommand implements Command{
     }
     @Override
     public Boolean threadSafe(){
-        return true;
+        return false;
     }
     @Override
     public Boolean dataRefresh() {
@@ -118,6 +120,7 @@ public class UpdateStructureCommand implements Command{
             job.progress(3, 3);
         }
 
+        demoController.populateStructure();
         State.getInstance().saveRequired = true;
     }
     @Override
@@ -150,6 +153,7 @@ public class UpdateStructureCommand implements Command{
 
         job.progress(5, 5);
 
+        demoController.populateStructure();
         State.getInstance().saveRequired = true;
     }
 }
