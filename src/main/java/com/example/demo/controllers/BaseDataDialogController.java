@@ -13,7 +13,7 @@ public class BaseDataDialogController {
     protected CommandList commandList;
     protected DemoController demoController;
     public void setController(DemoController demoController) {
-        commandList = new CommandList(demoController);
+        commandList = new CommandList();
         this.demoController = demoController;
     }
 

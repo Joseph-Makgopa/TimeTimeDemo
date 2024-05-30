@@ -12,6 +12,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -32,7 +35,7 @@ public class DemoController implements Initializable {
     @FXML
     private TableColumn<Assignable, String> columnGrade, columnDetail, columnRemain;
     @FXML
-    private TabPane paneTimeTable;
+    private TabPane tabPane;
     @FXML
     private CheckBox checkMonday, checkTuesday, checkWednesday, checkThursday, checkFriday, checkSaturday, checkSunday;
     @FXML
@@ -57,6 +60,10 @@ public class DemoController implements Initializable {
     private BorderPane borderPane;
     @FXML
     private AnchorPane progressAnchor;
+    @FXML
+    private Label loaderMessage, labelClashes, labelRemain;
+    @FXML
+    private StackPane stackPane;
     private Boolean showPanel = true;
     private Menu openRecentMenu = new Menu("Open Recent");
     private DemoService service;
@@ -65,7 +72,7 @@ public class DemoController implements Initializable {
     private ContextMenu contextMenu = new ContextMenu();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        paneTimeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             ClickableTableCell.lastSelectedCell = null;
             setupTableAssignContextMenu();
 
@@ -109,9 +116,7 @@ public class DemoController implements Initializable {
                     Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
 
                     if(assignable != null) {
-                        Command command = new ResetSelectionCommand(assignable, this);
-                        command.execute();
-                        CommandManager.getInstance().addCommand(command);
+                        CommandManager.getInstance().addCommand(new ResetSelectionCommand(assignable));
                     }
                 });
 
@@ -121,9 +126,7 @@ public class DemoController implements Initializable {
                     Assignable assignable = tableAssign.getSelectionModel().getSelectedItem();
 
                     if(assignable != null) {
-                        Command command = new ArrangeSelectionCommand(this, assignable);
-                        command.execute();
-                        CommandManager.getInstance().addCommand(command);
+                        CommandManager.getInstance().addCommand(new ArrangeSelectionCommand(this, assignable));
                     }
                 });
 
@@ -132,7 +135,7 @@ public class DemoController implements Initializable {
                 contextMenu.getItems().add(0, positionMenuItem);
 
                 if(service instanceof EducatorViewService){
-                    Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+                    Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
                     if(tab != null) {
                         Integer post = Integer.parseInt(tab.getText().split(",")[0]);
@@ -215,8 +218,6 @@ public class DemoController implements Initializable {
         spinnerBreakFactory.setValue(1);
         spinnerBreak.setValueFactory(spinnerBreakFactory);
 
-        service.refresh();
-
         menuWeekDays.setSelected(true);
         menuWeekDays.setDisable(true);
 
@@ -227,15 +228,50 @@ public class DemoController implements Initializable {
 
         clearTab.setText("Clear Day");
         clearRow.setText("Clear Grade");
+
+        service.viewRefresh(null);
     }
     public DemoService getService(){
         return service;
     }
+    public void setService(DemoService service){
+        this.service = service;
+    }
+    public CheckMenuItem getMenuWeekDays(){
+        return menuWeekDays;
+    }
+    public CheckMenuItem getMenuGrades(){
+        return menuGrades;
+    }
+
+    public MenuItem getClearTab() {
+        return clearTab;
+    }
+
+    public MenuItem getClearRow() {
+        return clearRow;
+    }
+
+    public CheckMenuItem getMenuEducators(){
+        return menuEducators;
+    }
     public TabPane getPane(){
-        return paneTimeTable;
+        return tabPane;
+    }
+    public StackPane getStackPane(){
+        return stackPane;
     }
     public AnchorPane getProgressAnchor(){
         return progressAnchor;
+    }
+    public Label getLoaderMessage(){
+        return loaderMessage;
+    }
+    public Label getLabelClashes() {
+        return labelClashes;
+    }
+    public Label getLabelRemain() {
+        return labelRemain;
     }
     public TextField getTxtSearch(){
         return txtSearch;
@@ -259,10 +295,8 @@ public class DemoController implements Initializable {
 
                 if(State.getInstance().open(file)){
                     stage.setTitle(file.getName() + " - TimeTable");
-                    service.populateTable();
-                    populateStructure();
-                    applyStructure(event);
-                    updateTableAssign();
+                    service.viewRefresh(null);
+                    setStatus();
                     updateFilterOptions();
                     State.getInstance().saveRequired = false;
 
@@ -282,17 +316,14 @@ public class DemoController implements Initializable {
         MenuItem arrangeMenuItem = new MenuItem("Arrange");
         arrangeMenuItem.setId("Arrange");
         arrangeMenuItem.setOnAction(event -> {
-            Command command = new ArrangeCommand(new LinkedList<>(tableAssign.getItems()), this);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+
+            CommandManager.getInstance().addCommand(new ArrangeCommand(new LinkedList<>(tableAssign.getItems()), this));
         });
 
         MenuItem resetMenuItem = new MenuItem("Reset");
         resetMenuItem.setId("Reset");
         resetMenuItem.setOnAction(event -> {
-            Command command = new ResetCommand(new LinkedList<>(tableAssign.getItems()), this);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ResetCommand(new LinkedList<>(tableAssign.getItems())));
         });
 
         contextMenu.getItems().clear();
@@ -380,7 +411,7 @@ public class DemoController implements Initializable {
     @FXML
     public void search(KeyEvent event){
         if(service instanceof GradeViewService){
-            Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
             if(tab != null){
                 String[] split = tab.getText().split(" ");
@@ -391,7 +422,7 @@ public class DemoController implements Initializable {
                 tableAssign.getItems().sort(new AssignableComparator());
             }
         }else if(service instanceof EducatorViewService){
-            Tab tab = paneTimeTable.getSelectionModel().getSelectedItem();
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
             if(tab != null){
                 Integer post = Integer.parseInt(tab.getText().split(",")[0]);
@@ -419,6 +450,8 @@ public class DemoController implements Initializable {
          * add the selected day and period number to the days map
          * call setupWeeklyTable function
          * **/
+
+        event.consume();
 
         Map<WeekDay, Integer> days = new HashMap<>();
 
@@ -451,7 +484,6 @@ public class DemoController implements Initializable {
         }
 
         Command command = new UpdateStructureCommand(days, spinnerBreak.getValue(), comboDay, this);
-        command.execute();
         CommandManager.getInstance().addCommand(command);
     }
     @FXML
@@ -538,9 +570,7 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void clearTable(ActionEvent event){
-        Command command = new ClearTimeTableCommand(this);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
+        CommandManager.getInstance().addCommand(new ClearTimeTableCommand());
     }
     @FXML
     public void cleanTab(ActionEvent event){
@@ -571,66 +601,15 @@ public class DemoController implements Initializable {
     }
     @FXML
     public void viewWeekDays(ActionEvent event){
-        if(menuGrades.isSelected()){
-            menuGrades.setSelected(false);
-            menuGrades.setDisable(false);
-        }else if(menuEducators.isSelected()){
-            menuEducators.setSelected(false);
-            menuEducators.setDisable(false);
-        }
-
-        menuWeekDays.setSelected(true);
-        menuWeekDays.setDisable(true);
-
-        clearTab.setText("Clear Day");
-        clearRow.setText("Clear Grade");
-
-        service = new WeekDayViewService( this);
-        service.refresh();
-
-        updateFilterOptions();
+        CommandManager.getInstance().addCommand(new SwitchViewCommand(this, new WeekDayViewService(this)));
     }
     @FXML
     public void viewGrades(ActionEvent event){
-        if(menuWeekDays.isSelected()){
-            menuWeekDays.setSelected(false);
-            menuWeekDays.setDisable(false);
-        }else if(menuEducators.isSelected()){
-            menuEducators.setSelected(false);
-            menuEducators.setDisable(false);
-        }
-
-        menuGrades.setSelected(true);
-        menuGrades.setDisable(true);
-
-        clearTab.setText("Clear Grade");
-        clearRow.setText("Clear Day");
-
-        service = new GradeViewService( this);
-        service.refresh();
-
-        updateFilterOptions();
+        CommandManager.getInstance().addCommand(new SwitchViewCommand(this, new GradeViewService(this)));
     }
     @FXML
     public void viewEducators(ActionEvent event){
-        if(menuGrades.isSelected()){
-            menuGrades.setSelected(false);
-            menuGrades.setDisable(false);
-        }else if(menuWeekDays.isSelected()){
-            menuWeekDays.setSelected(false);
-            menuWeekDays.setDisable(false);
-        }
-
-        menuEducators.setSelected(true);
-        menuEducators.setDisable(true);
-
-        clearTab.setText("Clear Educator");
-        clearRow.setText("Clear Day");
-
-        service = new EducatorViewService(this);
-        service.refresh();
-
-        updateFilterOptions();
+        CommandManager.getInstance().addCommand(new SwitchViewCommand(this, new EducatorViewService(this)));
     }
     @FXML
     public void newFile(ActionEvent event){
@@ -644,10 +623,9 @@ public class DemoController implements Initializable {
 
         State.getInstance().reset();
         stage.setTitle(State.getInstance().filename + " - TimeTable");
-        service.populateTable();
+        service.viewRefresh(null);
+        setStatus();
         populateStructure();
-        applyStructure(event);
-        updateTableAssign();
         updateFilterOptions();
         State.getInstance().saveRequired = false;
     }
@@ -702,16 +680,26 @@ public class DemoController implements Initializable {
             }
         });
     }
+    public void setStatus(){
+        labelClashes.setText(State.getInstance().clashes.size() + " clashes");
+
+        int result = 0;
+
+        for(Assignable assignable: State.getInstance().assignables.values()){
+            result += assignable.getRemain();
+        }
+
+        labelRemain.setText(result + " remaining");
+    }
     @FXML
     public void openFile(ActionEvent event){
         File file = toolbarService.openFile(stage);
 
         if(file != null && State.getInstance().open(file)){
             stage.setTitle(file.getName() + " - TimeTable");
-            service.populateTable();
-            populateStructure();
-            applyStructure(event);
-            updateTableAssign();
+            service.viewRefresh(null);
+            setStatus();
+
             updateFilterOptions();
             State.getInstance().saveRequired = false;
 
@@ -724,9 +712,6 @@ public class DemoController implements Initializable {
                 recent.removeLast();
 
             setupRecentMenu();
-
-            ProgressIndicator progressIndicator = new ProgressIndicator();
-            borderPane.setCenter(progressIndicator);
         }
     }
     @FXML

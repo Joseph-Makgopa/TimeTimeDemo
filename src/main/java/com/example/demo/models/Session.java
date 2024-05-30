@@ -36,7 +36,7 @@ public class Session implements Serializable,Comparable<Session> {
         this.pair = pair;
     }
     public Session clone(){
-        return new Session(grade, educator, subject, amount, split, pair);
+        return new Session(id, grade, educator, subject, amount, split, pair);
     }
     public void setId(Integer id){
         this.id = id;

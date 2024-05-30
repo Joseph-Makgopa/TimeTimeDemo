@@ -6,6 +6,7 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.services.DemoService;
+import com.example.demo.utilities.Job;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
@@ -14,16 +15,35 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ClearTimeTableCommand extends Command{
+public class ClearTimeTableCommand implements Command{
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
-    public ClearTimeTableCommand(DemoController demoController){
-        super(demoController);
+    public ClearTimeTableCommand(){
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldClashes = new HashSet<>(State.getInstance().clashes);
     }
+
     @Override
-    public void executeCode() {
+    public String executeDescription() {
+        return "  clearing table.";
+    }
+
+    @Override
+    public String reverseDescription() {
+        return "  reversing cleared table.";
+    }
+
+    @Override
+    public Boolean dataRefresh() {
+        return true;
+    }
+    @Override
+    public Boolean threadSafe(){
+        return true;
+    }
+    @Override
+    public void execute(Job job) {
+        job.progress(0, 3);
         State.getInstance().timetable.forEach((triplet, reference) -> {
             if(reference != null){
                 Assignable assignable = State.getInstance().assignables.get(reference);
@@ -32,13 +52,17 @@ public class ClearTimeTableCommand extends Command{
             }
         });
 
+        job.progress(1, 3);
         State.getInstance().timetable.clear();
+
+        job.progress(2, 3);
         State.getInstance().clashes.clear();
-        getDemoController().getService().refreshData();
+
+        job.progress(3, 3);
     }
 
     @Override
-    public void reverseCode() {
+    public void reverse(Job job) {
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
@@ -52,6 +76,5 @@ public class ClearTimeTableCommand extends Command{
 
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
-        getDemoController().getService().refreshData();
     }
 }

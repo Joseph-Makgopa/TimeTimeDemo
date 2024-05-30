@@ -61,7 +61,7 @@ public class SubjectDialogController extends BaseDataDialogController implements
         listSubject.getItems().add(name);
         listSubject.getSelectionModel().select(name);
         listSubject.scrollTo(name);
-        commandList.add(new AddSubjectCommand(demoController, subject));
+        commandList.add(new AddSubjectCommand( subject));
         txtName.clear();
         btnOk.setDisable(false);
     }
@@ -69,15 +69,12 @@ public class SubjectDialogController extends BaseDataDialogController implements
     public void remove(ActionEvent event){
         String selection =  listSubject.getSelectionModel().getSelectedItem();
         listSubject.getItems().remove(selection);
-        commandList.add(new RemoveSubjectCommand(demoController, new Subject(selection)));
+        commandList.add(new RemoveSubjectCommand(new Subject(selection)));
         btnOk.setDisable(false);
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new UpdateSubjectsCommand(demoController, commandList);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
-
+        CommandManager.getInstance().addCommand(new UpdateSubjectsCommand(commandList));
         super.ok(event);
     }
 }

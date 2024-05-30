@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.comparators.AssignableComparator;
 import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
 import com.example.demo.models.Assignable;
@@ -33,14 +34,27 @@ public class WeekDayViewService extends DemoService{
     public WeekDayViewService(DemoController demoController){
         super(demoController);
     }
-    @Override
-    public void refreshData(){
-        ClickableTableCell.instances.clear();
+    public void lessonViewRefresh(){
+        Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
+        demoController.getTableAssign().getItems().clear();
+        demoController.getTableAssign().getItems().addAll(State.getInstance().assignables.values());
+        demoController.getTableAssign().setItems(demoController.getService().search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
+        demoController.getTableAssign().getItems().sort(new AssignableComparator());
+        demoController.getTableAssign().refresh();
 
-        State.getInstance().days.forEach((day, numPeriods) -> {
+        if(selection != null)
+            demoController.getTableAssign().getSelectionModel().select(selection);
+    }
+    public void dataRefresh(Job job){
+        ClickableTableCell.instances.clear();
+        long count = 0;
+        job.progress(count, (long)State.getInstance().days.size() * State.getInstance().grades.size());
+
+        for(WeekDay day: State.getInstance().days.keySet()){
+            Integer numPeriods = State.getInstance().days.get(day);
             ObservableList<Rank<Grade>> gradeSchedules = FXCollections.observableArrayList();
 
-            State.getInstance().grades.forEach(grade -> {
+            for(Grade grade: State.getInstance().grades){
                 Rank<Grade> gradeSchedule = new Rank<>(grade, numPeriods);
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
 
@@ -50,13 +64,14 @@ public class WeekDayViewService extends DemoService{
                 }
 
                 gradeSchedules.add(gradeSchedule);
-            });
+
+                count++;
+                job.progress(count, (long)State.getInstance().days.size() * State.getInstance().grades.size());
+            }
 
             weeklyTable.get(day).clear();
             weeklyTable.get(day).addAll(gradeSchedules);
-        });
-
-        super.refreshData();
+        }
     }
     public void clearTab(){
         Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();
@@ -72,9 +87,7 @@ public class WeekDayViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
     public void clearRow(){
@@ -94,9 +107,7 @@ public class WeekDayViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, demoController);
-                command.execute();
-                CommandManager.getInstance().addCommand(command);
+                CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
             }
         }
     }
@@ -122,16 +133,19 @@ public class WeekDayViewService extends DemoService{
         }
 
         if(!trash.isEmpty()) {
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
-    public void setupTable(){
-        demoController.getPane().getTabs().clear();
+    public ObservableList<Tab> setupTable(Job job){
         Tab[] tabs = new Tab[7];
 
-        State.getInstance().days.forEach((day, periods) ->{
+        int workDone = 0;
+
+        if(job != null)
+            job.progress(workDone, State.getInstance().days.size());
+
+        for(WeekDay day: State.getInstance().days.keySet()){
+            Integer periods = State.getInstance().days.get(day);
 
             TableView<Rank<Grade>> daySchedule = new TableView<>();
             daySchedule.setId(day.toString());
@@ -181,10 +195,14 @@ public class WeekDayViewService extends DemoService{
                     tabs[6] = tab;
                 }break;
             }
-        });
 
-        demoController.getPane().getTabs().addAll(Arrays.stream(tabs).filter(value -> value != null).toList());
+            if(job != null){
+                workDone++;
+                job.progress(workDone, State.getInstance().days.size());
+            }
+        }
 
+        return FXCollections.observableArrayList(Arrays.stream(tabs).filter(Objects::nonNull).toList());
     }
     public void setupDayTable(WeekDay day, TableView<Rank<Grade>> table){
         /**
@@ -218,16 +236,24 @@ public class WeekDayViewService extends DemoService{
 
         table.setItems(weeklyTable.get(day));
     }
-    public void populateTable(){
+    public void populateTable(Job job){
         /**
          * Add data to the ObservableList that is referenced by the tableview
          * **/
 
+        int size = State.getInstance().days.size() * State.getInstance().grades.size();
+        long workDone = 0;
+
+        if(job != null)
+            job.progress(workDone, size);
+
         weeklyTable.clear();
-        State.getInstance().days.forEach((day, numPeriods) -> {
+        for(WeekDay day: State.getInstance().days.keySet()){
+            Integer numPeriods = State.getInstance().days.get(day);
+
             ObservableList<Rank<Grade>> gradeSchedules = FXCollections.observableArrayList();
 
-            State.getInstance().grades.forEach(grade -> {
+            for(Grade grade: State.getInstance().grades){
                 Rank<Grade> gradeSchedule = new Rank<>(grade, numPeriods);
                 ArrayList<Pair<Integer, Integer>> periods = gradeSchedule.getPeriods();
 
@@ -237,10 +263,15 @@ public class WeekDayViewService extends DemoService{
                 }
 
                 gradeSchedules.add(gradeSchedule);
-            });
+
+                if(job != null) {
+                    workDone++;
+                    job.progress(workDone, size);
+                }
+            }
 
             weeklyTable.put(day, gradeSchedules);
-        });
+        }
     }
     public ObservableList<Rank<Grade>> filter(WeekDay day){
         return FXCollections.observableArrayList(weeklyTable.get(day).stream().filter(gradeSchedule -> {
@@ -364,9 +395,7 @@ public class WeekDayViewService extends DemoService{
 
         }
 
-        Command command = new PositionCommand(demoController, assignable, triplet);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
+        CommandManager.getInstance().addCommand(new PositionCommand( assignable, triplet));
     }
     public void print(Stage stage){
         Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();

@@ -109,9 +109,7 @@ public class GradeViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
     public void clearRow(){
@@ -132,9 +130,7 @@ public class GradeViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, demoController);
-                command.execute();
-                CommandManager.getInstance().addCommand(command);
+                CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
             }
         }
     }
@@ -162,16 +158,19 @@ public class GradeViewService extends DemoService{
         }
 
         if(!trash.isEmpty()) {
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
     @Override
-    public void setupTable() {
-        demoController.getPane().getTabs().clear();
+    public ObservableList<Tab> setupTable(Job job) {
+        ObservableList<Tab> result = FXCollections.observableArrayList();
+        long workDone = 0;
 
-        State.getInstance().grades.forEach(grade -> {
+        if(job != null){
+            job.progress(workDone, State.getInstance().grades.size());
+        }
+
+        for(Grade grade: State.getInstance().grades){
             TableView<Rank<WeekDay>> daySchedule = new TableView<>();
 
             AnchorPane anchorPane = new AnchorPane(daySchedule);
@@ -189,8 +188,15 @@ public class GradeViewService extends DemoService{
                 daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
 
             setupGradeTable(grade, daySchedule);
-            demoController.getPane().getTabs().add(tab);
-        });
+            result.add(tab);
+
+            if(job != null){
+                workDone++;
+                job.progress(workDone, State.getInstance().grades.size());
+            }
+        }
+
+        return result;
     }
     public void setupGradeTable(Grade grade, TableView<Rank<WeekDay>> table){
         TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
@@ -228,12 +234,8 @@ public class GradeViewService extends DemoService{
         table.setItems(gradeTable.get(grade));
     }
     @Override
-    public void refresh() {
-        ClickableTableCell.instances.clear();
+    public void lessonViewRefresh() {
         Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
-
-        populateTable();
-        setupTable();
 
         if(index >= 0 && index < demoController.getPane().getTabs().size()){
             demoController.getPane().getSelectionModel().select(index);
@@ -249,14 +251,17 @@ public class GradeViewService extends DemoService{
             if(selection != null)
                 demoController.getTableAssign().getSelectionModel().select(selection);
         }
-
-        ClickableTableCell.lastSelectedCell = null;
     }
     @Override
-    public void refreshData(){
+    public void dataRefresh(Job job){
+        job.progress(0, (long)State.getInstance().grades.size() * WeekDay.values().length);
+        long workDone = 0;
+
         ClickableTableCell.instances.clear();
 
-        State.getInstance().grades.forEach(grade -> {
+        for(int count = 0; count < State.getInstance().grades.size(); count++){
+            Grade grade = State.getInstance().grades.get(count);
+
             ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
@@ -273,20 +278,26 @@ public class GradeViewService extends DemoService{
 
                     daySchedules.add(daySchedule);
                 }
+
+                workDone++;
+                job.progress(workDone, (long)State.getInstance().grades.size() * WeekDay.values().length);
             }
 
             gradeTable.get(grade).clear();
             gradeTable.get(grade).addAll(daySchedules);
-        });
-
-        super.refreshData();
+        }
     }
-
-
     @Override
-    public void populateTable() {
+    public void populateTable(Job job) {
         gradeTable.clear();
-        State.getInstance().grades.forEach(grade -> {
+        int size = State.getInstance().grades.size() * WeekDay.values().length;
+        long workDone = 0;
+
+        if(job != null){
+            job.progress(workDone, size);
+        }
+
+        for(Grade grade: State.getInstance().grades){
             ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
@@ -303,10 +314,15 @@ public class GradeViewService extends DemoService{
 
                     daySchedules.add(daySchedule);
                 }
+
+                if(job != null){
+                    workDone++;
+                    job.progress(workDone, size);
+                }
             }
 
             gradeTable.put(grade, daySchedules);
-        });
+        }
     }
 
     public void position(){
@@ -365,9 +381,7 @@ public class GradeViewService extends DemoService{
 
         }
 
-        Command command = new PositionCommand(demoController, assignable, triplet);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
+        CommandManager.getInstance().addCommand(new PositionCommand(assignable, triplet));
     }
 
     public void print(Stage stage){

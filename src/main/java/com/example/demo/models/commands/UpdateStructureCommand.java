@@ -6,6 +6,7 @@ import com.example.demo.models.Grade;
 import com.example.demo.models.State;
 import com.example.demo.models.WeekDay;
 import com.example.demo.services.WeekDayViewService;
+import com.example.demo.utilities.Job;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 import javafx.collections.FXCollections;
@@ -13,7 +14,7 @@ import javafx.scene.control.ComboBox;
 
 import java.util.*;
 
-public class UpdateStructureCommand extends Command{
+public class UpdateStructureCommand implements Command{
     private Map<WeekDay, Integer> oldDays;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
     private LinkedList<Assignable> oldAssignable, freshAssignable;
@@ -23,7 +24,6 @@ public class UpdateStructureCommand extends Command{
     private Integer freshBreakAfter;
     private ComboBox<WeekDay> comboDay;
     public UpdateStructureCommand(Map<WeekDay, Integer> days, Integer breakAfter, ComboBox<WeekDay> comboDay, DemoController demoController){
-        super(demoController);
         oldDays = new HashMap<>(State.getInstance().days);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
         oldAssignable = new LinkedList<>();
@@ -41,13 +41,33 @@ public class UpdateStructureCommand extends Command{
         this.comboDay = comboDay;
     }
     @Override
-    public void executeCode() {
+    public String executeDescription() {
+        return "  updating table.";
+    }
+
+    @Override
+    public String reverseDescription() {
+        return "  reversing table update.";
+    }
+    @Override
+    public Boolean threadSafe(){
+        return true;
+    }
+    @Override
+    public Boolean dataRefresh() {
+        return false;
+    }
+
+    @Override
+    public void execute(Job job) {
         State.getInstance().days.clear();
         State.getInstance().days.putAll(freshDays);
         State.getInstance().breakAfter = freshBreakAfter;
         comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
 
         if(freshTimeTable == null){
+            job.progress(0, 3);
+
             Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterators = State.getInstance().timetable.entrySet().iterator();
 
             while(iterators.hasNext()){
@@ -65,55 +85,70 @@ public class UpdateStructureCommand extends Command{
                 }
             }
 
+            job.progress(1, 3);
+
             freshTimeTable = State.getInstance().timetable;
             freshAssignable = new LinkedList<>();
             for(Assignable assignable: State.getInstance().assignables.values())
                 freshAssignable.add(assignable.clone());
 
+            job.progress(2, 3);
+
             State.getInstance().setClashes();
             freshClashes = new HashSet<>(State.getInstance().clashes);
+
+            job.progress(3, 3);
         }else{
+            job.progress(0, 3);
+
             State.getInstance().timetable.clear();
             State.getInstance().timetable.putAll(freshTimeTable);
+
+            job.progress(1, 3);
 
             State.getInstance().assignables.clear();
             for(Assignable assignable: freshAssignable)
                 State.getInstance().assignables.put(assignable.getId(), assignable.clone());
 
+            job.progress(2, 3);
+
             State.getInstance().clashes.clear();
             State.getInstance().clashes.addAll(freshClashes);
-        }
 
-        if(getDemoController().getService() instanceof WeekDayViewService)
-            getDemoController().getService().refresh();
-        else
-            getDemoController().getService().refreshData();
+            job.progress(3, 3);
+        }
 
         State.getInstance().saveRequired = true;
     }
-
     @Override
-    public void reverseCode() {
+    public void reverse(Job job) {
+        job.progress(0, 5);
+
         State.getInstance().days.clear();
         State.getInstance().days.putAll(oldDays);
 
+        job.progress(1, 5);
+
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
+
+        job.progress(2, 5);
 
         State.getInstance().assignables.clear();
         for(Assignable assignable: oldAssignable)
             State.getInstance().assignables.put(assignable.getId(), assignable.clone());
 
+        job.progress(3, 5);
+
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
+
+        job.progress(4, 5);
 
         State.getInstance().breakAfter = oldBreakAfter;
         comboDay.setItems(FXCollections.observableArrayList(State.getInstance().days.keySet().stream().toList()));
 
-        if(getDemoController().getService() instanceof WeekDayViewService)
-            getDemoController().getService().refresh();
-        else
-            getDemoController().getService().refreshData();
+        job.progress(5, 5);
 
         State.getInstance().saveRequired = true;
     }

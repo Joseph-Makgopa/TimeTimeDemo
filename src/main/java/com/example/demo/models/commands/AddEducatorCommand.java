@@ -4,19 +4,41 @@ import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Educator;
 import com.example.demo.models.Grade;
 import com.example.demo.models.State;
+import com.example.demo.utilities.Job;
+import javafx.concurrent.Task;
 
-public class AddEducatorCommand extends Command{
+public class AddEducatorCommand implements Command{
     private Educator educator;
-    public AddEducatorCommand(DemoController demoController, Educator educator){
-        super(demoController);
+    public AddEducatorCommand(Educator educator){
         this.educator = educator;
     }
+
     @Override
-    public void executeCode(){
+    public String executeDescription() {
+        return "";
+    }
+
+    @Override
+    public String reverseDescription() {
+        return "";
+    }
+
+    @Override
+    public Boolean dataRefresh() {
+        return null;
+    }
+
+    @Override
+    public Boolean threadSafe(){
+        return true;
+    }
+
+    @Override
+    public void execute(Job job){
         State.getInstance().educators.put(educator.getPost(), educator);
     }
     @Override
-    public void reverseCode(){
+    public void reverse(Job job){
         State.getInstance().educators.remove(educator);
     }
 }

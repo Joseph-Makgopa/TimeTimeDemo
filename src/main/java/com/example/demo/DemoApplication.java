@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.controllers.DemoController;
 import com.example.demo.models.*;
+import com.example.demo.models.commands.CommandManager;
 import com.example.demo.utilities.Pair;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,12 +19,14 @@ public class DemoApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("demo-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
+
         stage.setTitle("Untitled - TimeTable");
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
         ((DemoController)fxmlLoader.getController()).setStage(stage);
-
+        CommandManager.getInstance().setDemoController(fxmlLoader.getController());
+        
         stage.setOnCloseRequest(event -> {
             if(State.getInstance().saveRequired) {
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to discard changes?", ButtonType.YES, ButtonType.NO);

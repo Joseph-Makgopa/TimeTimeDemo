@@ -61,10 +61,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new UpdateEducatorsCommand(demoController, commandList);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
-
+        CommandManager.getInstance().addCommand(new UpdateEducatorsCommand(commandList));
         super.ok(event);
     }
     @FXML
@@ -115,7 +112,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
 
             if(entry.getPost().equals(post)){
                 listEducators.set(count, educator);
-                commandList.add(new UpdateEducatorCommand(demoController, entry, educator));
+                commandList.add(new UpdateEducatorCommand(entry, educator));
                 btnOk.setDisable(false);
                 return;
             }
@@ -129,7 +126,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
         tableEducators.scrollTo(educator);
         txtInitials.requestFocus();
 
-        commandList.add(new AddEducatorCommand(demoController, educator));
+        commandList.add(new AddEducatorCommand(educator));
 
         try {
             Integer max = listEducators.stream().map(entry -> entry.getPost()).max(Comparator.naturalOrder()).get();
@@ -145,7 +142,7 @@ public class EducatorDialogController extends BaseDataDialogController implement
         ObservableList<Educator> selection =  tableEducators.getSelectionModel().getSelectedItems();
 
         for(Educator educator: selection)
-            commandList.add(new RemoveEducatorCommand(demoController, educator));
+            commandList.add(new RemoveEducatorCommand(educator));
 
         listEducators.removeAll(selection);
         btnOk.setDisable(false);

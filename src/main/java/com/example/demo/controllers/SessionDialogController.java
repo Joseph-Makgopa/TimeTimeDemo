@@ -14,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class SessionDialogController extends BaseDataDialogController implements Initializable {
@@ -35,7 +37,7 @@ public class SessionDialogController extends BaseDataDialogController implements
     TableColumn<Session, String> columnId, columnGrade, columnSubject, columnEducator, columnAmount, columnSplit, columnPair;
     @FXML
     Button btnOk;
-    private final ObservableList<Session> listSessions = FXCollections.observableArrayList();
+    private final Map<Integer, Session> sessions = new HashMap<>(State.getInstance().sessions);
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         SpinnerValueFactory<Integer> spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100);
@@ -69,9 +71,7 @@ public class SessionDialogController extends BaseDataDialogController implements
             return new SimpleObjectProperty<>(entry.getValue().getSplit().toString());
         });
 
-        tableSessions.setItems(listSessions);
-
-        listSessions.addAll(State.getInstance().sessions.values());
+        tableSessions.setItems(FXCollections.observableArrayList(sessions.values()));
     }
     public void rowSelection(){
         Session session = (Session)tableSessions.getSelectionModel().getSelectedItem();
@@ -90,11 +90,11 @@ public class SessionDialogController extends BaseDataDialogController implements
         String text = txtSearch.getText().toUpperCase();
 
         if(text.isEmpty()){
-            tableSessions.setItems(listSessions);
+            tableSessions.setItems(FXCollections.observableArrayList(sessions.values()));
             return;
         }
 
-        tableSessions.setItems(FXCollections.observableArrayList(listSessions.stream().filter(entry -> {
+        tableSessions.setItems(FXCollections.observableArrayList(sessions.values().stream().filter(entry -> {
             if(entry.getId().toString().contains(text))
                 return true;
 
@@ -145,14 +145,7 @@ public class SessionDialogController extends BaseDataDialogController implements
         Session session = new Session(grade, educator, subject, amount, split, pair);
 
         if(split != null){
-            Session splitSession = null;
-
-            for(Session entry: listSessions){
-                if(entry.getId().equals(split)){
-                    splitSession = entry;
-                    break;
-                }
-            }
+            Session splitSession = sessions.get(split);
 
             if(splitSession == null){
                 Notification.show("Session error", "Split session is missing.", Alert.AlertType.ERROR);
@@ -171,14 +164,7 @@ public class SessionDialogController extends BaseDataDialogController implements
         }
 
         if(pair != null){
-            Session pairSession = null;
-
-            for(Session entry: listSessions){
-                if(entry.getId().equals(pair)){
-                    pairSession = entry;
-                    break;
-                }
-            }
+            Session pairSession = sessions.get(pair);
 
             if(pairSession == null){
                 Notification.show("Session error", "Pair session is missing.", Alert.AlertType.ERROR);
@@ -196,14 +182,7 @@ public class SessionDialogController extends BaseDataDialogController implements
             }
         }
 
-        if(listSessions.contains(session)){
-            Notification.show("Session error", "Duplicate session is detected.", Alert.AlertType.ERROR);
-            return;
-        }
-
-        for(int count = 0; count < listSessions.size(); count++){
-            Session entry = listSessions.get(count);
-
+        for(Session entry: sessions.values()){
             if(entry.getGrade().equals(session.getGrade()) && entry.getSubject().equals(session.getSubject()) && entry.getEducator().equals(session.getEducator())){
                 if(pair != null && pair.equals(entry.getId())){
                     Notification.show("Session error", "Can not set pair to the same value as the id.", Alert.AlertType.ERROR);
@@ -216,88 +195,61 @@ public class SessionDialogController extends BaseDataDialogController implements
                 }
 
                 if(pair != null){
-                    for(Session value: listSessions){
-                        if(pair.equals(value.getId())){
-                            if(value.getPair() != null){
-                                for(Session other: listSessions){
-                                    if(other.getId().equals(value.getPair())){
-                                        other.setPair(null);
-                                        break;
-                                    }
-                                }
-                            }
+                    Session pairSession = sessions.get(pair);
 
-                            value.setPair(entry.getId());
-                            break;
-                        }
+                    if(pairSession != null && pairSession.getPair() != null){
+                        sessions.get(pairSession.getPair()).setPair(null);
                     }
+
+                    pairSession.setPair(entry.getId());
+                    entry.setPair(pair);
                 }
 
                 if(split != null){
-                    for(Session value: listSessions){
-                        if(split.equals(value.getId())){
-                            if(value.getSplit() != null){
-                                for(Session other: listSessions){
-                                    if(other.getId().equals(value.getSplit())){
-                                        other.setSplit(null);
-                                        break;
-                                    }
-                                }
-                            }
+                    Session splitSession = sessions.get(split);
 
-                            value.setSplit(entry.getId());
-                            break;
-                        }
+                    if(splitSession != null && splitSession.getSplit() != null){
+                        sessions.get(splitSession.getSplit()).setSplit(null);
                     }
+
+                    splitSession.setSplit(entry.getId());
+                    entry.setPair(split);
                 }
 
                 session.setId(entry.getId());
-                listSessions.set(count, session);
-                commandList.add(new UpdateSessionCommand(demoController, entry, session));
+                sessions.put(entry.getId(), session);
+                commandList.add(new UpdateSessionCommand( entry, session));
                 btnOk.setDisable(false);
                 return;
             }
         }
 
         if(split != null){
-            for(Session value: listSessions){
-                if(split.equals(value.getId())){
-                    if(value.getSplit() != null){
-                        for(Session other: listSessions){
-                            if(other.getId().equals(value.getSplit())){
-                                other.setSplit(null);
-                                break;
-                            }
-                        }
-                    }
-                    value.setSplit(session.getId());
-                    break;
-                }
+            Session splitSession = sessions.get(split);
+
+            if(splitSession != null && splitSession.getSplit() != null){
+                sessions.get(splitSession.getSplit()).setSplit(null);
             }
+
+            splitSession.setSplit(session.getId());
         }
 
         if(pair != null){
-            for(Session value: listSessions){
-                if(pair.equals(value.getId())){
-                    if(value.getPair() != null){
-                        for(Session other: listSessions){
-                            if(other.getId().equals(value.getPair())){
-                                other.setPair(null);
-                                break;
-                            }
-                        }
-                    }
+            Session pairSession = sessions.get(pair);
 
-                    value.setPair(session.getId());
-                    break;
-                }
+            if(pairSession != null && pairSession.getPair() != null){
+                sessions.get(pairSession.getPair()).setPair(null);
             }
+
+            pairSession.setPair(session.getId());
         }
 
-        listSessions.add(session);
+
+        sessions.put(session.getId(), session);
         comboPair.getItems().add(session.getId().toString());
         comboSplit.getItems().add(session.getId().toString());
-        commandList.add(new AddSessionCommand(demoController, session));
+        commandList.add(new AddSessionCommand(session));
+        tableSessions.setItems(FXCollections.observableArrayList(sessions.values()));
         tableSessions.refresh();
         tableSessions.getSelectionModel().select(session);
         tableSessions.scrollTo(session);
@@ -308,25 +260,20 @@ public class SessionDialogController extends BaseDataDialogController implements
     }
     @FXML
     public void remove(ActionEvent event){
-        ObservableList<Session> selection =  tableSessions.getSelectionModel().getSelectedItems();
+        Session selection =  (Session) tableSessions.getSelectionModel().getSelectedItem();
 
-        for(Session session: selection) {
-            commandList.add(new RemoveSessionCommand(demoController, session));
-            comboPair.getItems().remove(session.getId().toString());
-            comboSplit.getItems().remove(session.getId().toString());
-        }
+        commandList.add(new RemoveSessionCommand(selection));
+        comboPair.getItems().remove(selection.getId().toString());
+        comboSplit.getItems().remove(selection.getId().toString());
 
-        listSessions.removeAll(selection);
+        sessions.remove(selection.getId());
         btnOk.setDisable(false);
         txtSearch.clear();
         search(null);
     }
     @Override
     public void ok(ActionEvent event){
-        Command command = new SetAssignablesCommand(demoController, commandList);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
-
+        CommandManager.getInstance().addCommand(new SetAssignablesCommand(commandList));
         super.ok(event);
     }
 }

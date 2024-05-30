@@ -9,6 +9,8 @@ import com.example.demo.models.Assignable;
 import com.example.demo.utilities.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -27,48 +29,16 @@ public abstract class DemoService {
     public void setFilterOptions(Filter filterOptions){
         this.filterOptions = filterOptions;
     }
-    public void refresh(){
+    public void viewRefresh(Job job){
         ClickableTableCell.instances.clear();
-        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
-
-        populateTable();
-        setupTable();
-
-        if(index > 0 && index < demoController.getPane().getTabs().size())
-            demoController.getPane().getSelectionModel().select(index);
-
-        Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
-        demoController.getTableAssign().getItems().clear();
-        demoController.getTableAssign().getItems().addAll(State.getInstance().assignables.values());
-        demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
-        demoController.getTableAssign().getItems().sort(new AssignableComparator());
-        demoController.getTableAssign().refresh();
-
-        if(selection != null)
-            demoController.getTableAssign().getSelectionModel().select(selection);
-
         ClickableTableCell.lastSelectedCell = null;
+
+        populateTable(job);
+        demoController.getPane().getTabs().setAll(setupTable(job));
+        lessonViewRefresh();
     }
-    public void refreshData(){
-        demoController.getPane().getTabs().forEach(tab -> ((TableView)((AnchorPane)tab.getContent()).getChildren().get(0)).refresh());
-
-        Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
-
-        if(index > 0 && index < demoController.getPane().getTabs().size())
-            demoController.getPane().getSelectionModel().select(index);
-
-        Assignable selection = demoController.getTableAssign().getSelectionModel().getSelectedItem();
-        demoController.getTableAssign().getItems().clear();
-        demoController.getTableAssign().getItems().addAll(State.getInstance().assignables.values());
-        demoController.getTableAssign().setItems(search(demoController.getTxtSearch().getText().toUpperCase(), demoController.getTableAssign().getItems()));
-        demoController.getTableAssign().getItems().sort(new AssignableComparator());
-        demoController.getTableAssign().refresh();
-
-        if(selection != null)
-            demoController.getTableAssign().getSelectionModel().select(selection);
-
-        ClickableTableCell.lastSelectedCell = null;
-    }
+    public abstract void dataRefresh(Job job);
+    public abstract void lessonViewRefresh();
     public abstract void clearTab();
     public abstract void clearRow();
     public abstract void clearCell();
@@ -120,8 +90,8 @@ public abstract class DemoService {
 
         return FXCollections.observableArrayList(result);
     }
-    public abstract void setupTable();
-    public abstract void populateTable();
+    public abstract ObservableList<Tab> setupTable(Job job);
+    public abstract void populateTable(Job job);
     public abstract void position();
     public abstract void print(Stage stage);
     public abstract void export(File file);
@@ -206,8 +176,19 @@ public abstract class DemoService {
                         while(valuesIterator.hasNext()){
                             Assignable value = valuesIterator.next();
 
-                            if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond()))
+                            if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond())) {
                                 valuesIterator.remove();
+
+                                Assignable pairAssignable = value.getPair();
+                                if(pairAssignable != null){
+                                    LinkedList<Assignable> pairValues = slotOptions.get(TripletManager.get(triplet.getFirst(), pairAssignable.getGrade(), triplet.getThird()));
+
+                                    if(pairValues != null) {
+                                        pairValues.remove(pairAssignable);
+                                        System.out.println("2-Hello");
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -234,43 +215,54 @@ public abstract class DemoService {
             slotOptions.forEach((triplet, options) -> {
                 options.remove(lesson);
             });
-        }else{
+        }else if(!pair)
             lessons.add(lesson);
 
-            int breakAfter = State.getInstance().breakAfter - 1;
+        int breakAfter = State.getInstance().breakAfter - 1;
 
-            for(int period = 0; period < State.getInstance().days.get(slot.getFirst()); period++){
-                if(period == (slot.getThird() - 1) && slot.getThird() != (breakAfter + 1))
-                    continue;
+        for(int period = 0; period < State.getInstance().days.get(slot.getFirst()); period++){
+            if(period == (slot.getThird() - 1) && slot.getThird() != (breakAfter + 1))
+                continue;
 
-                if(period == slot.getThird())
-                    continue;
+            if(period == slot.getThird())
+                continue;
 
-                if(period == (slot.getThird() + 1) && slot.getThird() != breakAfter)
-                    continue;
+            if(period == (slot.getThird() + 1) && slot.getThird() != breakAfter)
+                continue;
 
-                LinkedList<Assignable> values =  slotOptions.get(TripletManager.get(slot.getFirst(), slot.getSecond(), period));
+            LinkedList<Assignable> values =  slotOptions.get(TripletManager.get(slot.getFirst(), slot.getSecond(), period));
 
-                if(values != null){
-                    values.remove(lesson);
-                }
+            if(values != null){
+                values.remove(lesson);
             }
+        }
 
-            for(Grade grade: State.getInstance().grades){
-                if(lesson.getGrade().equals(grade))
-                    continue;
+        for(Grade grade: State.getInstance().grades) {
+            if(lesson.getGrade().equals(grade))
+                continue;
 
-                LinkedList<Assignable> values = slotOptions.get(TripletManager.get(slot.getFirst(), grade, slot.getThird()));
+            LinkedList<Assignable> values = slotOptions.get(TripletManager.get(slot.getFirst(), grade, slot.getThird()));
 
-                if(values != null){
-                    Iterator<Assignable> valuesIterator =  values.iterator();
-                    educators = lesson.getEducators();
+            if(values != null){
+                Iterator<Assignable> valuesIterator =  values.iterator();
+                educators = lesson.getEducators();
 
-                    while(valuesIterator.hasNext()){
-                        Assignable value = valuesIterator.next();
+                while(valuesIterator.hasNext()){
+                    Assignable value = valuesIterator.next();
 
-                        if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond()))
-                            valuesIterator.remove();
+                    if(value.hasEducator(educators.getFirst()) || value.hasEducator(educators.getSecond())) {
+                        valuesIterator.remove();
+                        //System.out.println("1-Hello ");
+
+                        Assignable pairAssignable = value.getPair();
+                        if(pairAssignable != null){
+                            LinkedList<Assignable> pairValues = slotOptions.get(TripletManager.get(slot.getFirst(), pairAssignable.getGrade(), slot.getThird()));
+
+                            if(pairValues != null) {
+                                pairValues.remove(pairAssignable);
+                                System.out.println("2-Hello");
+                            }
+                        }
                     }
                 }
             }
@@ -281,7 +273,7 @@ public abstract class DemoService {
             position(pairAssignable, TripletManager.get(slot.getFirst(), pairAssignable.getGrade(), slot.getThird()), lessons, educatorLessonCount, slotOptions, true);
         }
     }
-    public void arrange(LinkedList<Assignable> options){
+    public void arrange(LinkedList<Assignable> options, Job job){
         Map<Educator, Integer> educatorLessonCount = new HashMap<>();
         Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions = new HashMap<>();
 
@@ -291,6 +283,9 @@ public abstract class DemoService {
         Queue<Assignable> lessonsTwo = new PriorityQueue<>(educatorBasedComparator);
 
         prepare(options, lessonsOne, educatorLessonCount, slotOptions);
+
+        int max = lessonsOne.size();
+        job.progress(0, max);
 
         while(!slotOptions.isEmpty() && !lessonsOne.isEmpty()){
             lessonsTwo.clear();
@@ -343,19 +338,13 @@ public abstract class DemoService {
             }
 
             if(lessonChoice != null){
-                lessonsThree.remove(lessonChoice);
-
-                for(Assignable assignable: lessonsThree){
-                    lessonsOne.add(assignable);
-                }
+                lessonsOne.addAll(lessonsThree);
+                lessonsOne.remove(lessonChoice);
 
                 position(lessonChoice, slotChoice, lessonsOne, educatorLessonCount, slotOptions, false);
             }
-        }
 
-        refreshData();
-    }
-    public void arrange(){
-        arrange(new LinkedList<>(State.getInstance().assignables.values()));
+            job.progress(max - lessonsOne.size(), max);
+        }
     }
 }

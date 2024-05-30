@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
@@ -305,9 +306,14 @@
       </Accordion>
    </right>
    <center>
-      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TabPane fx:id="paneTimeTable" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+            <AnchorPane fx:id="progressAnchor" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgba(0, 0, 0, 0.7);" visible="false">
+               <children>
+                  <ProgressIndicator fx:id="progress" layoutX="234.0" layoutY="207.0" prefHeight="102.0" prefWidth="101.0" style="-fx-accent: white;" visible="false" />
+               </children>
+            </AnchorPane>
+            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                <tabs>
                   <Tab fx:id="MONDAY" text="Monday">
                      <content>
@@ -354,12 +360,25 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <AnchorPane fx:id="progressAnchor" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgba(0, 0, 0, 0.7);" visible="false">
-               <children>
-                  <ProgressIndicator fx:id="progress" layoutX="234.0" layoutY="207.0" prefHeight="102.0" prefWidth="101.0" style="-fx-accent: white;" visible="false" />
-               </children>
-            </AnchorPane>
          </children>
       </StackPane>
    </center>
+   <bottom>
+      <AnchorPane prefHeight="30.0" prefWidth="800.0" style="-fx-border-color: gray;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <AnchorPane fx:id="progressAnchor" prefHeight="200.0" prefWidth="240.0">
+                     <children>
+                        <ProgressBar fx:id="progress" layoutY="5.0" prefHeight="20.0" prefWidth="240.0" stylesheets="@progress-indicator.css" visible="false" />
+                     </children>
+                  </AnchorPane>
+                  <Label fx:id="loaderMessage" prefHeight="30.0" prefWidth="200.0" text="  Loader Message" visible="false" wrapText="true" />
+                  <Label fx:id="labelClashes" alignment="CENTER" prefHeight="30.0" prefWidth="80.0" styleClass="status" stylesheets="@progress-indicator.css" text="0 clashes" textAlignment="CENTER" />
+                  <Label fx:id="labelRemain" alignment="CENTER" layoutX="728.0" layoutY="10.0" prefHeight="30.0" prefWidth="80.0" styleClass="status" stylesheets="@progress-indicator.css" text="0 remaining" textAlignment="CENTER" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </bottom>
 </BorderPane>

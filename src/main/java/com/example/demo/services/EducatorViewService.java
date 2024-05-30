@@ -31,12 +31,8 @@ public class EducatorViewService extends DemoService{
         super(controller);
     }
     @Override
-    public void refresh() {
-        ClickableTableCell.instances.clear();
+    public void lessonViewRefresh() {
         Integer index = demoController.getPane().getSelectionModel().getSelectedIndex();
-
-        populateTable();
-        setupTable();
 
         if(index >= 0 && index < demoController.getPane().getTabs().size()) {
             demoController.getPane().getSelectionModel().select(index);
@@ -53,13 +49,14 @@ public class EducatorViewService extends DemoService{
             if(selection != null)
                 demoController.getTableAssign().getSelectionModel().select(selection);
         }
-        ClickableTableCell.lastSelectedCell = null;
     }
     @Override
-    public void refreshData(){
+    public void dataRefresh(Job job){
         ClickableTableCell.instances.clear();
+        int count = 0;
 
-        State.getInstance().educators.forEach((post, educator) -> {
+        for(Integer post: State.getInstance().educators.keySet()){
+            Educator educator = State.getInstance().educators.get(post);
             ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
@@ -94,13 +91,14 @@ public class EducatorViewService extends DemoService{
 
                     daySchedules.add(daySchedule);
                 }
+
+                count++;
+                job.progress(count, (long)State.getInstance().educators.size() * WeekDay.values().length);
             }
 
             educatorTable.get(educator).clear();
             educatorTable.get(educator).addAll(daySchedules);
-        });
-
-        super.refreshData();
+        }
     }
     public ObservableList<Rank<WeekDay>> filter(Educator educator){
         return FXCollections.observableArrayList(educatorTable.get(educator).stream().filter(daySchedule -> {
@@ -201,9 +199,7 @@ public class EducatorViewService extends DemoService{
                 }
             }
 
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
     public void clearRow(){
@@ -226,9 +222,7 @@ public class EducatorViewService extends DemoService{
                     }
                 }
 
-                Command command = new ClearSlotsCommand(trash, demoController);
-                command.execute();
-                CommandManager.getInstance().addCommand(command);
+                CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
             }
         }
     }
@@ -260,33 +254,20 @@ public class EducatorViewService extends DemoService{
         }
 
         if(!trash.isEmpty()) {
-            Command command = new ClearSlotsCommand(trash, demoController);
-            command.execute();
-            CommandManager.getInstance().addCommand(command);
+            CommandManager.getInstance().addCommand(new ClearSlotsCommand(trash));
         }
     }
     @Override
-    public void setupTable() {
-        demoController.getPane().getTabs().clear();
+    public ObservableList<Tab> setupTable(Job job) {
+        ObservableList<Tab> result = FXCollections.observableArrayList();
+        int workDone = 0;
 
-        State.getInstance().educators.forEach((post, educator) -> {
+        if(job != null)
+            job.progress(workDone, State.getInstance().educators.size());
+
+        for(Integer post: State.getInstance().educators.keySet()){
+            Educator educator = State.getInstance().educators.get(post);
             TableView<Rank<WeekDay>> daySchedule = new TableView<>();
-
-//            ContextMenu contextMenu = new ContextMenu();
-//            MenuItem clearCellMenuItem = new MenuItem("Clear cell");
-//            MenuItem clearRowMenuItem = new MenuItem("Clear row");
-//            MenuItem clearColMenuItem = new MenuItem("Clear column");
-//            MenuItem clearTableMenuItem = new MenuItem("Clear table");
-//
-//            clearCellMenuItem.setOnAction(event -> {
-//                TablePosition<Row<WeekDay>, ?> editEvent = daySchedule.getEditingCell();
-//                if (editEvent != null) {
-//                    editEvent.
-//                }
-//            });
-//            clearRowMenuItem.setOnAction(event -> {});
-//            clearColMenuItem.setOnAction(event -> {});
-//            clearTableMenuItem.setOnAction(event -> {});
 
             AnchorPane anchorPane = new AnchorPane(daySchedule);
             AnchorPane.setTopAnchor(daySchedule, 0.0);
@@ -303,8 +284,15 @@ public class EducatorViewService extends DemoService{
                 daySchedule.getColumns().add(new TableColumn<>(Integer.toString(count + 1)));
 
             setupEducatorTable(educator, daySchedule);
-            demoController.getPane().getTabs().add(tab);
-        });
+            result.add(tab);
+
+            if(job != null){
+                workDone++;
+                job.progress(workDone, State.getInstance().educators.size());
+            }
+        }
+
+        return result;
     }
     public void setupEducatorTable(Educator educator, TableView<Rank<WeekDay>> table){
         TableColumn<Rank<WeekDay>,?> column = table.getColumns().get(0);
@@ -357,9 +345,17 @@ public class EducatorViewService extends DemoService{
         table.setItems(educatorTable.get(educator));
     }
     @Override
-    public void populateTable() {
+    public void populateTable(Job job) {
         educatorTable.clear();
-        State.getInstance().educators.forEach((post, educator) -> {
+        int size = State.getInstance().educators.size() * WeekDay.values().length;
+        long workDone = 0;
+
+        if(job != null){
+            job.progress(workDone, size);
+        }
+
+        for(Integer post: State.getInstance().educators.keySet()){
+            Educator educator = State.getInstance().educators.get(post);
             ObservableList<Rank<WeekDay>> daySchedules = FXCollections.observableArrayList();
 
             for(WeekDay day: WeekDay.values()){
@@ -397,7 +393,12 @@ public class EducatorViewService extends DemoService{
             }
 
             educatorTable.put(educator, daySchedules);
-        });
+
+            if(job != null){
+                workDone++;
+                job.progress(workDone, size);
+            }
+        }
     }
     public void position(){
         Assignable assignable = demoController.getTableAssign().getSelectionModel().getSelectedItem();
@@ -454,9 +455,7 @@ public class EducatorViewService extends DemoService{
 
         }
 
-        Command command = new PositionCommand(demoController, assignable, triplet);
-        command.execute();
-        CommandManager.getInstance().addCommand(command);
+        CommandManager.getInstance().addCommand(new PositionCommand(assignable, triplet));
     }
     public void print(Stage stage){
         Tab tab = demoController.getPane().getSelectionModel().getSelectedItem();

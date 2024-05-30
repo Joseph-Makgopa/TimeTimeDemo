@@ -8,19 +8,19 @@ import com.example.demo.models.WeekDay;
 import com.example.demo.models.Assignable;
 import com.example.demo.services.DemoService;
 import com.example.demo.services.GradeViewService;
+import com.example.demo.utilities.Job;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
 
 import java.util.*;
 
-public class UpdateGradesCommand extends Command {
+public class UpdateGradesCommand implements Command {
     private Map<Integer, Session> oldSessions;
     private Map<Pair<Integer, Integer>, Assignable> oldAssignables;
     private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
     private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
     private CommandList commands;
-    public UpdateGradesCommand(DemoController demoController, CommandList commands){
-        super(demoController);
+    public UpdateGradesCommand(CommandList commands){
         oldSessions = new HashMap<>();
         oldSessions.putAll(State.getInstance().sessions);
 
@@ -35,10 +35,34 @@ public class UpdateGradesCommand extends Command {
 
         this.commands = commands;
     }
+
     @Override
-    public void executeCode() {
-        commands.executeCode();
+    public String executeDescription() {
+        return "  updating grades.";
+    }
+
+    @Override
+    public String reverseDescription() {
+        return "  reversing grade updates.";
+    }
+
+    @Override
+    public Boolean dataRefresh() {
+        return false;
+    }
+    @Override
+    public Boolean threadSafe(){
+        return true;
+    }
+    @Override
+    public void execute(Job job) {
+        commands.execute(job);
+
+        job.progress(0, 5);
+
         State.getInstance().grades.sort(Comparator.naturalOrder());
+
+        job.progress(1,5);
 
         State.getInstance().sessions.clear();
         oldSessions.forEach((id, session) -> {
@@ -47,6 +71,8 @@ public class UpdateGradesCommand extends Command {
             }
         });
 
+        job.progress(2,5);
+
         State.getInstance().assignables.clear();
         oldAssignables.forEach((id, assignable) -> {
             if(State.getInstance().sessions.get(id.getFirst()) != null){
@@ -54,12 +80,16 @@ public class UpdateGradesCommand extends Command {
             }
         });
 
+        job.progress(3,5);
+
         State.getInstance().timetable.clear();
         oldTimeTable.forEach((triplet, id) -> {
             if(State.getInstance().grades.contains(triplet.getSecond())){
                 State.getInstance().timetable.put(triplet, id);
             }
         });
+
+        job.progress(4,5);
 
         if(freshClashes == null){
             State.getInstance().setClashes();
@@ -69,36 +99,41 @@ public class UpdateGradesCommand extends Command {
             State.getInstance().clashes.addAll(freshClashes);
         }
 
+        job.progress(5,5);
+
         State.getInstance().saveRequired = true;
-        if(getDemoController().getService() instanceof GradeViewService) {
-            getDemoController().getService().refresh();
-        }else{
-            getDemoController().getService().refreshData();
-        }
     }
 
     @Override
-    public void reverseCode() {
-        commands.reverseCode();
+    public void reverse(Job job) {
+        commands.reverse(job);
+
+        job.progress(0, 5);
+
         State.getInstance().grades.sort(Comparator.naturalOrder());
+
+        job.progress(1, 5);
 
         State.getInstance().sessions.clear();
         State.getInstance().sessions.putAll(oldSessions);
 
+        job.progress(2, 5);
+
         State.getInstance().assignables.clear();
         State.getInstance().assignables.putAll(oldAssignables);
+
+        job.progress(3, 5);
 
         State.getInstance().timetable.clear();
         State.getInstance().timetable.putAll(oldTimeTable);
 
+        job.progress(4,5);
+
         State.getInstance().clashes.clear();
         State.getInstance().clashes.addAll(oldClashes);
 
+        job.progress(5,5);
+
         State.getInstance().saveRequired = true;
-        if(getDemoController().getService() instanceof GradeViewService) {
-            getDemoController().getService().refresh();
-        }else{
-            getDemoController().getService().refreshData();
-        }
     }
 }

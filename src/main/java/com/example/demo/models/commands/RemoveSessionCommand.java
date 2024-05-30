@@ -4,19 +4,36 @@ import com.example.demo.controllers.DemoController;
 import com.example.demo.models.Educator;
 import com.example.demo.models.Session;
 import com.example.demo.models.State;
+import com.example.demo.utilities.Job;
 
-public class RemoveSessionCommand extends Command{
+public class RemoveSessionCommand implements Command{
     private Session session;
-    public RemoveSessionCommand(DemoController demoController, Session session){
-        super(demoController);
+    public RemoveSessionCommand(Session session){
         this.session = session;
     }
+
     @Override
-    public void executeCode() {
+    public String executeDescription() {
+        return "";
+    }
+    @Override
+    public String reverseDescription() {
+        return "";
+    }
+    @Override
+    public Boolean dataRefresh() {
+        return null;
+    }
+    @Override
+    public Boolean threadSafe(){
+        return true;
+    }
+    @Override
+    public void execute(Job job) {
         State.getInstance().sessions.remove(session.getId());
     }
     @Override
-    public void reverseCode() {
+    public void reverse(Job job) {
         State.getInstance().sessions.put(session.getId(), session);
     }
 }
