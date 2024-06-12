@@ -9,6 +9,7 @@ import com.example.demo.services.DemoService;
 import com.example.demo.utilities.Job;
 import com.example.demo.utilities.Pair;
 import com.example.demo.utilities.Triplet;
+import com.example.demo.utilities.TripletManager;
 
 import java.util.*;
 
@@ -59,6 +60,12 @@ public class ClearSlotsCommand implements Command{
 
                     assignable.setRemain(assignable.getRemain() + 1);
                     State.getInstance().timetable.remove(entry.getKey());
+
+                    Assignable pairAssignable = assignable.getPair();
+
+                    if(pairAssignable != null){
+                        State.getInstance().timetable.remove(TripletManager.get(entry.getKey().getFirst(), pairAssignable.getGrade(), entry.getKey().getThird()));
+                    }
                 }
             }
 
@@ -71,7 +78,6 @@ public class ClearSlotsCommand implements Command{
 
             State.getInstance().setClashes();
             freshClashes = new HashSet<>(State.getInstance().clashes);
-
         }else{
             job.progress(0, freshAssignables.size() + 3);
 

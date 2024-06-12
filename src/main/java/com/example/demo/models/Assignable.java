@@ -37,7 +37,11 @@ public class Assignable implements Serializable {
         Integer share = State.getInstance().sessions.get(sessionRef).getSplit();
 
         if(share != null){
-            id.setSecond(share);
+            if(share < sessionRef){
+                id.setSecond(sessionRef);
+                id.setFirst(share);
+            }else
+                id.setSecond(share);
         }
 
         remain = State.getInstance().sessions.get(sessionRef).getAmount();

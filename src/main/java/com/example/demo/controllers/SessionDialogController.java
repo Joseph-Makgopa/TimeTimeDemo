@@ -15,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -91,6 +92,7 @@ public class SessionDialogController extends BaseDataDialogController implements
 
         if(text.isEmpty()){
             tableSessions.setItems(FXCollections.observableArrayList(sessions.values()));
+            tableSessions.refresh();
             return;
         }
 
@@ -117,6 +119,7 @@ public class SessionDialogController extends BaseDataDialogController implements
 
             return entry.getSplit() != null && entry.getSplit().toString().contains(text);
         }).toList()));
+        tableSessions.refresh();
     }
     @FXML
     public void add(ActionEvent event){
@@ -184,6 +187,8 @@ public class SessionDialogController extends BaseDataDialogController implements
 
         for(Session entry: sessions.values()){
             if(entry.getGrade().equals(session.getGrade()) && entry.getSubject().equals(session.getSubject()) && entry.getEducator().equals(session.getEducator())){
+                Session copy = entry.clone();
+
                 if(pair != null && pair.equals(entry.getId())){
                     Notification.show("Session error", "Can not set pair to the same value as the id.", Alert.AlertType.ERROR);
                     return;
@@ -194,31 +199,45 @@ public class SessionDialogController extends BaseDataDialogController implements
                     return;
                 }
 
+
+                if(entry.getPair() != null){
+                    sessions.get(entry.getPair()).setPair(null);
+                }
                 if(pair != null){
+
                     Session pairSession = sessions.get(pair);
 
-                    if(pairSession != null && pairSession.getPair() != null){
-                        sessions.get(pairSession.getPair()).setPair(null);
-                    }
+                    if(pairSession != null){
+                        if(pairSession.getPair() != null)
+                            sessions.get(pairSession.getPair()).setPair(null);
 
-                    pairSession.setPair(entry.getId());
-                    entry.setPair(pair);
+                        pairSession.setPair(entry.getId());
+                    }
                 }
 
+                if(entry.getSplit() != null){
+                    sessions.get(entry.getSplit()).setSplit(null);
+                }
                 if(split != null){
+
                     Session splitSession = sessions.get(split);
 
-                    if(splitSession != null && splitSession.getSplit() != null){
-                        sessions.get(splitSession.getSplit()).setSplit(null);
-                    }
+                    if(splitSession != null){
+                        if(splitSession.getSplit() != null)
+                            sessions.get(splitSession.getSplit()).setSplit(null);
 
-                    splitSession.setSplit(entry.getId());
-                    entry.setPair(split);
+                        splitSession.setSplit(entry.getId());
+                    }
                 }
 
                 session.setId(entry.getId());
                 sessions.put(entry.getId(), session);
-                commandList.add(new UpdateSessionCommand( entry, session));
+                commandList.add(new UpdateSessionCommand( copy, session));
+                btnOk.setDisable(false);
+                search(null);
+                tableSessions.getSelectionModel().select(session);
+                tableSessions.scrollTo(session);
+                comboGrade.requestFocus();
                 btnOk.setDisable(false);
                 return;
             }
