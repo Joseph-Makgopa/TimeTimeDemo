@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="updated the execute and reverse function of UpdateStructureCommand and updated the reverseStructure function">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/DemoApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SessionDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/controllers/SessionDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Assignable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/Assignable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ClearSlotsCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/models/commands/ClearSlotsCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/demo/demo-view.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/timetable_data.dat" beforeDir="false" afterPath="$PROJECT_DIR$/timetable_data.dat" afterDir="false" />
-    </list>
+    <list default="true" id="a8f6254f-902b-47cf-9022-38981ebf3f68" name="Changes" comment="FINAL COMMIT BEFORE MOVING TO DIFFERENT MACHINE" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,20 +70,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1706185400456</updated>
-    </task>
-    <task id="LOCAL-00011" summary="implemented the design of the educator dialog">
-      <created>1706453416921</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1706453416921</updated>
-    </task>
-    <task id="LOCAL-00012" summary="implemented the design of the sessions dialog">
-      <created>1706466104009</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1706466104009</updated>
     </task>
     <task id="LOCAL-00013" summary="added skeleton methonds in subjectDialogController">
       <created>1706466840260</created>
@@ -422,7 +400,21 @@
       <option name="project" value="LOCAL" />
       <updated>1717086946805</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="FINAL COMMIT BEFORE MOVING TO DIFFERENT MACHINE">
+      <created>1718204963138</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1718204963139</updated>
+    </task>
+    <task id="LOCAL-00061" summary="FINAL COMMIT BEFORE MOVING TO DIFFERENT MACHINE">
+      <created>1718205343388</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1718205343389</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -452,7 +444,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented clearTab and clearRow functions in EducatorViewService and GradeViewService" />
     <MESSAGE value="implemented the togglePanel menu button" />
     <MESSAGE value="updated the UpdateSubjectsCommand" />
     <MESSAGE value="updated the data functions" />
@@ -477,6 +468,7 @@
     <MESSAGE value="added functionality to update progress bar when executed and fixed the arrange functionality" />
     <MESSAGE value="Fixed errors" />
     <MESSAGE value="updated the execute and reverse function of UpdateStructureCommand and updated the reverseStructure function" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated the execute and reverse function of UpdateStructureCommand and updated the reverseStructure function" />
+    <MESSAGE value="FINAL COMMIT BEFORE MOVING TO DIFFERENT MACHINE" />
+    <option name="LAST_COMMIT_MESSAGE" value="FINAL COMMIT BEFORE MOVING TO DIFFERENT MACHINE" />
   </component>
 </project>
