@@ -22,7 +22,7 @@ public class DemoApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("timetable_icon.png"))));
-
+        int dummy;
         stage.setTitle("Untitled - TimeTable");
         stage.setMaximized(true);
         stage.setScene(scene);
