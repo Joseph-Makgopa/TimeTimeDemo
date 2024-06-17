@@ -324,7 +324,7 @@ public class DemoController implements Initializable {
         MenuItem resetMenuItem = new MenuItem("Reset");
         resetMenuItem.setId("Reset");
         resetMenuItem.setOnAction(event -> {
-            CommandManager.getInstance().addCommand(new ResetCommand(new LinkedList<>(tableAssign.getItems())));
+            CommandManager.getInstance().addCommand(new ResetCommand());
         });
 
         contextMenu.getItems().clear();

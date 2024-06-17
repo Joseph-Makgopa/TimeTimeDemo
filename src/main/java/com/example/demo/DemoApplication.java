@@ -21,8 +21,9 @@ public class DemoApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(DemoApplication.class.getResource("demo-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
+        //<a href="https://www.flaticon.com/free-icons/table" title="table icons">Table icons created by Pixel perfect - Flaticon</a>
+
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("timetable_icon.png"))));
-        int dummy;
         stage.setTitle("Untitled - TimeTable");
         stage.setMaximized(true);
         stage.setScene(scene);

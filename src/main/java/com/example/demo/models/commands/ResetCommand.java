@@ -13,31 +13,19 @@ import com.example.demo.utilities.TripletManager;
 import java.util.*;
 
 public class ResetCommand implements Command{
-    private Map<Pair<Integer, Integer>, Assignable> lessons;
-    private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable, freshTimeTable;
-    private LinkedList<Assignable> oldAssignable, freshAssignable;
-    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    public ResetCommand(LinkedList<Assignable> lessons){
-        setLessons(lessons);
+    private final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
+    private final LinkedList<Assignable> oldAssignable;
+    private final Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
 
+    public ResetCommand(){
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
-        freshTimeTable = null;
 
         oldAssignable = new LinkedList<>();
-        for(Assignable assignable: lessons){
+        for(Assignable assignable: State.getInstance().assignables.values()){
             oldAssignable.add(assignable.clone());
         }
-        freshAssignable = null;
 
         oldClashes = new HashSet<>(State.getInstance().clashes);
-        freshClashes = null;
-    }
-
-    void setLessons(LinkedList<Assignable> lessons){
-        this.lessons = new HashMap<>();
-
-        for(Assignable assignable: lessons)
-            this.lessons.put(assignable.getId(), assignable.clone());
     }
 
     @Override
@@ -60,71 +48,16 @@ public class ResetCommand implements Command{
     }
     @Override
     public void execute(Job job) {
-        if(freshTimeTable == null){
-            Iterator<Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>>> iterator = State.getInstance().timetable.entrySet().iterator();
-            LinkedList<Triplet<WeekDay, Grade, Integer>> pairs = new LinkedList<>();
+        job.progress(0, 3);
+        State.getInstance().timetable.clear();
 
-            job.progress(0,5);
+        job.progress(1, 3);
+        State.getInstance().assignables.forEach((key, value) -> value.setRemain(value.getAmount()));
 
-            while (iterator.hasNext()) {
-                Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry = iterator.next();
+        job.progress(2, 3);
+        State.getInstance().clashes.clear();
 
-                if (lessons.containsKey(entry.getValue())) {
-                    Assignable assignable = lessons.get(entry.getValue());
-                    assignable.setRemain(assignable.getRemain() + 1);
-                    iterator.remove();
-
-                    Assignable pair = assignable.getPair();
-
-                    if (pair != null) {
-                        pairs.add(TripletManager.get(entry.getKey().getFirst(), pair.getGrade(), entry.getKey().getThird()));
-                        pair.setRemain(pair.getRemain() + 1);
-                    }
-                }
-            }
-
-            job.progress(1,5);
-
-            for (Triplet<WeekDay, Grade, Integer> pair: pairs)
-                State.getInstance().timetable.remove(pair);
-
-            job.progress(2,5);
-
-            freshAssignable = new LinkedList<>();
-            for(Assignable assignable: lessons.values()) {
-                freshAssignable.add(assignable.clone());
-                State.getInstance().assignables.put(assignable.getId(), assignable.clone());
-            }
-
-            job.progress(3,5);
-
-            freshTimeTable = new HashMap<>(State.getInstance().timetable);
-
-            job.progress(4,5);
-
-            State.getInstance().setClashes();
-            freshClashes = new HashSet<>(State.getInstance().clashes);
-
-            job.progress(5,5);
-        }else{
-            job.progress(0,3);
-
-            State.getInstance().timetable.clear();
-            State.getInstance().timetable.putAll(freshTimeTable);
-
-            job.progress(1,3);
-
-            for(Assignable assignable: freshAssignable)
-                State.getInstance().assignables.put(assignable.getId(), assignable.clone());
-
-            job.progress(2,3);
-
-            State.getInstance().clashes.clear();
-            State.getInstance().clashes.addAll(freshClashes);
-
-            job.progress(3,3);
-        }
-
+        job.progress(3, 3);
         State.getInstance().saveRequired = true;
     }
 

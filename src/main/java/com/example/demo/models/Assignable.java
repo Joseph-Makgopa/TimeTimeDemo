@@ -6,8 +6,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Assignable implements Serializable {
-    private Pair<Integer, Integer> id;
+    private final Pair<Integer, Integer> id;
     private Integer remain;
+    private Integer amount;
     private Integer getPairId(){
         Session session = State.getInstance().sessions.get(id.getFirst());
         if(session.getPair() != null){
@@ -23,9 +24,10 @@ public class Assignable implements Serializable {
 
         return null;
     }
-    private Assignable(Pair<Integer, Integer> id, Integer remain){
+    private Assignable(Pair<Integer, Integer> id, Integer remain, Integer amount){
         this.id = id;
         this.remain = remain;
+        this.amount = amount;
     }
     public Assignable(Integer sessionRef) throws NullPointerException{
 
@@ -44,10 +46,10 @@ public class Assignable implements Serializable {
                 id.setSecond(share);
         }
 
-        remain = State.getInstance().sessions.get(sessionRef).getAmount();
+        amount = remain = State.getInstance().sessions.get(sessionRef).getAmount();
     }
     public Assignable clone(){
-        return new Assignable(id, remain);
+        return new Assignable(id,remain, amount);
     }
     public Pair<Session, Session> getSessions(){
         return new Pair<>(State.getInstance().sessions.get(id.getFirst()), State.getInstance().sessions.get(id.getSecond()));
@@ -80,9 +82,7 @@ public class Assignable implements Serializable {
 
         if(id.getSecond() != null){
             session = State.getInstance().sessions.get(id.getSecond());
-            if(session.getPair() != null){
-                return true;
-            }
+            return session.getPair() != null;
         }
 
         return false;
@@ -119,6 +119,12 @@ public class Assignable implements Serializable {
     }
     public Integer getRemain(){
         return remain;
+    }
+    public void setAmount(Integer amount){
+        this.amount = amount;
+    }
+    public Integer getAmount(){
+        return amount;
     }
     public void decrement(){
         remain--;

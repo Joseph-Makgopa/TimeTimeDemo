@@ -13,10 +13,11 @@ import com.example.demo.utilities.Triplet;
 import java.util.*;
 
 public class SetAssignablesCommand implements Command{
-    private Map<Pair<Integer, Integer>, Assignable> oldAssignable;
-    private Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
-    private Set<Triplet<WeekDay, Grade, Integer>> oldClashes, freshClashes;
-    private CommandList commands;
+    private final Map<Pair<Integer, Integer>, Assignable> oldAssignable;
+    private final Map<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> oldTimeTable;
+    private final Set<Triplet<WeekDay, Grade, Integer>> oldClashes;
+    private Set<Triplet<WeekDay, Grade, Integer>> freshClashes;
+    private final CommandList commands;
     public SetAssignablesCommand(CommandList commands){
         oldAssignable = new HashMap<>(State.getInstance().assignables);
         oldTimeTable = new HashMap<>(State.getInstance().timetable);
@@ -64,8 +65,13 @@ public class SetAssignablesCommand implements Command{
         while(iterator.hasNext()){
             Map.Entry<Triplet<WeekDay, Grade, Integer>, Pair<Integer, Integer>> entry = iterator.next();
 
-            if(entry.getValue() != null && !State.getInstance().assignables.containsKey(entry.getValue())){
-                iterator.remove();
+            if(entry.getValue() != null) {
+                Assignable assignable = State.getInstance().assignables.get(entry.getValue());
+
+                if(assignable == null || assignable.getRemain() == 0)
+                    iterator.remove();
+                else
+                    assignable.setRemain(assignable.getRemain() - 1);
             }
         }
 
@@ -94,7 +100,9 @@ public class SetAssignablesCommand implements Command{
 
         job.progress(1, 3);
 
-        State.getInstance().assignables.putAll(oldAssignable);
+        for(Assignable assignable: oldAssignable.values())
+            State.getInstance().assignables.put(assignable.getId(), assignable.clone());
+
         State.getInstance().timetable.putAll(oldTimeTable);
 
         job.progress(2, 3);
