@@ -94,16 +94,27 @@ public abstract class DemoService {
     public abstract void print(Stage stage);
     public abstract void export(File file);
     public abstract void filter();
-    protected void prepare(LinkedList<Assignable> options, Queue<Assignable> lessons, Map<Educator, Integer> educatorLessonCount, Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions, Map<Assignable, Integer> lessonAssignments, Map<Educator, Integer> educatorAssignments ){
+    protected void prepare(LinkedList<Assignable> options, Queue<Assignable> lessons, Map<Educator, Integer> educatorLessonCount, Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions, Map<Assignable, Integer> lessonAssignments, Map<Educator, Integer> educatorAssignments , Map<Assignable, Map<WeekDay, Integer>> possibleAssignmentsCounter){
         lessons.clear();
         educatorLessonCount.clear();
         slotOptions.clear();
         lessonAssignments.clear();
         educatorAssignments.clear();
+        possibleAssignmentsCounter.clear();
+
 
         for(Assignable assignable: options) {
             if(assignable.getRemain() > 0) {
                 lessons.add(assignable);
+
+                Map<WeekDay, Integer> dayAssignmentsCounter = new HashMap<>();
+
+                for (WeekDay weekDay : State.getInstance().days.keySet()) {
+                    dayAssignmentsCounter.put(weekDay, 2);
+                }
+
+                possibleAssignmentsCounter.put(assignable, dayAssignmentsCounter);
+
             }
         }
 
@@ -140,8 +151,9 @@ public abstract class DemoService {
             Map.Entry<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> entry = iterator.next();
             Triplet<WeekDay, Grade, Integer> triplet = entry.getKey();
 
-            if(State.getInstance().timetable.get(triplet) != null){
+            if(State.getInstance().timetable.get(triplet) != null){ 
                 Assignable assignable = State.getInstance().assignables.get(State.getInstance().timetable.get(triplet));
+                possibleAssignmentsCounter.get(assignable).computeIfPresent(triplet.getFirst(), (key, value) -> (value != 0 ? value - 1 : 0));
 
                 lessonAssignments.computeIfPresent(assignable, (key, value) -> value + 1);
 
@@ -299,34 +311,23 @@ public abstract class DemoService {
         Map<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> slotOptions = new HashMap<>();
         Map<Assignable, Integer> lessonAssignments = new HashMap<>();
         Map<Educator, Integer> educatorAssignments = new HashMap<>();
+        Map<Assignable, Map<WeekDay, Integer>> possibleAssignmentsCounter = new HashMap<>();
+
 
         LessonComparator lessonComparator = new LessonComparator();
-        LessonAssignmentComparator lessonAssignmentComparator = new LessonAssignmentComparator(lessonAssignments);
         EducatorAssignmentComparator educatorAssignmentComparator = new EducatorAssignmentComparator(educatorAssignments);
         EducatorBasedComparator educatorBasedComparator = new EducatorBasedComparator(educatorLessonCount);
 
         PriorityQueue<Assignable> lessons = new PriorityQueue<>(lessonComparator);
 
-        prepare(options, lessons, educatorLessonCount, slotOptions, lessonAssignments, educatorAssignments);
+        prepare(options, lessons, educatorLessonCount, slotOptions, lessonAssignments, educatorAssignments, possibleAssignmentsCounter);
 
         int max = lessons.size();
         job.progress(0, max);
 
         while(!slotOptions.isEmpty() && !lessons.isEmpty()){
-            Set<Assignable> lessonsBelongingToAlmostEmptySlots = new HashSet<>();
-            for(Map.Entry<Triplet<WeekDay, Grade, Integer>, LinkedList<Assignable>> entry: slotOptions.entrySet()){
-                if(entry.getValue().size() <= 3)
-                    lessonsBelongingToAlmostEmptySlots.addAll(entry.getValue());
-            }
-
-            LinkedList<Assignable> lessonsBelongingToWellOfSlots = new LinkedList<>();
-            if(!lessonsBelongingToAlmostEmptySlots.isEmpty()) {
-                lessonsBelongingToWellOfSlots.addAll(lessons.stream().filter(assignable -> !lessonsBelongingToAlmostEmptySlots.contains(assignable)).toList());
-                lessons.removeIf(lessonsBelongingToWellOfSlots::contains);
-            }
 
             PriorityQueue<Assignable> lessonsByEducators = lessonFilter(lessons, educatorBasedComparator);
-            lessons.addAll(lessonsBelongingToWellOfSlots);
             PriorityQueue<Assignable> lessonsByEducatorAssignments = lessonFilter(lessonsByEducators, educatorAssignmentComparator);
             lessons.addAll(lessonsByEducators);
             PriorityQueue<Assignable> filtered = lessonFilter(lessonsByEducatorAssignments, educatorAssignmentComparator);
